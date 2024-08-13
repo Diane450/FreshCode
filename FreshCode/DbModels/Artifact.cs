@@ -25,6 +25,10 @@ public partial class Artifact
 
     public virtual ICollection<BannerItem> BannerItems { get; set; } = new List<BannerItem>();
 
+    public virtual ICollection<Pet> PetAccessories { get; set; } = new List<Pet>();
+
+    public virtual ICollection<Pet> PetHats { get; set; } = new List<Pet>();
+
     public virtual Rarity Rarity { get; set; } = null!;
 
     public virtual ICollection<UserArtifact> UserArtifacts { get; set; } = new List<UserArtifact>();

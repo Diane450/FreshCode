@@ -27,7 +27,7 @@ namespace FreshCode.Repositories
                 .ThenInclude(b=>b.Characteristic)
                 .Include(a => a.Bonus)
                 .ThenInclude(b => b.Type)
-                .Select (artifact => ArtifactMapper.ToDTO(artifact)).ToListAsync();
+                .Select (artifact => ArtifactMapper.ToArtifactDTO(artifact)).ToListAsync();
         }
 
         public async Task<List<FoodDTO>> GetFoodAsync() {

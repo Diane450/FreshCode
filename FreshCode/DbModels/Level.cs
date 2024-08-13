@@ -20,4 +20,6 @@ public partial class Level
     public int MaxCriticalChance { get; set; }
 
     public decimal EnhancementCoefficient { get; set; }
+
+    public virtual ICollection<Pet> Pets { get; set; } = new List<Pet>();
 }

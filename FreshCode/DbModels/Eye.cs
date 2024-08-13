@@ -10,4 +10,6 @@ public partial class Eye
     public int X { get; set; }
 
     public int Y { get; set; }
+
+    public virtual ICollection<Pet> Pets { get; set; } = new List<Pet>();
 }

@@ -10,13 +10,13 @@ namespace FreshCode.ModelsDTO
 
         public long UserId { get; set; }
 
-        public Body Body { get; set; } = null!;
+        public BodyDTO Body { get; set; } = null!;
 
-        public Eye Eyes { get; set; } = null!;
+        public EyeDTO Eyes { get; set; } = null!;
 
-        public ArtifactDTO Hat { get; set; } = null!;
+        public ArtifactSummaryDTO? Hat { get; set; } = null!;
 
-        public ArtifactDTO Accessory { get; set; } = null!;
+        public ArtifactSummaryDTO? Accessory { get; set; } = null!;
 
         public int SleepNeed { get; set; }
 

@@ -1,19 +1,15 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.Interfaces;
+using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
 using FreshCode.Requests;
 using Microsoft.EntityFrameworkCore;
 
 namespace FreshCode.Repositories
 {
-    public class PetsRepository : IPetsRepository
+    public class PetsRepository(FreshCodeContext dbContext) : IPetsRepository
     {
-        private readonly FreshCodeContext _dbContext;
-
-        public PetsRepository(FreshCodeContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
+        private readonly FreshCodeContext _dbContext = dbContext;
 
         public async Task<Pet> CreatePetAsync(CreatePetRequest request, string? vk_user_id)
         {
@@ -26,8 +22,8 @@ namespace FreshCode.Repositories
             {
                 Name = request.Name,
                 UserId = userId,
-                EyesId = request.Eyes_Id,
-                BodyId = request.Body_Id,
+                Eyes = request.Eyes,
+                Body = request.Body,
                 SleepNeed = 100,
                 FeedNeed = 100,
                 FightNeed = 100,
@@ -51,7 +47,7 @@ namespace FreshCode.Repositories
             return pet;
         }
 
-        public async Task<Pet> GetPetInfoAsync(int VkId)
+        public async Task<PetDTO> GetPetInfoAsync(int VkId)
         {
             try
             {
@@ -61,26 +57,49 @@ namespace FreshCode.Repositories
                     .Include(p => p.Hat)
                     .Include(p => p.Body)
                     .Include(p => p.Eyes)
+                    .Select(p => PetMapper.ToDto(p))
                     .FirstAsync();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 throw new Exception("User has no pet");
             }
         }
 
-        public async Task<Pet> LevelUpAsync(Pet pet)
+        public async Task<PetDTO> LevelUpAsync(PetDTO petDto)
         {
-            _dbContext.Attach(pet);
+            Pet? pet = await _dbContext.Pets.Where(p => p.Id == petDto.Id)
+                .Include(p => p.Accessory)
+                .Include(p => p.Hat)
+                .Include(p => p.Body)
+                .Include(p => p.Eyes)
+                .FirstAsync();
+
+            Level? nextLevel = await _dbContext.Levels.FindAsync(petDto.Level + 1);
+            if (pet == null)
+            {
+                throw new Exception("Pet not found");
+            }
+            if (nextLevel == null)
+            {
+                throw new Exception("Max level reached");
+            }
             pet.Level += 1;
+            pet.MaxHealth = nextLevel.MaxHealth;
+            pet.MaxStrength = nextLevel.MaxStrength;
+            pet.MaxDefence = nextLevel.MaxDefence;
+            pet.MaxCriticalDamage = nextLevel.MaxCriticalDamage;
+            pet.MaxCriticalChance = nextLevel.MaxCriticalChance;
+
+            PetDTO newPetDTO = PetMapper.ToDto(pet);
             //TODO: прибавление максимальных значений для питомца.
-            await _dbContext.SaveChangesAsync();
-            return pet;
+            //await _dbContext.SaveChangesAsync();
+            return newPetDTO;
         }
 
         //public async Task<Pet> Eat(EatRequest request)
         //{
-            
+
         //}
     }
 }

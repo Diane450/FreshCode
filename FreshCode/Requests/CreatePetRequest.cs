@@ -1,9 +1,11 @@
-﻿namespace FreshCode.Requests
+﻿using FreshCode.DbModels;
+
+namespace FreshCode.Requests
 {
     public class CreatePetRequest
     {
         public string Name { get; set; } = null!;
-        public int Body_Id { get; set; }
-        public int Eyes_Id { get; set; }
+        public Body Body { get; set; } = null!;
+        public Eye Eyes { get; set; } = null!;
     }
 }

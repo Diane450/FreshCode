@@ -5,7 +5,7 @@ namespace FreshCode.Mappers
 {
     public static class ArtifactMapper
     {
-        public static ArtifactDTO ToDTO(ArtifactBonuse artifact)
+        public static ArtifactDTO ToArtifactDTO(ArtifactBonuse artifact)
         {
             return new ArtifactDTO
             {
@@ -19,6 +19,20 @@ namespace FreshCode.Mappers
                 Value = artifact.Bonus.Value,
                 Type = artifact.Bonus.Type.Type
             };
+        }
+
+        public static ArtifactSummaryDTO? ToArtifactSummaryDTO(Artifact? artifact)
+        {
+            if (artifact is not null)
+            {
+                return new ArtifactSummaryDTO
+                {
+                    Id = artifact.Id,
+                    X = artifact.X,
+                    Y = artifact.Y,
+                };
+            }
+            return null;
         }
     }
 }

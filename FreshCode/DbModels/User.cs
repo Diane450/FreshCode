@@ -23,6 +23,8 @@ public partial class User
 
     public virtual ICollection<FortuneWheelResult> FortuneWheelResults { get; set; } = new List<FortuneWheelResult>();
 
+    public virtual ICollection<Pet> Pets { get; set; } = new List<Pet>();
+
     public virtual ICollection<UserArtifact> UserArtifacts { get; set; } = new List<UserArtifact>();
 
     public virtual ICollection<UserBackground> UserBackgrounds { get; set; } = new List<UserBackground>();

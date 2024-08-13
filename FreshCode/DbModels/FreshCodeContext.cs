@@ -331,7 +331,7 @@ public partial class FreshCodeContext : DbContext
 
         modelBuilder.Entity<Pet>(entity =>
         {
-            entity.HasNoKey();
+            entity.HasKey(e => e.Id).HasName("Pets_pkey");
 
             entity.Property(e => e.AccessoryId).HasColumnName("Accessory_Id");
             entity.Property(e => e.AveragePower).HasPrecision(1000, 2);
@@ -341,36 +341,35 @@ public partial class FreshCodeContext : DbContext
             entity.Property(e => e.EyesId).HasColumnName("Eyes_Id");
             entity.Property(e => e.GeneralHappiness).HasPrecision(10, 2);
             entity.Property(e => e.HatId).HasColumnName("Hat_Id");
-            entity.Property(e => e.Id).ValueGeneratedOnAdd();
             entity.Property(e => e.MaxCriticalChance).HasPrecision(10, 2);
             entity.Property(e => e.MaxCriticalDamage).HasPrecision(10, 2);
             entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.UserId).HasColumnName("User_Id");
 
-            entity.HasOne(d => d.Accessory).WithMany()
+            entity.HasOne(d => d.Accessory).WithMany(p => p.PetAccessories)
                 .HasForeignKey(d => d.AccessoryId)
                 .HasConstraintName("Pets_Accessory_Id");
 
-            entity.HasOne(d => d.Body).WithMany()
+            entity.HasOne(d => d.Body).WithMany(p => p.Pets)
                 .HasForeignKey(d => d.BodyId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Pets_Body_Id");
 
-            entity.HasOne(d => d.Eyes).WithMany()
+            entity.HasOne(d => d.Eyes).WithMany(p => p.Pets)
                 .HasForeignKey(d => d.EyesId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Pets_Eyes_Id");
 
-            entity.HasOne(d => d.Hat).WithMany()
+            entity.HasOne(d => d.Hat).WithMany(p => p.PetHats)
                 .HasForeignKey(d => d.HatId)
                 .HasConstraintName("Pets_Hat_Id");
 
-            entity.HasOne(d => d.LevelNavigation).WithMany()
+            entity.HasOne(d => d.LevelNavigation).WithMany(p => p.Pets)
                 .HasForeignKey(d => d.Level)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Pets_Level");
 
-            entity.HasOne(d => d.User).WithMany()
+            entity.HasOne(d => d.User).WithMany(p => p.Pets)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Pets_User_Id");
