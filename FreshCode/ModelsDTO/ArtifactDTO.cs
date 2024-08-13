@@ -12,12 +12,12 @@
 
         public string Rarity { get; set; } = null!;
 
-        public string Bonus { get; set; } = null!;
+        public List<BonusDTO> Bonus { get; set; } = null!;
 
-        public string Characteristic { get; set; } = null!;
+        //public string Characteristic { get; set; } = null!;
 
-        public decimal Value { get; set; }
+        //public decimal Value { get; set; }
 
-        public string Type { get; set; } = null!;
+        //public string Type { get; set; } = null!;
     }
 }
