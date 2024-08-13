@@ -29,27 +29,27 @@ namespace FreshCode.Repositories
                 .ThenInclude(b => b.Type)
                 .Select(a=>ArtifactMapper.ToDTO(a))
                 .ToListAsync();
-            //return await _dbContext.ArtifactBonuses
-            //    .Include(a=>a.Artifact)
-            //    .ThenInclude(a=>a.Rarity)
-            //    .Include(a => a.Artifact)
-            //    .ThenInclude(a => a.ArtifatcType)
-            //    .Include(a=>a.Bonus)
-            //    .ThenInclude(b=>b.Characteristic)
-            //    .Include(a => a.Bonus)
-            //    .ThenInclude(b => b.Type)
-            //    .Select (artifact => ArtifactMapper.ToDTO(artifact)).ToListAsync();
         }
 
-        public async Task<List<FoodDTO>> GetFoodAsync() {
-        
-            return await _dbContext.FoodBonuses
-                .Include(f => f.Food)
-                .Include(f => f.Bonus)
-                .ThenInclude(f => f.Characteristic)
-                .Include(f => f.Bonus)
-                .ThenInclude(f => f.Type)
-                .Select(foodBonus => FoodMapper.ToDTO(foodBonus)).ToListAsync();
+        public async Task<List<FoodDTO>> GetFoodAsync()
+        {
+            return await _dbContext.Foods
+                .Include(f=>f.FoodBonuses)
+                .ThenInclude(fb=>fb.Bonus)
+                .ThenInclude(b => b.Characteristic)
+                .Include(f => f.FoodBonuses)
+                .ThenInclude(fb => fb.Bonus)
+                .ThenInclude(b => b.Type)
+                .Select(f=>FoodMapper.ToDTO(f))
+                .ToListAsync();
+
+            //return await _dbContext.FoodBonuses
+            //    .Include(f => f.Food)
+            //    .Include(f => f.Bonus)
+            //    .ThenInclude(f => f.Characteristic)
+            //    .Include(f => f.Bonus)
+            //    .ThenInclude(f => f.Type)
+            //    .Select(foodBonus => FoodMapper.ToDTO(foodBonus)).ToListAsync();
         }
     }
 }
