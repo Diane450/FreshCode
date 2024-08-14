@@ -5,8 +5,12 @@ namespace FreshCode.Mappers
 {
     public static class ArtifactMapper
     {
-        public static ArtifactDTO ToDTO(Artifact artifact)
+        public static ArtifactDTO ToDTO(Artifact? artifact)
         {
+            if (artifact is null)
+            {
+                return null;
+            }
             return new ArtifactDTO
             {
                 Id = artifact.Id,
@@ -14,25 +18,23 @@ namespace FreshCode.Mappers
                 Y = artifact.Y,
                 Price = artifact.Price,
                 Rarity = artifact.Rarity.Name,
-                Bonus = artifact.ArtifactBonuses.Select(b => BonusMapper.ToDTO(b.Bonus)).ToList(),
-                //Characteristic = artifact.Bonus.Characteristic.Characteristic1,
-                //Value = artifact.Bonus.Value,
-                //Type = artifact.Bonus.Type.Type
+                Type = artifact.ArtifatcType.Type,
+                Bonuses = artifact.ArtifactBonuses.Select(b => BonusMapper.ToDTO(b.Bonus)).ToList(),
             };
         }
 
         public static ArtifactSummaryDTO? ToArtifactSummaryDTO(Artifact? artifact)
         {
-            if (artifact is not null)
+            if (artifact is null)
             {
-                return new ArtifactSummaryDTO
-                {
-                    Id = artifact.Id,
-                    X = artifact.X,
-                    Y = artifact.Y,
-                };
+                return null;
             }
-            return null;
+            return new ArtifactSummaryDTO
+            {
+                Id = artifact.Id,
+                X = artifact.X,
+                Y = artifact.Y,
+            };
         }
     }
 }

@@ -11,6 +11,8 @@ public partial class UserFood
 
     public long FoodId { get; set; }
 
+    public int Count { get; set; }
+
     public virtual Food Food { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;

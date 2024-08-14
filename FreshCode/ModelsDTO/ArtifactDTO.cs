@@ -12,7 +12,10 @@
 
         public string Rarity { get; set; } = null!;
 
-        public List<BonusDTO> Bonus { get; set; } = null!;
+        public List<BonusDTO> Bonuses { get; set; } = null!;
+        
+        public string Type { get; set; } = null!;
+
 
         //public string Characteristic { get; set; } = null!;
 

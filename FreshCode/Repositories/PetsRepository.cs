@@ -54,7 +54,31 @@ namespace FreshCode.Repositories
                 return await _dbContext.Pets.Include(p => p.User)
                     .Where(p => p.User.VkId == VkId)
                     .Include(p => p.Accessory)
+                    .ThenInclude(a => a.Rarity)
+                    .Include(p => p.Accessory)
+                    .ThenInclude(a => a.ArtifatcType)
+                    .Include(p => p.Accessory)
+                    .ThenInclude(a => a.ArtifactBonuses)
+                    .ThenInclude(ab => ab.Bonus)
+                    .ThenInclude(b => b.Characteristic)
+                    .Include(p => p.Accessory)
+                    .ThenInclude(a => a.ArtifactBonuses)
+                    .ThenInclude(ab => ab.Bonus)
+                    .ThenInclude(b => b.Type)
+
                     .Include(p => p.Hat)
+                    .ThenInclude(a => a.Rarity)
+                    .Include(p => p.Hat)
+                    .ThenInclude(a => a.ArtifatcType)
+                    .Include(p => p.Hat)
+                    .ThenInclude(a => a.ArtifactBonuses)
+                    .ThenInclude(ab => ab.Bonus)
+                    .ThenInclude(b => b.Characteristic)
+                    .Include(p => p.Hat)
+                    .ThenInclude(a => a.ArtifactBonuses)
+                    .ThenInclude(ab => ab.Bonus)
+                    .ThenInclude(b => b.Type)
+
                     .Include(p => p.Body)
                     .Include(p => p.Eyes)
                     .Select(p => PetMapper.ToDto(p))
@@ -62,7 +86,7 @@ namespace FreshCode.Repositories
             }
             catch (Exception)
             {
-                throw new Exception("User has no pet");
+                throw new Exception("User has no petDTO");
             }
         }
 
@@ -97,9 +121,25 @@ namespace FreshCode.Repositories
             return newPetDTO;
         }
 
-        //public async Task<Pet> Eat(EatRequest request)
-        //{
+        public async System.Threading.Tasks.Task ChangePetsArtifact(PetDTO petDTO)
+        {
+            Pet pet = await _dbContext.Pets.FindAsync(petDTO.Id);
+            pet.AccessoryId = petDTO.Accessory.Id;
+            pet.HatId = petDTO.Hat.Id;
 
-        //}
+            pet.CurrentCriticalChance = petDTO.CurrentCriticalChance;
+            pet.CurrentDefence = petDTO.CurrentDefence;
+            pet.CurrentCriticalDamage = petDTO.CurrentCriticalDamage;
+            pet.CurrentHealth = petDTO.CurrentHealth;
+            pet.CurrentStrength = petDTO.CurrentStrength;
+            //TODO: Изменить на формулу
+            pet.AveragePower = petDTO.AveragePower;
+            //await _dbContext.SaveChangesAsync();
+        }
+
+        public async Task<PetDTO> FeedAsync(FeedRequest request, string vk_user_id)
+        {
+            return null;
+        }
     }
 }

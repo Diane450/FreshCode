@@ -3,9 +3,9 @@ using FreshCode.ModelsDTO;
 
 namespace FreshCode.Requests
 {
-    public class EatRequest
+    public class FeedRequest
     {
-        public int PetId { get; set; }
+        public PetDTO Pet { get; set; } = null!;
         public FoodDTO Food { get; set; } = null!;
     }
 }

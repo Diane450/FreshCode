@@ -14,9 +14,9 @@ namespace FreshCode.ModelsDTO
 
         public EyeDTO Eyes { get; set; } = null!;
 
-        public ArtifactSummaryDTO? Hat { get; set; } = null!;
+        public ArtifactDTO? Hat { get; set; } = null!;
 
-        public ArtifactSummaryDTO? Accessory { get; set; } = null!;
+        public ArtifactDTO? Accessory { get; set; } = null!;
 
         public int SleepNeed { get; set; }
 

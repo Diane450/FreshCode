@@ -25,5 +25,10 @@ namespace FreshCode.UseCases
         {
             return await _petsRepository.LevelUpAsync(pet);
         }
+
+        public async System.Threading.Tasks.Task ChangePetsArtifact(PetDTO pet)
+        {
+            await _petsRepository.ChangePetsArtifact(pet);
+        }
     }
 }
