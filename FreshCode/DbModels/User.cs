@@ -15,7 +15,11 @@ public partial class User
 
     public int WonBattlesCount { get; set; }
 
-    public long? VkId { get; set; }
+    public long VkId { get; set; }
+
+    public int PrimogemsCount { get; set; }
+
+    public int FatesCount { get; set; }
 
     public virtual ICollection<ArtifactHistory> ArtifactHistories { get; set; } = new List<ArtifactHistory>();
 

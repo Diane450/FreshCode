@@ -9,7 +9,7 @@ namespace FreshCode.Interfaces
         Task <Pet> CreatePetAsync(CreatePetRequest request, string? vk_user_id);
         Task<PetDTO> GetPetInfoAsync(int userId);
         Task<PetDTO> LevelUpAsync(PetDTO pet);
-        Task<PetDTO> FeedAsync(FeedRequest request, string vk_user_id);
         System.Threading.Tasks.Task ChangePetsArtifact(PetDTO pet);
+        System.Threading.Tasks.Task FeedAsync(PetDTO pet);
     }
 }

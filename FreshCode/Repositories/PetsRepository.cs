@@ -137,9 +137,19 @@ namespace FreshCode.Repositories
             //await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<PetDTO> FeedAsync(FeedRequest request, string vk_user_id)
+        public async System.Threading.Tasks.Task FeedAsync(PetDTO petDTO)
         {
-            return null;
+            Pet pet = await _dbContext.Pets.FindAsync(petDTO.Id);
+            pet.SleepNeed = petDTO.SleepNeed;
+            pet.FeedNeed = petDTO.FeedNeed;
+            pet.FightNeed = petDTO.FightNeed;
+
+            pet.CurrentDefence = petDTO.CurrentDefence;
+            pet.CurrentCriticalChance = petDTO.CurrentCriticalChance;
+            pet.CurrentCriticalDamage = petDTO.CurrentCriticalDamage;
+            pet.CurrentHealth = petDTO.CurrentHealth;
+            pet.CurrentStrength = petDTO.CurrentStrength;
+            await _dbContext.SaveChangesAsync();
         }
     }
 }

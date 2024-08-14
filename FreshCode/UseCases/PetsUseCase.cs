@@ -30,5 +30,10 @@ namespace FreshCode.UseCases
         {
             await _petsRepository.ChangePetsArtifact(pet);
         }
+
+        public async System.Threading.Tasks.Task FeedAsync(FeedRequest request)
+        {
+            await _petsRepository.FeedAsync(request.Pet);
+        }
     }
 }

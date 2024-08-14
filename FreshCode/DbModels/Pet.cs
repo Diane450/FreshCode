@@ -53,6 +53,8 @@ public partial class Pet
 
     public decimal AveragePower { get; set; }
 
+    public int MaxPoints { get; set; }
+
     public virtual Artifact? Accessory { get; set; }
 
     public virtual Body Body { get; set; } = null!;

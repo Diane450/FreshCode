@@ -30,6 +30,8 @@ namespace FreshCode.ModelsDTO
 
         public int Points { get; set; }
 
+        public int MaxPoints { get; set; }
+
         public int CurrentHealth { get; set; }
 
         public int CurrentStrength { get; set; }
