@@ -37,5 +37,24 @@ namespace FreshCode.Repositories
                 .ToListAsync();
             return tasks;
         }
+
+        public async Task<List<ArtifactHistoryDTO>> GetArtifactHistory(string vk_user_id)
+        {
+            User user = await _dbContext.Users.FirstAsync(u => u.VkId == Convert.ToInt32(vk_user_id));
+
+            var artifactHistory = await _dbContext.Artifacts
+                .Include(a=>a.ArtifatcType)
+                .Include(a=>a.Rarity)
+                .Include(a=>a.ArtifactBonuses)
+                .ThenInclude(ab => ab.Bonus)
+                .ThenInclude(b => b.Characteristic)
+                .Include(a => a.ArtifactBonuses)
+                .ThenInclude(ab => ab.Bonus)
+                .ThenInclude(b => b.Type)
+                .Include(a => a.ArtifactHistories.Where(ah => ah.UserId == user.Id))
+                .Select(artifact=> ArtifactHistoryMapper.ToDTO(artifact))
+                .ToListAsync();
+            return artifactHistory;
+        }
     }
 }

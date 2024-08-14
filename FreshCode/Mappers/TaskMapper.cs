@@ -17,7 +17,7 @@ namespace FreshCode.Mappers
                 PointsReward = task.PointsReward,
                 StatPointsReward = task.StatPointsReward,
                 PrimogemsReward = task.PrimogemsReward,
-                IsCompleted = userTask != null && userTask.IsCompleted
+                IsCompleted = userTask.IsCompleted
             };
         }
     }

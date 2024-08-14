@@ -26,5 +26,10 @@ namespace FreshCode.UseCases
         {
             return await _userRepository.GetUserTasks(vk_user_id);
         }
+
+        public async Task<List<ArtifactHistoryDTO>> GetArtifactHistory(string? vk_user_id)
+        {
+            return await _userRepository.GetArtifactHistory(vk_user_id);
+        }
     }
 }

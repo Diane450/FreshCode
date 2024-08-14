@@ -8,7 +8,7 @@ namespace FreshCode.Controllers
     [ApiController]
     [Route("[controller]/[action]")]
 
-    public class UserController(UserUseCase userUseCase) : Controller
+    public class UserContentController(UserUseCase userUseCase) : Controller
     {
 
         private readonly UserUseCase _userUseCase = userUseCase;
@@ -25,6 +25,13 @@ namespace FreshCode.Controllers
         {
             var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
             return await _userUseCase.GetUserTasks(vk_user_id);
+        }
+
+        [HttpGet]
+        public async Task<List<ArtifactHistoryDTO>> GetArtifactHistory()
+        {
+            var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
+            return await _userUseCase.GetArtifactHistory(vk_user_id);
         }
     }
 }

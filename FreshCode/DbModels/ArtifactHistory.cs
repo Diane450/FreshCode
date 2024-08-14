@@ -9,9 +9,9 @@ public partial class ArtifactHistory
 
     public long UserId { get; set; }
 
-    public DateOnly GotAt { get; set; }
-
     public long ArtifactId { get; set; }
+
+    public int GotAt { get; set; }
 
     public virtual Artifact Artifact { get; set; } = null!;
 
