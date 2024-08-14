@@ -19,5 +19,12 @@ namespace FreshCode.Controllers
             var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
             return await _userUseCase.GetUserGameInfo(vk_user_id);
         }
+
+        [HttpGet]
+        public async Task<List<TaskDTO>> GetUserTasks()
+        {
+            var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
+            return await _userUseCase.GetUserTasks(vk_user_id);
+        }
     }
 }

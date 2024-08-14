@@ -27,5 +27,15 @@ namespace FreshCode.Repositories
             user.UserFoods.First(uf => uf.Food.Id == food.Id).Count--;
             await _dbContext.SaveChangesAsync();
         }
+
+        public async Task<List<TaskDTO>> GetUserTasks(string vk_user_id)
+        {
+            User user = await _dbContext.Users.FirstAsync(u => u.VkId == Convert.ToInt32(vk_user_id));
+            var tasks = await _dbContext.Tasks
+                .Include(t => t.UserTasks.Where(ut => ut.UserId == user.Id))
+                .Select(task=>TaskMapper.ToDTO(task))
+                .ToListAsync();
+            return tasks;
+        }
     }
 }
