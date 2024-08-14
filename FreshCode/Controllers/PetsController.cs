@@ -9,11 +9,11 @@ namespace FreshCode.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class PetsController(PetsUseCase petsUseCase, UserUseCase userUseCase) : ControllerBase
+    public class PetsController(PetsUseCase petsUseCase, UserContentUseCase userUseCase) : ControllerBase
     {
         private readonly PetsUseCase _petsUseCase = petsUseCase;
         
-        private readonly UserUseCase _userUseCase = userUseCase;
+        private readonly UserContentUseCase _userUseCase = userUseCase;
 
 
         [HttpGet]

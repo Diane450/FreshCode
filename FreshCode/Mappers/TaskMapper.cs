@@ -5,18 +5,16 @@ namespace FreshCode.Mappers
 {
     public static class TaskMapper
     {
-        public static TaskDTO ToDTO(DbModels.Task task)
+        public static TaskDTO ToDTO(UserTask userTask)
         {
-            var userTask = task.UserTasks.FirstOrDefault();
-
             return new TaskDTO
             {
-                Id = task.Id,
-                Descryption = task.Descryption,
-                MoneyReward = task.MoneyReward,
-                PointsReward = task.PointsReward,
-                StatPointsReward = task.StatPointsReward,
-                PrimogemsReward = task.PrimogemsReward,
+                Id = userTask.Task.Id,
+                Descryption = userTask.Task.Descryption,
+                MoneyReward = userTask.Task.MoneyReward,
+                PointsReward = userTask.Task.PointsReward,
+                StatPointsReward = userTask.Task.StatPointsReward,
+                PrimogemsReward = userTask.Task.PrimogemsReward,
                 IsCompleted = userTask.IsCompleted
             };
         }

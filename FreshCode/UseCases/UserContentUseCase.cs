@@ -3,11 +3,11 @@ using FreshCode.ModelsDTO;
 
 namespace FreshCode.UseCases
 {
-    public class UserUseCase
+    public class UserContentUseCase
     {
         private readonly IUserRepository _userRepository;
         
-        public UserUseCase(IUserRepository userRepository)
+        public UserContentUseCase(IUserRepository userRepository)
         {
             _userRepository = userRepository;
         }
@@ -30,6 +30,16 @@ namespace FreshCode.UseCases
         public async Task<List<ArtifactHistoryDTO>> GetArtifactHistory(string? vk_user_id)
         {
             return await _userRepository.GetArtifactHistory(vk_user_id);
+        }
+
+        public async Task<List<UserFoodDTO>> GetUserFood(string? vk_user_id)
+        {
+            return await _userRepository.GetUserFood(vk_user_id);
+        }
+
+        public async Task<List<ArtifactDTO>> GetUserArtifact(string? vk_user_id)
+        {
+            return await _userRepository.GetUserArtifact(vk_user_id);
         }
     }
 }

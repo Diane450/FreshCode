@@ -42,14 +42,6 @@ namespace FreshCode.Repositories
                 .ThenInclude(b => b.Type)
                 .Select(f=>FoodMapper.ToDTO(f))
                 .ToListAsync();
-
-            //return await _dbContext.FoodBonuses
-            //    .Include(f => f.Food)
-            //    .Include(f => f.Bonus)
-            //    .ThenInclude(f => f.Characteristic)
-            //    .Include(f => f.Bonus)
-            //    .ThenInclude(f => f.Type)
-            //    .Select(foodBonus => FoodMapper.ToDTO(foodBonus)).ToListAsync();
         }
     }
 }

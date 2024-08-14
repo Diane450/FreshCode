@@ -6,15 +6,13 @@ namespace FreshCode.Mappers
 {
     public static class ArtifactHistoryMapper
     {
-        public static ArtifactHistoryDTO ToDTO(Artifact artifact)
+        public static ArtifactHistoryDTO ToDTO(ArtifactHistory artifactHistory)
         {
-            var userHistory = artifact.ArtifactHistories.FirstOrDefault();
-            
             return new ArtifactHistoryDTO
             {
-                Id = artifact.Id,
-                Artifact = ArtifactMapper.ToDTO(artifact),
-                GotAt = userHistory.GotAt
+                Id = artifactHistory.Id,
+                Artifact = ArtifactMapper.ToDTO(artifactHistory.Artifact),
+                GotAt = artifactHistory.GotAt
             };
         }
     }
