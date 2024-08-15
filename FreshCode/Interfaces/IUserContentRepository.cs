@@ -3,7 +3,7 @@ using FreshCode.ModelsDTO;
 
 namespace FreshCode.Interfaces
 {
-    public interface IUserRepository
+    public interface IUserContentRepository
     {
         Task <UserDTO> GetUserGameInfo(string vk_user_id);
         Task<List<TaskDTO>> GetUserTasks(string vk_user_id);

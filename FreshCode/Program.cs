@@ -24,8 +24,10 @@ builder.Services.AddScoped<ShopUseCase>();
 builder.Services.AddScoped<IShopRepository, ShopRepository>();
 
 builder.Services.AddScoped<UserContentUseCase>();
-builder.Services.AddScoped<IUserRepository, UserContentRepository>();
+builder.Services.AddScoped<IUserContentRepository, UserContentRepository>();
 
+builder.Services.AddScoped<CreatePetUseCase>();
+builder.Services.AddScoped<ICreatePetRepository, CreatePetRepository>();
 
 builder.Services.AddScoped<VkLaunchParamsService>();
 

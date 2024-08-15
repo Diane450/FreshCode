@@ -5,9 +5,9 @@ namespace FreshCode.UseCases
 {
     public class UserContentUseCase
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUserContentRepository _userRepository;
         
-        public UserContentUseCase(IUserRepository userRepository)
+        public UserContentUseCase(IUserContentRepository userRepository)
         {
             _userRepository = userRepository;
         }

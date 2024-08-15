@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FreshCode.Repositories
 {
-    public class UserContentRepository(FreshCodeContext dbContext) : IUserRepository
+    public class UserContentRepository(FreshCodeContext dbContext) : IUserContentRepository
     {
         private readonly FreshCodeContext _dbContext = dbContext;
 
