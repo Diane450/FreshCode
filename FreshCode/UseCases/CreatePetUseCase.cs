@@ -12,5 +12,10 @@ namespace FreshCode.UseCases
         {
             return await _createPetRepository.GetEyesAsync();
         }
+
+        public async Task<List<BodyDTO>> GetBodiesAsync()
+        {
+            return await _createPetRepository.GetBodiesAsync();
+        }
     }
 }

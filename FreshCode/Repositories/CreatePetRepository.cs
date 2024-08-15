@@ -14,10 +14,18 @@ namespace FreshCode.Repositories
         {
             _dbContext = freshCodeContext;
         }
+
         public async Task<List<EyeDTO>> GetEyesAsync()
         {
             return await _dbContext.Eyes
                 .Select(eye => EyeMapper.ToDTO(eye))
+                .ToListAsync();
+        }
+
+        public async Task<List<BodyDTO>> GetBodiesAsync()
+        {
+            return await _dbContext.Bodies
+                .Select(body => BodyMapper.ToDTO(body))
                 .ToListAsync();
         }
     }

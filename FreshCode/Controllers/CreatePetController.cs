@@ -16,5 +16,11 @@ namespace FreshCode.Controllers
         {
             return await _createPetUseCase.GetEyesAsync();
         }
+
+        [HttpGet]
+        public async Task<List<BodyDTO>> GetBodies()
+        {
+            return await _createPetUseCase.GetBodiesAsync();
+        }
     }
 }
