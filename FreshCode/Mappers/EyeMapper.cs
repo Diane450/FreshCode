@@ -14,5 +14,15 @@ namespace FreshCode.Mappers
                 Y = eye.Y,
             };
         }
+
+        public static Eye ToEntity(EyeDTO eyeDTO)
+        {
+            return new Eye
+            {
+                Id = eyeDTO.Id,
+                X = eyeDTO.X,
+                Y = eyeDTO.Y,
+            };
+        }
     }
 }

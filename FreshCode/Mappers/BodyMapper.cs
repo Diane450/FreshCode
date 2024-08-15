@@ -14,5 +14,16 @@ namespace FreshCode.Mappers
                 Y = body.Y,
             };
         }
+
+        public static Body ToEntity(BodyDTO bodyDTO)
+        {
+            return new Body
+            {
+                Id = bodyDTO.Id,
+                X = bodyDTO.X,
+                Y = bodyDTO.Y,
+            };
+
+        }
     }
 }

@@ -23,13 +23,6 @@ namespace FreshCode.Controllers
             return await _petsUseCase.GetPetByVkIdAsync(Convert.ToInt32(vk_user_id));
         }
 
-        [HttpPost]
-        public async Task<PetDTO> CreatePet([FromBody] CreatePetRequest request)
-        {
-            var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-            return await _petsUseCase.CreatePetAsync(request, vk_user_id);
-        }
-
         [HttpPut]
         public async Task<PetDTO> LevelUp([FromBody] PetDTO pet)
         {

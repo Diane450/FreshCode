@@ -1,6 +1,9 @@
-﻿using FreshCode.Interfaces;
+﻿using FreshCode.DbModels;
+using FreshCode.Interfaces;
+using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
 using FreshCode.Repositories;
+using FreshCode.Requests;
 
 namespace FreshCode.UseCases
 {
@@ -16,6 +19,11 @@ namespace FreshCode.UseCases
         public async Task<List<BodyDTO>> GetBodiesAsync()
         {
             return await _createPetRepository.GetBodiesAsync();
+        }
+        public async Task<PetDTO> CreatePetAsync(CreatePetRequest request, string? vk_user_id)
+        {
+            Pet pet = await _createPetRepository.CreatePetAsync(request, vk_user_id);
+            return PetMapper.ToDto(pet);
         }
     }
 }

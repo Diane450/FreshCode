@@ -15,12 +15,6 @@ namespace FreshCode.UseCases
             return await _petsRepository.GetPetInfoAsync(VkId);
         }
 
-        public async Task<PetDTO> CreatePetAsync(CreatePetRequest request, string? vk_user_id)
-        {
-           Pet pet = await _petsRepository.CreatePetAsync(request, vk_user_id);
-           return PetMapper.ToDto(pet);
-        }
-
         public async Task<PetDTO> LevelUpAsync(PetDTO pet)
         {
             return await _petsRepository.LevelUpAsync(pet);
