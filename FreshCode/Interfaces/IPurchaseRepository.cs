@@ -6,5 +6,6 @@ namespace FreshCode.Interfaces
     {
         Task BuyArtifact(ArtifactDTO artifactToBuy, string vk_user_id);
         Task BuyFood(FoodDTO foodToBuy, string? vk_user_id);
+        Task BuyBackground(BackgroundDTO backgroundToBuy, string? vk_user_id);
     }
 }

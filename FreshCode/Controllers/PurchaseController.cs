@@ -29,10 +29,11 @@ namespace FreshCode.Controllers
             await _purchaseUseCase.BuyFood(foodToBuy, vk_user_id);
         }
 
-        //[HttpPost]
-        //public async Task BuyBackground()
-        //{
-        //    await _purchaseUseCase.BuyBackground();
-        //}
+        [HttpPost]
+        public async Task BuyBackground([FromBody] BackgroundDTO backgroundToBuy)
+        {
+            var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
+            await _purchaseUseCase.BuyBackground(backgroundToBuy, vk_user_id);
+        }
     }
 }

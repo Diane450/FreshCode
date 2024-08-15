@@ -80,5 +80,35 @@ namespace FreshCode.Repositories
                 throw;
             }
         }
+
+        public async System.Threading.Tasks.Task BuyBackground(BackgroundDTO backgroundToBuy, string? vk_user_id)
+        {
+            try
+            {
+                User? user = await _dbContext.Users
+                    .FirstOrDefaultAsync(u => u.VkId == Convert.ToInt32(vk_user_id));
+
+                Background? background = await _dbContext.Backgrounds.FindAsync(backgroundToBuy.Id);
+
+                user.Money -= background.Price;
+
+                if (user.Money < 0)
+                {
+                    throw new Exception();
+                }
+
+                user.UserBackgrounds.Add(new UserBackground
+                {
+                    User = user,
+                    Background = background
+                });
+
+                await _dbContext.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+                throw new Exception("Не удалось совершить покупку");
+            }
+        }
     }
 }
