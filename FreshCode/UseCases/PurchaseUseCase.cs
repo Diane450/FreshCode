@@ -15,5 +15,10 @@ namespace FreshCode.UseCases
         {
             await _purchaseRepository.BuyArtifact(artifactToBuy, vk_user_id);
         }
+
+        public async Task BuyFood(FoodDTO foodToBuy, string? vk_user_id)
+        {
+            await _purchaseRepository.BuyFood(foodToBuy, vk_user_id);
+        }
     }
 }

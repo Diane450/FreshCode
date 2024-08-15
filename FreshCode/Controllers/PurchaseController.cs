@@ -23,9 +23,10 @@ namespace FreshCode.Controllers
         }
 
         [HttpPost]
-        public async Task BuyFood()
+        public async Task BuyFood([FromBody] FoodDTO foodToBuy)
         {
-            await _purchaseUseCase.BuyFood();
+            var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
+            await _purchaseUseCase.BuyFood(foodToBuy, vk_user_id);
         }
 
         //[HttpPost]
