@@ -29,6 +29,10 @@ builder.Services.AddScoped<IUserContentRepository, UserContentRepository>();
 builder.Services.AddScoped<CreatePetUseCase>();
 builder.Services.AddScoped<ICreatePetRepository, CreatePetRepository>();
 
+builder.Services.AddScoped<PurchaseUseCase>();
+builder.Services.AddScoped<IPurchaseRepository, PurchaseRepository>();
+
+
 builder.Services.AddScoped<VkLaunchParamsService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
