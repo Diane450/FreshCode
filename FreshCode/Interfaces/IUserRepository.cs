@@ -11,5 +11,6 @@ namespace FreshCode.Interfaces
         Task<List<ArtifactHistoryDTO>> GetArtifactHistory(string vk_user_id);
         Task<List<UserFoodDTO>> GetUserFood(string? vk_user_id);
         Task<List<ArtifactDTO>> GetUserArtifact(string? vk_user_id);
+        Task<List<BackgroundDTO>> GetUserBackgrounds(string vk_user_id);
     }
 }

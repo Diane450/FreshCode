@@ -32,7 +32,7 @@ namespace FreshCode.Repositories
         {
             User user = await _dbContext.Users.FirstAsync(u => u.VkId == Convert.ToInt32(vk_user_id));
             var tasks = await _dbContext.UserTasks
-                .Include(ut=>ut.Task)
+                .Include(ut => ut.Task)
                 .Select(task => TaskMapper.ToDTO(task))
                 .ToListAsync();
             return tasks;
@@ -43,8 +43,8 @@ namespace FreshCode.Repositories
             User user = await _dbContext.Users.FirstAsync(u => u.VkId == Convert.ToInt32(vk_user_id));
 
             return await _dbContext.ArtifactHistories
-                .Where(ah=>ah.UserId == user.Id)
-                .Include(ah=>ah.Artifact)
+                .Where(ah => ah.UserId == user.Id)
+                .Include(ah => ah.Artifact)
                 .ThenInclude(a => a.ArtifatcType)
                 .Include(ah => ah.Artifact)
                 .ThenInclude(a => a.Rarity)
@@ -66,7 +66,7 @@ namespace FreshCode.Repositories
 
             return await _dbContext.UserFoods
                 .Where(uf => uf.UserId == user.Id)
-                .Include(uf=>uf.Food)
+                .Include(uf => uf.Food)
                 .ThenInclude(f => f.FoodBonuses)
                 .ThenInclude(fb => fb.Bonus)
                 .ThenInclude(b => b.Characteristic)
@@ -96,7 +96,17 @@ namespace FreshCode.Repositories
                 .ThenInclude(a => a.ArtifactBonuses)
                 .ThenInclude(ab => ab.Bonus)
                 .ThenInclude(b => b.Type)
-                .Select(artifactHistory=>ArtifactMapper.ToDTO(artifactHistory.Artifact))
+                .Select(artifactHistory => ArtifactMapper.ToDTO(artifactHistory.Artifact))
+                .ToListAsync();
+        }
+
+        public async Task<List<BackgroundDTO>> GetUserBackgrounds(string vk_user_id)
+        {
+            User user = await _dbContext.Users.FirstAsync(u => u.VkId == Convert.ToInt32(vk_user_id));
+            return await _dbContext.UserBackgrounds
+                .Where(ub => ub.UserId == user.Id)
+                .Include(ub=>ub.Background)
+                .Select(userBackground=>BackgroundMapper.ToDTO(userBackground.Background))
                 .ToListAsync();
         }
     }

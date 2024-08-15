@@ -48,5 +48,11 @@ namespace FreshCode.Controllers
             return await _userUseCase.GetUserArtifact(vk_user_id);
         }
 
+        [HttpGet]
+        public async Task<List<BackgroundDTO>> GetUserBackgrounds()
+        {
+            var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
+            return await _userUseCase.GetUserBackgrounds(vk_user_id);
+        }
     }
 }
