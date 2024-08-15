@@ -1,4 +1,5 @@
-﻿using FreshCode.ModelsDTO;
+﻿using FreshCode.Exceptions;
+using FreshCode.ModelsDTO;
 using FreshCode.Services;
 using FreshCode.UseCases;
 using Microsoft.AspNetCore.Mvc;
@@ -15,11 +16,28 @@ namespace FreshCode.Controllers
         {
             _purchaseUseCase = purchaseUseCase;
         }
+
         [HttpPost]
-        public async Task BuyArtifact([FromBody] ArtifactDTO artifactToBuy)
+        public async Task<ActionResult> BuyArtifact([FromBody] ArtifactDTO artifactToBuy)
         {
-            var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-            await _purchaseUseCase.BuyArtifact(artifactToBuy, vk_user_id);
+            try
+            {
+                string vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
+                await _purchaseUseCase.BuyArtifact(artifactToBuy, vk_user_id);
+                return Ok();
+            }
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
+            catch (InsufficientFundsException exception)
+            {
+                return Conflict(exception.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Ошибка: {ex.Message}");
+            }
         }
 
         [HttpPost]

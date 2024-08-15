@@ -1,11 +1,12 @@
-﻿using FreshCode.ModelsDTO;
+﻿using FreshCode.DbModels;
+using FreshCode.ModelsDTO;
 
 namespace FreshCode.Interfaces
 {
     public interface IPurchaseRepository
     {
-        Task BuyArtifact(ArtifactDTO artifactToBuy, string vk_user_id);
-        Task BuyFood(FoodDTO foodToBuy, string? vk_user_id);
-        Task BuyBackground(BackgroundDTO backgroundToBuy, string? vk_user_id);
+        System.Threading.Tasks.Task BuyArtifact(ArtifactDTO artifactToBuy, User user);
+        System.Threading.Tasks.Task BuyFood(FoodDTO foodToBuy, User user);
+        System.Threading.Tasks.Task BuyBackground(BackgroundDTO backgroundToBuy, User user);
     }
 }

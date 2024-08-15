@@ -1,4 +1,5 @@
-﻿using FreshCode.Interfaces;
+﻿using FreshCode.DbModels;
+using FreshCode.Interfaces;
 using FreshCode.ModelsDTO;
 
 namespace FreshCode.UseCases
@@ -7,23 +8,31 @@ namespace FreshCode.UseCases
     {
         private readonly IPurchaseRepository _purchaseRepository;
 
-        public PurchaseUseCase(IPurchaseRepository purchaseRepository)
+        private readonly IUserRepository _userRepository;
+
+        public PurchaseUseCase(IPurchaseRepository purchaseRepository, IUserRepository userRepository)
         {
             _purchaseRepository = purchaseRepository;
+            _userRepository = userRepository;
         }
-        public async Task BuyArtifact(ArtifactDTO artifactToBuy, string vk_user_id)
+        public async System.Threading.Tasks.Task BuyArtifact(ArtifactDTO artifactToBuy, string vk_user_id)
         {
-            await _purchaseRepository.BuyArtifact(artifactToBuy, vk_user_id);
-        }
-
-        public async Task BuyFood(FoodDTO foodToBuy, string? vk_user_id)
-        {
-            await _purchaseRepository.BuyFood(foodToBuy, vk_user_id);
+            User user = await _userRepository.GetUserIdByVkId(vk_user_id);
+            await _purchaseRepository.BuyArtifact(artifactToBuy, user);
         }
 
-        public async Task BuyBackground(BackgroundDTO backgroundToBuy, string? vk_user_id)
+        public async System.Threading.Tasks.Task BuyFood(FoodDTO foodToBuy, string vk_user_id)
         {
-            await _purchaseRepository.BuyBackground(backgroundToBuy, vk_user_id);
+            User user = await _userRepository.GetUserIdByVkId(vk_user_id);
+
+            await _purchaseRepository.BuyFood(foodToBuy, user);
+        }
+
+        public async System.Threading.Tasks.Task BuyBackground(BackgroundDTO backgroundToBuy, string vk_user_id)
+        {
+            User user = await _userRepository.GetUserIdByVkId(vk_user_id);
+
+            await _purchaseRepository.BuyBackground(backgroundToBuy, user);
         }
     }
 }

@@ -24,7 +24,7 @@ builder.Services.AddScoped<ShopUseCase>();
 builder.Services.AddScoped<IShopRepository, ShopRepository>();
 
 builder.Services.AddScoped<UserContentUseCase>();
-builder.Services.AddScoped<IUserContentRepository, UserContentRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<CreatePetUseCase>();
 builder.Services.AddScoped<ICreatePetRepository, CreatePetRepository>();

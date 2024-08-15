@@ -5,16 +5,11 @@ namespace FreshCode.UseCases
 {
     public class UserContentUseCase
     {
-        private readonly IUserContentRepository _userRepository;
+        private readonly IUserRepository _userRepository;
         
-        public UserContentUseCase(IUserContentRepository userRepository)
+        public UserContentUseCase(IUserRepository userRepository)
         {
             _userRepository = userRepository;
-        }
-
-        public async Task InventoryDecreaseFoodCountAsync(string vk_user_id, FoodDTO food)
-        {
-            await _userRepository.InventoryDecreaseFoodCount(vk_user_id, food);
         }
 
         public async Task<UserDTO> GetUserGameInfo(string vk_user_id)

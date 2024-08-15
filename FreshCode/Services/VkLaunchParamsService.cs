@@ -29,7 +29,7 @@ namespace FreshCode.Services
         {
             string url = Decode(header.Authorization);
             var queryParams = await Task.Run(() => GetQueryParams(url));
-            return queryParams.ContainsKey(key) ? queryParams[key] : null;
+            return queryParams.ContainsKey(key) ? queryParams[key] : throw new ArgumentException("Пользователь не найден");
         }
 
         private static Dictionary<string, string> GetQueryParams(string url)

@@ -1,4 +1,5 @@
 ﻿using FreshCode.DbModels;
+using FreshCode.Exceptions;
 using FreshCode.Interfaces;
 using FreshCode.ModelsDTO;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -10,20 +11,22 @@ namespace FreshCode.Repositories
     {
         private readonly FreshCodeContext _dbContext = dbContext;
 
-        public async System.Threading.Tasks.Task BuyArtifact(ArtifactDTO artifactToBuy, string vk_user_id)
+        public async System.Threading.Tasks.Task BuyArtifact(ArtifactDTO artifactToBuy, User user)
         {
             try
             {
-                User? user = await _dbContext.Users
-                    .FirstOrDefaultAsync(u => u.VkId == Convert.ToInt32(vk_user_id));
-
                 Artifact? artifact = await _dbContext.Artifacts.FindAsync(artifactToBuy.Id);
                 
-                user.Money -= artifact.Price;
-                
-                if (user.Money<0)
+                if (user is null || artifact is null)
                 {
-                    throw new Exception();
+                    throw new ArgumentException("Пользователь или артефакты не найдены");
+                }
+
+                user.Money -= artifact.Price;
+
+                if (user.Money < 0)
+                {
+                    throw new InsufficientFundsException();
                 }
 
                 user.UserArtifacts.Add(new UserArtifact
@@ -40,25 +43,26 @@ namespace FreshCode.Repositories
             }
         }
 
-        public async System.Threading.Tasks.Task BuyFood(FoodDTO foodToBuy, string? vk_user_id)
+        public async System.Threading.Tasks.Task BuyFood(FoodDTO foodToBuy, User user)
         {
             try
             {
-                User? user = await _dbContext.Users
-                    .Where(u => u.VkId == Convert.ToInt32(vk_user_id))
-                    .Include(u => u.UserFoods)
-                    .FirstOrDefaultAsync();
-
                 Food? food = await _dbContext.Foods.FindAsync(foodToBuy.Id);
+                
+                if (user is null || food is null)
+                {
+                    throw new ArgumentException("Пользователь или еда не найдены");
+                }
 
                 user.Money -= food.Price;
 
                 if (user.Money < 0)
                 {
-                    throw new Exception();
+                    throw new InsufficientFundsException();
                 }
 
                 var userFood = user.UserFoods.FirstOrDefault(uf => uf.FoodId == food.Id);
+                
                 if (userFood is not null)
                 {
                     userFood.Count += 1;
@@ -81,20 +85,22 @@ namespace FreshCode.Repositories
             }
         }
 
-        public async System.Threading.Tasks.Task BuyBackground(BackgroundDTO backgroundToBuy, string? vk_user_id)
+        public async System.Threading.Tasks.Task BuyBackground(BackgroundDTO backgroundToBuy, User user)
         {
             try
             {
-                User? user = await _dbContext.Users
-                    .FirstOrDefaultAsync(u => u.VkId == Convert.ToInt32(vk_user_id));
-
                 Background? background = await _dbContext.Backgrounds.FindAsync(backgroundToBuy.Id);
+                
+                if (user is null || background is null)
+                {
+                    throw new ArgumentException("Пользователь или фон не найдены");
+                }
 
                 user.Money -= background.Price;
 
                 if (user.Money < 0)
                 {
-                    throw new Exception();
+                    throw new InsufficientExecutionStackException();
                 }
 
                 user.UserBackgrounds.Add(new UserBackground

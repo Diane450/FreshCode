@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FreshCode.Repositories
 {
-    public class UserContentRepository(FreshCodeContext dbContext) : IUserContentRepository
+    public class UserRepository(FreshCodeContext dbContext) : IUserRepository
     {
         private readonly FreshCodeContext _dbContext = dbContext;
 
@@ -19,13 +19,6 @@ namespace FreshCode.Repositories
                 .Include(u => u.Background)
                 .Select(user => UserMapper.ToDTO(user))
                 .FirstOrDefaultAsync();
-        }
-
-        public async System.Threading.Tasks.Task InventoryDecreaseFoodCount(string vk_user_id, FoodDTO food)
-        {
-            User user = await _dbContext.Users.FirstAsync(u => u.VkId == Convert.ToInt32(vk_user_id));
-            user.UserFoods.First(uf => uf.Food.Id == food.Id).Count--;
-            await _dbContext.SaveChangesAsync();
         }
 
         public async Task<List<TaskDTO>> GetUserTasks(string vk_user_id)
@@ -108,6 +101,20 @@ namespace FreshCode.Repositories
                 .Include(ub=>ub.Background)
                 .Select(userBackground=>BackgroundMapper.ToDTO(userBackground.Background))
                 .ToListAsync();
+        }
+
+        public async Task<User?> GetUserIdByVkId(string vk_user_id)
+        {
+            try
+            {
+                throw new Exception();
+                return await _dbContext.Users
+                    .FirstOrDefaultAsync(u => u.VkId == Convert.ToInt32(vk_user_id));
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException("Пользователь не найден");
+            }
         }
     }
 }
