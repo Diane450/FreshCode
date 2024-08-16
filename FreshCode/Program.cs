@@ -30,7 +30,6 @@ builder.Services.AddScoped<CreatePetUseCase>();
 builder.Services.AddScoped<ICreatePetRepository, CreatePetRepository>();
 
 builder.Services.AddScoped<PurchaseUseCase>();
-builder.Services.AddScoped<IPurchaseRepository, PurchaseRepository>();
 
 builder.Services.AddScoped<InventoryUseCase>();
 

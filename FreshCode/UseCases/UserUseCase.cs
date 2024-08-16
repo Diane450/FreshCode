@@ -4,14 +4,9 @@ using FreshCode.ModelsDTO;
 
 namespace FreshCode.UseCases
 {
-    public class UserUseCase
+    public class UserUseCase(IUserRepository userRepository)
     {
-        private readonly IUserRepository _userRepository;
-        
-        public UserUseCase(IUserRepository userRepository)
-        {
-            _userRepository = userRepository;
-        }
+        private readonly IUserRepository _userRepository = userRepository;
 
         public async Task<UserDTO> GetUserGameInfo(string vk_user_id)
         {

@@ -13,6 +13,7 @@ namespace FreshCode.Interfaces
         Task<List<ArtifactDTO>> GetUserArtifact(long userId);
         Task<List<BackgroundDTO>> GetUserBackgrounds(long userId);
         Task<long> GetUserIdByVkId(string vk_user_id);
+        Task<User> GetUserByVkId(string vk_user_id);
         System.Threading.Tasks.Task SaveChangesAsync();
     }
 }

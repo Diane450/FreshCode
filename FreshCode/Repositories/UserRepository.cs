@@ -39,7 +39,7 @@ namespace FreshCode.Repositories
         public async Task<List<TaskDTO>> GetUserTasks(long userId)
         {
             return await _dbContext.UserTasks
-                .Where(ut=>ut.UserId == userId)
+                .Where(ut => ut.UserId == userId)
                 .Include(ut => ut.Task)
                 .Select(task => TaskMapper.ToDTO(task))
                 .ToListAsync();
@@ -105,8 +105,8 @@ namespace FreshCode.Repositories
         {
             return await _dbContext.UserBackgrounds
                 .Where(ub => ub.UserId == userId)
-                .Include(ub=>ub.Background)
-                .Select(userBackground=>BackgroundMapper.ToDTO(userBackground.Background))
+                .Include(ub => ub.Background)
+                .Select(userBackground => BackgroundMapper.ToDTO(userBackground.Background))
                 .ToListAsync();
         }
 
@@ -115,5 +115,17 @@ namespace FreshCode.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
+        public async Task<User> GetUserByVkId(string vk_user_id)
+        {
+            try
+            {
+                return await _dbContext.Users
+                    .FirstAsync(u => u.VkId == Convert.ToInt32(vk_user_id));
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException("Пользователь не найден");
+            }
+        }
     }
 }
