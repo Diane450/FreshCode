@@ -115,5 +115,10 @@ namespace FreshCode.Repositories
                 throw new ArgumentException("Пользователь не найден");
             }
         }
+
+        public async System.Threading.Tasks.Task SaveChangesAsync()
+        {
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }
