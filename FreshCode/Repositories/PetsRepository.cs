@@ -11,12 +11,11 @@ namespace FreshCode.Repositories
     {
         private readonly FreshCodeContext _dbContext = dbContext;
 
-        public async Task<PetDTO> GetPetByUserId(int VkId)
+        public async Task<PetDTO> GetPetByUserId(long userId)
         {
             try
             {
-                return await _dbContext.Pets.Include(p => p.User)
-                    .Where(p => p.User.VkId == VkId)
+                return await _dbContext.Pets.Where(p=>p.UserId==userId)
                     .Include(p => p.Accessory)
                     .ThenInclude(a => a.Rarity)
                     .Include(p => p.Accessory)
@@ -50,27 +49,59 @@ namespace FreshCode.Repositories
             }
             catch (Exception)
             {
-                throw new Exception("User has no petDTO");
+                throw new ArgumentException("У пользователя нет питомца");
             }
         }
 
-        public async Task<PetDTO> LevelUpAsync(PetDTO petDto)
+        public async Task<PetDTO> GetPetById(long petId)
         {
-            Pet? pet = await _dbContext.Pets.Where(p => p.Id == petDto.Id)
-                .Include(p => p.Accessory)
-                .Include(p => p.Hat)
-                .Include(p => p.Body)
-                .Include(p => p.Eyes)
-                .FirstAsync();
-
-            Level? nextLevel = await _dbContext.Levels.FindAsync(petDto.Level + 1);
-            if (pet == null)
+            try
             {
-                throw new Exception("Pet not found");
+                return await _dbContext.Pets.Where(p => p.Id == petId)
+                    .Include(p => p.Accessory)
+                    .ThenInclude(a => a.Rarity)
+                    .Include(p => p.Accessory)
+                    .ThenInclude(a => a.ArtifatcType)
+                    .Include(p => p.Accessory)
+                    .ThenInclude(a => a.ArtifactBonuses)
+                    .ThenInclude(ab => ab.Bonus)
+                    .ThenInclude(b => b.Characteristic)
+                    .Include(p => p.Accessory)
+                    .ThenInclude(a => a.ArtifactBonuses)
+                    .ThenInclude(ab => ab.Bonus)
+                    .ThenInclude(b => b.Type)
+
+                    .Include(p => p.Hat)
+                    .ThenInclude(a => a.Rarity)
+                    .Include(p => p.Hat)
+                    .ThenInclude(a => a.ArtifatcType)
+                    .Include(p => p.Hat)
+                    .ThenInclude(a => a.ArtifactBonuses)
+                    .ThenInclude(ab => ab.Bonus)
+                    .ThenInclude(b => b.Characteristic)
+                    .Include(p => p.Hat)
+                    .ThenInclude(a => a.ArtifactBonuses)
+                    .ThenInclude(ab => ab.Bonus)
+                    .ThenInclude(b => b.Type)
+
+                    .Include(p => p.Body)
+                    .Include(p => p.Eyes)
+                    .Select(p => PetMapper.ToDto(p))
+                    .FirstAsync();
             }
+            catch (Exception)
+            {
+                throw new ArgumentException("У пользователя нет питомца");
+            }
+        }
+
+        public async Task<PetDTO> LevelUpAsync(Pet pet)
+        {
+            Level? nextLevel = await _dbContext.Levels.FindAsync(pet.Level + 1);
+            
             if (nextLevel == null)
             {
-                throw new Exception("Max level reached");
+                throw new Exception("Достигнут максимальный уровень");
             }
             pet.Level += 1;
             pet.MaxHealth = nextLevel.MaxHealth;
@@ -130,11 +161,6 @@ namespace FreshCode.Repositories
             await _dbContext.Pets.AddAsync(pet);
             await _dbContext.SaveChangesAsync();
             return pet;
-        }
-
-        public async Task<Pet> GetPetById(long id)
-        {
-            return await _dbContext.Pets.FindAsync(id);
         }
 
         public async System.Threading.Tasks.Task SaveShangesAsync()
