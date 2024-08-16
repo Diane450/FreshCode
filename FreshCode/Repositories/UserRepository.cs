@@ -107,7 +107,6 @@ namespace FreshCode.Repositories
         {
             try
             {
-                throw new Exception();
                 return await _dbContext.Users
                     .FirstOrDefaultAsync(u => u.VkId == Convert.ToInt32(vk_user_id));
             }
