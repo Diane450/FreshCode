@@ -13,6 +13,7 @@ namespace FreshCode.Mappers
                 Money = user.Money,
                 StatPoints = user.StatPoints,
                 PrimogemsCount = user.PrimogemsCount,
+                WonBattlesCount = user.WonBattlesCount,
                 FatesCount = user.FatesCount,
                 Background = BackgroundMapper.ToDTO(user.Background)
             };
