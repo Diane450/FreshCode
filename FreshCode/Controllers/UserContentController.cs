@@ -8,10 +8,10 @@ namespace FreshCode.Controllers
     [ApiController]
     [Route("[controller]/[action]")]
 
-    public class UserContentController(UserContentUseCase userUseCase) : Controller
+    public class UserContentController(UserUseCase userUseCase) : Controller
     {
 
-        private readonly UserContentUseCase _userUseCase = userUseCase;
+        private readonly UserUseCase _userUseCase = userUseCase;
 
         [HttpGet]
         public async Task <UserDTO> GetUserGameInfo()

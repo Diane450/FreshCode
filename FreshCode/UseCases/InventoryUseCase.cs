@@ -13,7 +13,7 @@ namespace FreshCode.UseCases
 
         public async System.Threading.Tasks.Task SetBackground(long backgroundId, string vk_user_id)
         {
-            User user = await _userRepository.GetUserIdByVkId(vk_user_id);
+            User user = await _userRepository.GetUserByVkId(vk_user_id);
             user.BackgroundId = backgroundId;
             await _userRepository.SaveChangesAsync();
         }

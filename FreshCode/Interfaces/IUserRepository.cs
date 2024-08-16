@@ -6,13 +6,13 @@ namespace FreshCode.Interfaces
 {
     public interface IUserRepository
     {
-        Task <UserDTO> GetUserGameInfo(string vk_user_id);
-        Task<List<TaskDTO>> GetUserTasks(string vk_user_id);
-        Task<List<ArtifactHistoryDTO>> GetArtifactHistory(string vk_user_id);
-        Task<List<UserFoodDTO>> GetUserFood(string? vk_user_id);
-        Task<List<ArtifactDTO>> GetUserArtifact(string? vk_user_id);
-        Task<List<BackgroundDTO>> GetUserBackgrounds(string vk_user_id);
-        Task<User?> GetUserIdByVkId(string vk_user_id);
+        Task <UserDTO> GetUserGameInfo(long userId);
+        Task<List<TaskDTO>> GetUserTasks(long userId);
+        Task<List<ArtifactHistoryDTO>> GetArtifactHistory(long userId);
+        Task<List<UserFoodDTO>> GetUserFood(long userId);
+        Task<List<ArtifactDTO>> GetUserArtifact(long userId);
+        Task<List<BackgroundDTO>> GetUserBackgrounds(long userId);
+        Task<long> GetUserIdByVkId(string vk_user_id);
         System.Threading.Tasks.Task SaveChangesAsync();
     }
 }

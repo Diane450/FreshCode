@@ -12,31 +12,43 @@ namespace FreshCode.Repositories
     {
         private readonly FreshCodeContext _dbContext = dbContext;
 
-        public async Task<UserDTO?> GetUserGameInfo(string vk_user_id)
+        public async Task<long> GetUserIdByVkId(string vk_user_id)
         {
-            return await _dbContext.Users
-                .Where(u => u.VkId == Convert.ToInt32(vk_user_id))
-                .Include(u => u.Background)
-                .Select(user => UserMapper.ToDTO(user))
-                .FirstOrDefaultAsync();
+            try
+            {
+                return await _dbContext.Users
+                    .Where(u => u.VkId == Convert.ToInt32(vk_user_id))
+                    .Select(u => u.Id)
+                    .FirstAsync();
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException("Пользователь не найден");
+            }
         }
 
-        public async Task<List<TaskDTO>> GetUserTasks(string vk_user_id)
+        public async Task<UserDTO> GetUserGameInfo(long userId)
         {
-            User user = await _dbContext.Users.FirstAsync(u => u.VkId == Convert.ToInt32(vk_user_id));
-            var tasks = await _dbContext.UserTasks
+            return await _dbContext.Users
+                .Where(u => u.Id == userId)
+                .Include(u => u.Background)
+                .Select(user => UserMapper.ToDTO(user))
+                .FirstAsync();
+        }
+
+        public async Task<List<TaskDTO>> GetUserTasks(long userId)
+        {
+            return await _dbContext.UserTasks
+                .Where(ut=>ut.UserId == userId)
                 .Include(ut => ut.Task)
                 .Select(task => TaskMapper.ToDTO(task))
                 .ToListAsync();
-            return tasks;
         }
 
-        public async Task<List<ArtifactHistoryDTO>> GetArtifactHistory(string vk_user_id)
+        public async Task<List<ArtifactHistoryDTO>> GetArtifactHistory(long userId)
         {
-            User user = await _dbContext.Users.FirstAsync(u => u.VkId == Convert.ToInt32(vk_user_id));
-
             return await _dbContext.ArtifactHistories
-                .Where(ah => ah.UserId == user.Id)
+                .Where(ah => ah.UserId == userId)
                 .Include(ah => ah.Artifact)
                 .ThenInclude(a => a.ArtifatcType)
                 .Include(ah => ah.Artifact)
@@ -53,12 +65,10 @@ namespace FreshCode.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<UserFoodDTO>> GetUserFood(string? vk_user_id)
+        public async Task<List<UserFoodDTO>> GetUserFood(long userId)
         {
-            User user = await _dbContext.Users.FirstAsync(u => u.VkId == Convert.ToInt32(vk_user_id));
-
             return await _dbContext.UserFoods
-                .Where(uf => uf.UserId == user.Id)
+                .Where(uf => uf.UserId == userId)
                 .Include(uf => uf.Food)
                 .ThenInclude(f => f.FoodBonuses)
                 .ThenInclude(fb => fb.Bonus)
@@ -71,12 +81,10 @@ namespace FreshCode.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<ArtifactDTO>> GetUserArtifact(string? vk_user_id)
+        public async Task<List<ArtifactDTO>> GetUserArtifact(long userId)
         {
-            User user = await _dbContext.Users.FirstAsync(u => u.VkId == Convert.ToInt32(vk_user_id));
-
             return await _dbContext.UserArtifacts
-                .Where(ua => ua.UserId == user.Id)
+                .Where(ua => ua.UserId == userId)
                 .Include(ah => ah.Artifact)
                 .ThenInclude(a => a.ArtifatcType)
                 .Include(ah => ah.Artifact)
@@ -93,32 +101,19 @@ namespace FreshCode.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<BackgroundDTO>> GetUserBackgrounds(string vk_user_id)
+        public async Task<List<BackgroundDTO>> GetUserBackgrounds(long userId)
         {
-            User user = await _dbContext.Users.FirstAsync(u => u.VkId == Convert.ToInt32(vk_user_id));
             return await _dbContext.UserBackgrounds
-                .Where(ub => ub.UserId == user.Id)
+                .Where(ub => ub.UserId == userId)
                 .Include(ub=>ub.Background)
                 .Select(userBackground=>BackgroundMapper.ToDTO(userBackground.Background))
                 .ToListAsync();
-        }
-
-        public async Task<User?> GetUserIdByVkId(string vk_user_id)
-        {
-            try
-            {
-                return await _dbContext.Users
-                    .FirstOrDefaultAsync(u => u.VkId == Convert.ToInt32(vk_user_id));
-            }
-            catch (Exception)
-            {
-                throw new ArgumentException("Пользователь не найден");
-            }
         }
 
         public async System.Threading.Tasks.Task SaveChangesAsync()
         {
             await _dbContext.SaveChangesAsync();
         }
+
     }
 }
