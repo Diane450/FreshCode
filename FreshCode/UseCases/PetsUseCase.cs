@@ -12,7 +12,7 @@ namespace FreshCode.UseCases
 
         public async Task<PetDTO> GetPetByVkIdAsync(int VkId)
         {
-            return await _petsRepository.GetPetInfoAsync(VkId);
+            return await _petsRepository.GetPetByUserId(VkId);
         }
 
         public async Task<PetDTO> LevelUpAsync(PetDTO pet)
@@ -23,11 +23,6 @@ namespace FreshCode.UseCases
         public async System.Threading.Tasks.Task ChangePetsArtifact(PetDTO pet)
         {
             await _petsRepository.ChangePetsArtifact(pet);
-        }
-
-        public async System.Threading.Tasks.Task FeedAsync(FeedRequest request)
-        {
-            await _petsRepository.FeedAsync(request.Pet);
         }
     }
 }

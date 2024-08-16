@@ -11,7 +11,7 @@ namespace FreshCode.Repositories
     {
         private readonly FreshCodeContext _dbContext = dbContext;
 
-        public async Task<PetDTO> GetPetInfoAsync(int VkId)
+        public async Task<PetDTO> GetPetByUserId(int VkId)
         {
             try
             {
@@ -101,18 +101,13 @@ namespace FreshCode.Repositories
             //await _dbContext.SaveChangesAsync();
         }
 
-        public async System.Threading.Tasks.Task FeedAsync(PetDTO petDTO)
+        public async Task<Pet> GetPetById(long id)
         {
-            Pet pet = await _dbContext.Pets.FindAsync(petDTO.Id);
-            pet.SleepNeed = petDTO.SleepNeed;
-            pet.FeedNeed = petDTO.FeedNeed;
-            pet.FightNeed = petDTO.FightNeed;
+            return await _dbContext.Pets.FindAsync(id);
+        }
 
-            pet.CurrentDefence = petDTO.CurrentDefence;
-            pet.CurrentCriticalChance = petDTO.CurrentCriticalChance;
-            pet.CurrentCriticalDamage = petDTO.CurrentCriticalDamage;
-            pet.CurrentHealth = petDTO.CurrentHealth;
-            pet.CurrentStrength = petDTO.CurrentStrength;
+        public async System.Threading.Tasks.Task SaveShangesAsync()
+        {
             await _dbContext.SaveChangesAsync();
         }
     }

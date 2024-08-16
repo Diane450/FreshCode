@@ -6,9 +6,10 @@ namespace FreshCode.Interfaces
 {
     public interface IPetsRepository
     {
-        Task<PetDTO> GetPetInfoAsync(int userId);
+        Task<PetDTO> GetPetByUserId(int userId);
         Task<PetDTO> LevelUpAsync(PetDTO pet);
         System.Threading.Tasks.Task ChangePetsArtifact(PetDTO pet);
-        System.Threading.Tasks.Task FeedAsync(PetDTO pet);
+        Task<Pet> GetPetById(long id);
+        System.Threading.Tasks.Task SaveShangesAsync();
     }
 }
