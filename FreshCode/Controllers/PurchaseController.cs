@@ -3,6 +3,7 @@ using FreshCode.ModelsDTO;
 using FreshCode.Services;
 using FreshCode.UseCases;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace FreshCode.Controllers
 {
@@ -41,17 +42,49 @@ namespace FreshCode.Controllers
         }
 
         [HttpPost]
-        public async Task BuyFood([FromBody] FoodDTO foodToBuy)
+        public async Task<ActionResult> BuyFood([FromBody] FoodDTO foodToBuy)
         {
-            var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-            await _purchaseUseCase.BuyFood(foodToBuy, vk_user_id);
+            try
+            {
+                var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
+                await _purchaseUseCase.BuyFood(foodToBuy, vk_user_id);
+                return Ok();
+            }
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
+            catch (InsufficientFundsException exception)
+            {
+                return Conflict(exception.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Ошибка: {ex.Message}");
+            }
         }
 
         [HttpPost]
-        public async Task BuyBackground([FromBody] BackgroundDTO backgroundToBuy)
+        public async Task<ActionResult> BuyBackground([FromBody] BackgroundDTO backgroundToBuy)
         {
-            var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-            await _purchaseUseCase.BuyBackground(backgroundToBuy, vk_user_id);
+            try
+            {
+                var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
+                await _purchaseUseCase.BuyBackground(backgroundToBuy, vk_user_id);
+                return Ok();
+            }
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
+            catch (InsufficientFundsException exception)
+            {
+                return Conflict(exception.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Ошибка: {ex.Message}");
+            }
         }
     }
 }
