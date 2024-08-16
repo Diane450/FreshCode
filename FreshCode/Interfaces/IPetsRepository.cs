@@ -11,5 +11,6 @@ namespace FreshCode.Interfaces
         System.Threading.Tasks.Task ChangePetsArtifact(PetDTO pet);
         Task<Pet> GetPetById(long id);
         System.Threading.Tasks.Task SaveShangesAsync();
+        Task<Pet> CreatePetAsync(CreatePetRequest request, long userId);
     }
 }

@@ -101,6 +101,37 @@ namespace FreshCode.Repositories
             //await _dbContext.SaveChangesAsync();
         }
 
+        public async Task<Pet> CreatePetAsync(CreatePetRequest request, long userId)
+        {
+            Pet pet = new()
+            {
+                Name = request.Name,
+                UserId = userId,
+                EyesId = request.Eyes.Id,
+                BodyId = request.Body.Id,
+                SleepNeed = 100,
+                FeedNeed = 100,
+                FightNeed = 100,
+                GeneralHappiness = 100,
+                Level = 2,
+                Points = 0,
+                CurrentHealth = 0,
+                CurrentStrength = 0,
+                CurrentDefence = 0,
+                CurrentCriticalDamage = 0,
+                CurrentCriticalChance = 0,
+                MaxHealth = 0,
+                MaxStrength = 0,
+                MaxDefence = 0,
+                MaxCriticalDamage = 0,
+                MaxCriticalChance = 0,
+                AveragePower = 0
+            };
+            await _dbContext.Pets.AddAsync(pet);
+            await _dbContext.SaveChangesAsync();
+            return pet;
+        }
+
         public async Task<Pet> GetPetById(long id)
         {
             return await _dbContext.Pets.FindAsync(id);

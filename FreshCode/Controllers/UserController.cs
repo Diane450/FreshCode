@@ -8,7 +8,7 @@ namespace FreshCode.Controllers
     [ApiController]
     [Route("[controller]/[action]")]
 
-    public class UserContentController(UserUseCase userUseCase) : Controller
+    public class UserController(UserUseCase userUseCase) : Controller
     {
 
         private readonly UserUseCase _userUseCase = userUseCase;

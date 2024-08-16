@@ -1,4 +1,5 @@
-﻿using FreshCode.ModelsDTO;
+﻿using FreshCode.Exceptions;
+using FreshCode.ModelsDTO;
 using FreshCode.Requests;
 using FreshCode.Services;
 using FreshCode.UseCases;
@@ -26,10 +27,21 @@ namespace FreshCode.Controllers
         }
 
         [HttpPost]
-        public async Task<PetDTO> CreatePet([FromBody] CreatePetRequest request)
+        public async Task<ActionResult<PetDTO>> CreatePet([FromBody] CreatePetRequest request)
         {
-            var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-            return await _createPetUseCase.CreatePetAsync(request, vk_user_id);
+            try
+            {
+                var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
+                return await _createPetUseCase.CreatePetAsync(request, vk_user_id);
+            }
+            catch (ArgumentException exception)
+            {
+                return BadRequest(exception.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Ошибка: {ex.Message}");
+            }
         }
     }
 }

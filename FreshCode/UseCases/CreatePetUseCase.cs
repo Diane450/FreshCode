@@ -4,25 +4,37 @@ using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
 using FreshCode.Repositories;
 using FreshCode.Requests;
+using System.Runtime.InteropServices;
 
 namespace FreshCode.UseCases
 {
-    public class CreatePetUseCase(ICreatePetRepository createPetRepository)
+    public class CreatePetUseCase(IEyesRepository eyesRepository,
+        IUserRepository userRepository,
+        IPetsRepository petRepository,
+        IBodyRepository bodyRepository)
+
     {
-        private readonly ICreatePetRepository _createPetRepository = createPetRepository;
+        private readonly IEyesRepository _eyesRepository = eyesRepository;
+        private readonly IUserRepository _userRepository = userRepository;
+        private readonly IPetsRepository _petRepository = petRepository;
+        private readonly IBodyRepository _bodyRepository = bodyRepository;
+
 
         public async Task<List<EyeDTO>> GetEyesAsync()
         {
-            return await _createPetRepository.GetEyesAsync();
+            return await _eyesRepository.GetEyesAsync();
         }
 
         public async Task<List<BodyDTO>> GetBodiesAsync()
         {
-            return await _createPetRepository.GetBodiesAsync();
+            return await _bodyRepository.GetBodiesAsync();
         }
+
         public async Task<PetDTO> CreatePetAsync(CreatePetRequest request, string? vk_user_id)
         {
-            Pet pet = await _createPetRepository.CreatePetAsync(request, vk_user_id);
+            long userId = await _userRepository.GetUserIdByVkId(vk_user_id);
+
+            Pet pet = await _petRepository.CreatePetAsync(request, userId);
             return PetMapper.ToDto(pet);
         }
     }
