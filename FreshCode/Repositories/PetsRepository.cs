@@ -11,7 +11,7 @@ namespace FreshCode.Repositories
     {
         private readonly FreshCodeContext _dbContext = dbContext;
 
-        public async Task<PetDTO> GetPetByUserId(long userId)
+        public async Task<Pet> GetPetByUserId(long userId)
         {
             try
             {
@@ -45,7 +45,6 @@ namespace FreshCode.Repositories
 
                     .Include(p => p.Body)
                     .Include(p => p.Eyes)
-                    .Select(p => PetMapper.ToDto(p))
                     .FirstAsync();
             }
             catch (Exception)

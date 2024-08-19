@@ -29,6 +29,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<CreatePetUseCase>();
 builder.Services.AddScoped<IEyesRepository, EyesRepository>();
 builder.Services.AddScoped<IBodyRepository, BodyRepository>();
+builder.Services.AddScoped<ClanUseCase>();
+builder.Services.AddScoped<TransactionRepository>();
 
 builder.Services.AddScoped<PurchaseUseCase>();
 

@@ -127,5 +127,15 @@ namespace FreshCode.Repositories
                 throw new ArgumentException("Пользователь не найден");
             }
         }
+
+        public async System.Threading.Tasks.Task CreateNewClan(Clan clan)
+        {
+            await _dbContext.Clans.AddAsync(clan);
+        }
+
+        public async System.Threading.Tasks.Task AddUserClan(UserClan userClan)
+        {
+            await _dbContext.UserClans.AddAsync(userClan);
+        }
     }
 }
