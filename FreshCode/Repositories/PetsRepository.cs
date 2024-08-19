@@ -16,6 +16,7 @@ namespace FreshCode.Repositories
             try
             {
                 return await _dbContext.Pets.Where(p=>p.UserId==userId)
+                    .Include(p=>p.Level)
                     .Include(p => p.Accessory)
                     .ThenInclude(a => a.Rarity)
                     .Include(p => p.Accessory)
@@ -53,11 +54,12 @@ namespace FreshCode.Repositories
             }
         }
 
-        public async Task<PetDTO> GetPetById(long petId)
+        public async Task<Pet> GetPetById(long petId)
         {
             try
             {
                 return await _dbContext.Pets.Where(p => p.Id == petId)
+                    .Include(p => p.Level)
                     .Include(p => p.Accessory)
                     .ThenInclude(a => a.Rarity)
                     .Include(p => p.Accessory)
@@ -86,33 +88,19 @@ namespace FreshCode.Repositories
 
                     .Include(p => p.Body)
                     .Include(p => p.Eyes)
-                    .Select(p => PetMapper.ToDto(p))
                     .FirstAsync();
             }
             catch (Exception)
             {
-                throw new ArgumentException("У пользователя нет питомца");
+                throw new ArgumentException("Питомца не существует");
             }
         }
 
         public async Task<PetDTO> LevelUpAsync(Pet pet)
         {
-            Level? nextLevel = await _dbContext.Levels.FindAsync(pet.Level + 1);
-            
-            if (nextLevel == null)
-            {
-                throw new Exception("Достигнут максимальный уровень");
-            }
-            pet.Level += 1;
-            pet.MaxHealth = nextLevel.MaxHealth;
-            pet.MaxStrength = nextLevel.MaxStrength;
-            pet.MaxDefence = nextLevel.MaxDefence;
-            pet.MaxCriticalDamage = nextLevel.MaxCriticalDamage;
-            pet.MaxCriticalChance = nextLevel.MaxCriticalChance;
+            pet.LevelId += 1;
 
             PetDTO newPetDTO = PetMapper.ToDto(pet);
-            //TODO: прибавление максимальных значений для питомца.
-            //await _dbContext.SaveChangesAsync();
             return newPetDTO;
         }
 
@@ -144,18 +132,13 @@ namespace FreshCode.Repositories
                 FeedNeed = 100,
                 FightNeed = 100,
                 GeneralHappiness = 100,
-                Level = 2,
+                LevelId = 2,
                 Points = 0,
                 CurrentHealth = 0,
                 CurrentStrength = 0,
                 CurrentDefence = 0,
                 CurrentCriticalDamage = 0,
                 CurrentCriticalChance = 0,
-                MaxHealth = 0,
-                MaxStrength = 0,
-                MaxDefence = 0,
-                MaxCriticalDamage = 0,
-                MaxCriticalChance = 0,
                 AveragePower = 0
             };
             await _dbContext.Pets.AddAsync(pet);
@@ -166,6 +149,23 @@ namespace FreshCode.Repositories
         public async System.Threading.Tasks.Task SaveShangesAsync()
         {
             await _dbContext.SaveChangesAsync();
+        }
+
+        public void UpdateAsync(Pet pet)
+        {
+            _dbContext.Pets.Update(pet);
+        }
+
+        public async Task<Level> GelLevelValues(long levelId)
+        {
+            var level = await _dbContext.Levels.FindAsync(levelId);
+
+            if (level == null)
+            {
+                throw new ArgumentException("Пользователь достиг максимального уровня");
+
+            }
+            return level;
         }
     }
 }

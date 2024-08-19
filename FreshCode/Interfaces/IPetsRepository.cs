@@ -12,5 +12,7 @@ namespace FreshCode.Interfaces
         Task<Pet> GetPetById(long id);
         System.Threading.Tasks.Task SaveShangesAsync();
         Task<Pet> CreatePetAsync(CreatePetRequest request, long userId);
+        void UpdateAsync(Pet pet);
+        Task<Level> GelLevelValues(long levelId);
     }
 }

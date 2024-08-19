@@ -21,13 +21,16 @@ namespace FreshCode.UseCases
         {
             Pet pet = await _petsRepository.GetPetById(petDTO.Id);
 
-            pet.Level += 1;
+            pet.Points = 0;
 
-            return await _petsRepository.LevelUpAsync(pet);
+            pet.Level = await _petsRepository.GelLevelValues(pet.LevelId + 1);
+            _petsRepository.UpdateAsync(pet);
+            await _petsRepository.SaveShangesAsync();
+            return PetMapper.ToDto(pet);
         }
 
         public async System.Threading.Tasks.Task ChangePetsArtifact(PetDTO pet)
-        {
+        {   
             await _petsRepository.ChangePetsArtifact(pet);
         }
     }

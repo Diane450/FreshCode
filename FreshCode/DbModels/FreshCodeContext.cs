@@ -341,8 +341,7 @@ public partial class FreshCodeContext : DbContext
             entity.Property(e => e.EyesId).HasColumnName("Eyes_Id");
             entity.Property(e => e.GeneralHappiness).HasPrecision(10, 2);
             entity.Property(e => e.HatId).HasColumnName("Hat_Id");
-            entity.Property(e => e.MaxCriticalChance).HasPrecision(10, 2);
-            entity.Property(e => e.MaxCriticalDamage).HasPrecision(10, 2);
+            entity.Property(e => e.LevelId).HasColumnName("Level_Id");
             entity.Property(e => e.Name).HasMaxLength(100);
             entity.Property(e => e.UserId).HasColumnName("User_Id");
 
@@ -364,8 +363,8 @@ public partial class FreshCodeContext : DbContext
                 .HasForeignKey(d => d.HatId)
                 .HasConstraintName("Pets_Hat_Id");
 
-            entity.HasOne(d => d.LevelNavigation).WithMany(p => p.Pets)
-                .HasForeignKey(d => d.Level)
+            entity.HasOne(d => d.Level).WithMany(p => p.Pets)
+                .HasForeignKey(d => d.LevelId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Pets_Level");
 

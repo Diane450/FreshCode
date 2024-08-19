@@ -27,7 +27,7 @@ public partial class Pet
 
     public decimal GeneralHappiness { get; set; }
 
-    public long Level { get; set; }
+    public long LevelId { get; set; }
 
     public int Points { get; set; }
 
@@ -41,16 +41,6 @@ public partial class Pet
 
     public decimal CurrentCriticalChance { get; set; }
 
-    public int MaxHealth { get; set; }
-
-    public int MaxStrength { get; set; }
-
-    public int MaxDefence { get; set; }
-
-    public decimal MaxCriticalDamage { get; set; }
-
-    public decimal MaxCriticalChance { get; set; }
-
     public decimal AveragePower { get; set; }
 
     public int MaxPoints { get; set; }
@@ -63,7 +53,7 @@ public partial class Pet
 
     public virtual Artifact? Hat { get; set; }
 
-    public virtual Level LevelNavigation { get; set; } = null!;
+    public virtual Level Level { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
 }
