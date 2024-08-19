@@ -17,5 +17,6 @@ namespace FreshCode.Interfaces
         System.Threading.Tasks.Task SaveChangesAsync();
         System.Threading.Tasks.Task CreateNewClan(Clan clan);
         System.Threading.Tasks.Task AddUserClan(UserClan userClan);
+        Task<Clan> GetClanByUser(long userId);
     }
 }

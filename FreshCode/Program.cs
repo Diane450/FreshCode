@@ -31,6 +31,8 @@ builder.Services.AddScoped<IEyesRepository, EyesRepository>();
 builder.Services.AddScoped<IBodyRepository, BodyRepository>();
 builder.Services.AddScoped<ClanUseCase>();
 builder.Services.AddScoped<TransactionRepository>();
+builder.Services.AddScoped<ClanUseCase>();
+builder.Services.AddScoped<IClanRepository, ClanRepository>();
 
 builder.Services.AddScoped<PurchaseUseCase>();
 

@@ -137,5 +137,21 @@ namespace FreshCode.Repositories
         {
             await _dbContext.UserClans.AddAsync(userClan);
         }
+
+        public async Task<Clan> GetClanByUser(long userId)
+        {
+            var userClan =  await _dbContext.UserClans
+                .Where(uc => uc.UserId == userId)
+                .Include(us=>us.Clan)
+                .Select(us=>us.Clan)
+                .FirstOrDefaultAsync();
+
+            if (userClan is null)
+            {
+                throw new ArgumentException("Клан не найден");
+            }
+
+            return userClan;
+        }
     }
 }

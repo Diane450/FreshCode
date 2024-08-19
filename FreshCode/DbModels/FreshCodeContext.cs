@@ -495,7 +495,6 @@ public partial class FreshCodeContext : DbContext
 
             entity.HasOne(d => d.Clan).WithMany(p => p.UserClans)
                 .HasForeignKey(d => d.ClanId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("User_Clan_Clan");
 
             entity.HasOne(d => d.Role).WithMany(p => p.UserClans)
