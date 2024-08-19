@@ -1,4 +1,5 @@
 using FreshCode.DbModels;
+using FreshCode.Exceptions;
 using FreshCode.ModelsDTO;
 using FreshCode.Requests;
 using FreshCode.Services;
@@ -33,6 +34,20 @@ namespace FreshCode.Controllers
         public async System.Threading.Tasks.Task ChangeArtifact([FromBody] PetDTO pet)
         {
             await _petsUseCase.ChangePetsArtifact(pet);
+        }
+
+        [HttpPut]
+        public async System.Threading.Tasks.Task IncreaseHealth([FromBody] PetDTO pet)
+        {
+            try
+            {
+                var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
+                await _petsUseCase.IncreaseHealth(vk_user_id, pet);
+            }
+            catch (InsufficientFundsException ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         //[HttpPut]

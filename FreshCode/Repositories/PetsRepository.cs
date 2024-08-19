@@ -95,13 +95,6 @@ namespace FreshCode.Repositories
             }
         }
 
-        public async Task<PetDTO> LevelUpAsync(Pet pet)
-        {
-            pet.LevelId += 1;
-
-            PetDTO newPetDTO = PetMapper.ToDto(pet);
-            return newPetDTO;
-        }
 
         public async System.Threading.Tasks.Task ChangePetsArtifact(PetDTO petDTO)
         {

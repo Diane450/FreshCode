@@ -1,4 +1,5 @@
 ﻿using FreshCode.DbModels;
+using FreshCode.Exceptions;
 using FreshCode.Interfaces;
 using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
@@ -31,8 +32,33 @@ namespace FreshCode.UseCases
         }
 
         public async System.Threading.Tasks.Task ChangePetsArtifact(PetDTO pet)
-        {   
+        {
             await _petsRepository.ChangePetsArtifact(pet);
+        }
+
+        public async Task<PetDTO> IncreaseHealth(string vk_user_id, PetDTO petDTO)
+        {
+            User user = await _userRepository.GetUserByVkId(vk_user_id);
+            Pet pet = await _petsRepository.GetPetById(petDTO.Id);
+
+            user.StatPoints -= 1;
+
+            if (user.StatPoints < 0)
+            {
+                throw new InsufficientFundsException();
+            }
+
+            pet.CurrentHealth *= (int)pet.Level.EnhancementCoefficient;
+
+            if (pet.CurrentHealth > pet.Level.MaxHealth)
+            {
+                throw new ArgumentException("Достигнуто максимальное значение свойства");
+            }
+
+            petDTO.CurrentHealth = pet.CurrentHealth;
+            _petsRepository.UpdateAsync(pet);
+            await _petsRepository.SaveShangesAsync();
+            return petDTO;
         }
     }
 }
