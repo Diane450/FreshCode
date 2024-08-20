@@ -30,12 +30,6 @@ namespace FreshCode.Controllers
             return await _petsUseCase.LevelUpAsync(pet);
         }
 
-        //[HttpPut]
-        //public async System.Threading.Tasks.Task ChangeArtifact([FromBody] PetDTO pet)
-        //{
-        //    await _petsUseCase.ChangePetsArtifact(pet);
-        //}
-
         [HttpPut]
         public async Task<ActionResult<PetDTO>> IncreaseHealth([FromBody] PetDTO pet)
         {

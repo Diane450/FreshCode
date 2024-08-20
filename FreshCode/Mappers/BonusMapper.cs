@@ -1,5 +1,6 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.ModelsDTO;
+using BonusType = FreshCode.ModelsDTO.BonusType;
 
 namespace FreshCode.Mappers
 {
@@ -12,7 +13,7 @@ namespace FreshCode.Mappers
                 Id = bonus.Id,
                 Value = bonus.Value,
                 Characteristic = bonus.Characteristic.Characteristic1,
-                Type = bonus.Type.Type
+                Type = bonus.Type.Type == "flat" ? BonusType.Flat : BonusType.Percentage
             };
         }
     }

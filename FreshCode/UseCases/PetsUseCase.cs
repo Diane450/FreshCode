@@ -1,5 +1,6 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.Exceptions;
+using FreshCode.Extensions;
 using FreshCode.Interfaces;
 using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
@@ -107,13 +108,14 @@ namespace FreshCode.UseCases
             }
         }
 
-        public async System.Threading.Tasks.Task SetArtifact(SetArtifactRequest setArtifactRequest)
+        public async Task<PetDTO> SetArtifact(SetArtifactRequest setArtifactRequest)
         {
             Pet pet = await _petsRepository.GetPetById(setArtifactRequest.Pet.Id);
 
-            pet.ChangeArtifact(setArtifactRequest.Artifact);
+            pet.AssignArtifact(setArtifactRequest.Artifact);
 
             await _petsRepository.SaveShangesAsync();
+            return PetMapper.ToDto(pet);
         }
     }
 }

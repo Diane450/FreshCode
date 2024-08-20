@@ -50,6 +50,5 @@ namespace FreshCode.UseCases
             user.BackgroundId = backgroundId;
             await _userRepository.SaveChangesAsync();
         }
-
     }
 }

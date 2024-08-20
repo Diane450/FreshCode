@@ -10,7 +10,7 @@ namespace FreshCode.Controllers
     [Route("[controller]/[action]")]
     public class InventoryController(UserUseCase userUseCase, PetsUseCase petsUseCase) : Controller
     {
-        public UserUseCase _userUseCase { get; set; } = userUseCase;
+        private readonly UserUseCase _userUseCase = userUseCase;
         private readonly PetsUseCase _petsUseCase = petsUseCase;
 
         [HttpPost]
@@ -33,10 +33,9 @@ namespace FreshCode.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SetArtifact([FromBody] SetArtifactRequest setArtifactRequest)
+        public async Task<ActionResult<PetDTO>> SetArtifact([FromBody] SetArtifactRequest setArtifactRequest)
         {
-            await _petsUseCase.SetArtifact(setArtifactRequest);
-            return Ok();
+            return Ok(await _petsUseCase.SetArtifact(setArtifactRequest));
         }
     }
 }
