@@ -64,9 +64,11 @@ namespace FreshCode.UseCases
 
         public async Task<ActionResult<PetDTO>> IncreaseStat(string? vk_user_id, IncreaseStatRequest statRequest)
         {
+            //TODO: обновить среднюю силу питомца
             User user = await _userRepository.GetUserByVkId(vk_user_id);
             Pet pet = await _petsRepository.GetPetById(statRequest.PetDTO.Id);
-
+            
+            
             user.StatPoints -= 1;
 
             CheckStatCount(user);
@@ -97,12 +99,21 @@ namespace FreshCode.UseCases
             return statRequest.PetDTO;
         }
 
-        public void CheckStatCount(User user)
+        private void CheckStatCount(User user)
         {
             if (user.StatPoints < 0)
             {
                 throw new InsufficientFundsException();
             }
+        }
+
+        public async System.Threading.Tasks.Task SetArtifact(SetArtifactRequest setArtifactRequest)
+        {
+            Pet pet = await _petsRepository.GetPetById(setArtifactRequest.Pet.Id);
+
+            pet.ChangeArtifact(setArtifactRequest.Artifact);
+
+            await _petsRepository.SaveShangesAsync();
         }
     }
 }

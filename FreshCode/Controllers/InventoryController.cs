@@ -8,9 +8,10 @@ namespace FreshCode.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class InventoryController(InventoryUseCase inventoryUseCase) : Controller
+    public class InventoryController(InventoryUseCase inventoryUseCase, PetsUseCase petsUseCase) : Controller
     {
         public InventoryUseCase _inventoryUseCase { get; set; } = inventoryUseCase;
+        private readonly PetsUseCase _petsUseCase = petsUseCase;
 
         [HttpPost]
         public async Task<IActionResult> SetBackground([FromBody] long backgroundId)
@@ -31,12 +32,11 @@ namespace FreshCode.Controllers
             }
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> SetArtifact([FromBody] SetArtifactRequest setArtifactRequest)
-        //{
-        //    await _inventoryUseCase.SetArtifact(setArtifactRequest);
-        //    return Ok();
-        //}
-
+        [HttpPost]
+        public async Task<IActionResult> SetArtifact([FromBody] SetArtifactRequest setArtifactRequest)
+        {
+            await _petsUseCase.SetArtifact(setArtifactRequest);
+            return Ok();
+        }
     }
 }

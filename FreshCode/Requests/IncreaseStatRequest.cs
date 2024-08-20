@@ -1,5 +1,7 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.ModelsDTO;
+using System.Runtime.Serialization;
+using System.Text.Json.Serialization;
 
 namespace FreshCode.Requests
 {
@@ -8,6 +10,8 @@ namespace FreshCode.Requests
         public PetDTO PetDTO { get; set; } = null!;
         public CharacteristicType Characteristic { get; set; }
     }
+
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum CharacteristicType
     {
         Health,

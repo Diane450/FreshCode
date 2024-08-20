@@ -30,11 +30,11 @@ namespace FreshCode.Controllers
             return await _petsUseCase.LevelUpAsync(pet);
         }
 
-        [HttpPut]
-        public async System.Threading.Tasks.Task ChangeArtifact([FromBody] PetDTO pet)
-        {
-            await _petsUseCase.ChangePetsArtifact(pet);
-        }
+        //[HttpPut]
+        //public async System.Threading.Tasks.Task ChangeArtifact([FromBody] PetDTO pet)
+        //{
+        //    await _petsUseCase.ChangePetsArtifact(pet);
+        //}
 
         [HttpPut]
         public async Task<ActionResult<PetDTO>> IncreaseHealth([FromBody] PetDTO pet)
@@ -71,6 +71,7 @@ namespace FreshCode.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
         //[HttpPut]
         //public async System.Threading.Tasks.Task Feed([FromBody] FeedRequest request)
         //{
@@ -80,4 +81,4 @@ namespace FreshCode.Controllers
         //    await _userUseCase.InventoryDecreaseFoodCountAsync(vk_user_id, request.Food);
         //}
     }
-    }
+}
