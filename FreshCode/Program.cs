@@ -36,7 +36,6 @@ builder.Services.AddScoped<IClanRepository, ClanRepository>();
 
 builder.Services.AddScoped<PurchaseUseCase>();
 
-builder.Services.AddScoped<InventoryUseCase>();
 
 builder.Services.AddScoped<VkLaunchParamsService>();
 
