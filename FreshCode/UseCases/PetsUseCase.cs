@@ -4,6 +4,7 @@ using FreshCode.Interfaces;
 using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
 using FreshCode.Requests;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FreshCode.UseCases
 {
@@ -47,7 +48,7 @@ namespace FreshCode.UseCases
             {
                 throw new InsufficientFundsException();
             }
-
+            //TODO: изменить логику повышения стата
             pet.CurrentHealth *= (int)pet.Level.EnhancementCoefficient;
 
             if (pet.CurrentHealth > pet.Level.MaxHealth)
@@ -59,6 +60,49 @@ namespace FreshCode.UseCases
             _petsRepository.UpdateAsync(pet);
             await _petsRepository.SaveShangesAsync();
             return petDTO;
+        }
+
+        public async Task<ActionResult<PetDTO>> IncreaseStat(string? vk_user_id, IncreaseStatRequest statRequest)
+        {
+            User user = await _userRepository.GetUserByVkId(vk_user_id);
+            Pet pet = await _petsRepository.GetPetById(statRequest.PetDTO.Id);
+
+            user.StatPoints -= 1;
+
+            CheckStatCount(user);
+
+            statRequest.Characteristic.IncreaseStat(pet);
+
+            switch (statRequest.Characteristic)
+            {
+                case CharacteristicType.Health:
+                    statRequest.PetDTO.CurrentHealth = pet.CurrentHealth;
+                    break;
+                case CharacteristicType.Defence:
+                    statRequest.PetDTO.CurrentDefence = pet.CurrentDefence;
+                    break;
+                case CharacteristicType.Strength:
+                    statRequest.PetDTO.CurrentStrength = pet.CurrentStrength;
+                    break;
+                case CharacteristicType.CriticalDamage:
+                    statRequest.PetDTO.CurrentCriticalDamage = pet.CurrentCriticalDamage;
+                    break;
+                case CharacteristicType.CriticalChance:
+                    statRequest.PetDTO.CurrentCriticalChance = pet.CurrentCriticalChance;
+                    break;
+            }
+
+            _petsRepository.UpdateAsync(pet);
+            await _petsRepository.SaveShangesAsync();
+            return statRequest.PetDTO;
+        }
+
+        public void CheckStatCount(User user)
+        {
+            if (user.StatPoints < 0)
+            {
+                throw new InsufficientFundsException();
+            }
         }
     }
 }

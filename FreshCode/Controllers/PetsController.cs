@@ -37,19 +37,40 @@ namespace FreshCode.Controllers
         }
 
         [HttpPut]
-        public async System.Threading.Tasks.Task IncreaseHealth([FromBody] PetDTO pet)
+        public async Task<ActionResult<PetDTO>> IncreaseHealth([FromBody] PetDTO pet)
         {
             try
             {
                 var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-                await _petsUseCase.IncreaseHealth(vk_user_id, pet);
+                return await _petsUseCase.IncreaseHealth(vk_user_id, pet);
             }
             catch (InsufficientFundsException ex)
+            {
+                return Conflict(ex.Message);
+            }
+            catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
             }
         }
 
+        [HttpPut]
+        public async Task<ActionResult<PetDTO>> IncreaseStat([FromBody] IncreaseStatRequest statRequest)
+        {
+            try
+            {
+                var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
+                return await _petsUseCase.IncreaseStat(vk_user_id, statRequest);
+            }
+            catch (InsufficientFundsException ex)
+            {
+                return Conflict(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
         //[HttpPut]
         //public async System.Threading.Tasks.Task Feed([FromBody] FeedRequest request)
         //{
@@ -59,4 +80,4 @@ namespace FreshCode.Controllers
         //    await _userUseCase.InventoryDecreaseFoodCountAsync(vk_user_id, request.Food);
         //}
     }
-}
+    }
