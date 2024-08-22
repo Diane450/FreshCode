@@ -22,6 +22,7 @@ namespace FreshCode.Extensions
                     break;
             }
         }
+        
         private static void EquipArtifact(Pet pet, ArtifactDTO artifactDTO, Artifact? currentArtifact)
         {
             if (currentArtifact is not null)
@@ -29,6 +30,23 @@ namespace FreshCode.Extensions
                 pet.RemoveArtifactBonuses(currentArtifact);
             }
             pet.SetArtifactBonuses(artifactDTO);
+        }
+
+        public static void RemoveArtifact(this Pet pet, ArtifactDTO artifactDTO)
+        {
+            switch (artifactDTO.Type)
+            {
+                case "Шапка":
+                    RemoveArtifactBonuses(pet, pet.Hat);
+                    pet.Hat = null;
+                    break;
+
+                case "Аксессуар":
+                    RemoveArtifactBonuses(pet, pet.Accessory);
+                    pet.Accessory = null;
+                    break;
+            }
+
         }
         public static void RemoveArtifactBonuses(this Pet pet, Artifact artifact)
         {

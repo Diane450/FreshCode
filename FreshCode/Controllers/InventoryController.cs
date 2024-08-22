@@ -37,5 +37,11 @@ namespace FreshCode.Controllers
         {
             return Ok(await _petsUseCase.SetArtifact(setArtifactRequest));
         }
+
+        [HttpPost]
+        public async Task<ActionResult<PetDTO>> RemoveArtifact([FromBody] RemoveArtifactRequest removeArtifactRequest)
+        {
+            return Ok(await _petsUseCase.RemoveArtifact(removeArtifactRequest));
+        }
     }
 }
