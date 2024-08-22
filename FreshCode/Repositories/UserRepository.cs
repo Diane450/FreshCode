@@ -140,10 +140,10 @@ namespace FreshCode.Repositories
 
         public async Task<Clan> GetClanByUser(long userId)
         {
-            var userClan =  await _dbContext.UserClans
+            var userClan = await _dbContext.UserClans
                 .Where(uc => uc.UserId == userId)
-                .Include(us=>us.Clan)
-                .Select(us=>us.Clan)
+                .Include(us => us.Clan)
+                .Select(us => us.Clan)
                 .FirstOrDefaultAsync();
 
             if (userClan is null)
@@ -152,6 +152,13 @@ namespace FreshCode.Repositories
             }
 
             return userClan;
+        }
+
+        public async Task<List<UserRatingTableDTO>> GetAllUsersRatingTable()
+        {
+            return await _dbContext.Users
+                .Select(u => UserMapper.ToRatingTableDTO(u))
+                .ToListAsync();
         }
     }
 }

@@ -4,9 +4,10 @@ using FreshCode.ModelsDTO;
 
 namespace FreshCode.UseCases
 {
-    public class UserUseCase(IUserRepository userRepository)
+    public class UserUseCase(IUserRepository userRepository, IClanRepository clanRepository)
     {
         private readonly IUserRepository _userRepository = userRepository;
+        private readonly IClanRepository _clanRepository = clanRepository;
 
         public async Task<UserDTO> GetUserGameInfo(string vk_user_id)
         {
@@ -49,6 +50,18 @@ namespace FreshCode.UseCases
             User user = await _userRepository.GetUserByVkId(vk_user_id);
             user.BackgroundId = backgroundId;
             await _userRepository.SaveChangesAsync();
+        }
+
+        public async Task<List<UserRatingTableDTO>> GetAllUsersRatingTable()
+        {
+            List<UserRatingTableDTO> users = await _userRepository.GetAllUsersRatingTable();
+            return users.OrderByDescending(u => u.WonBattlesCount).ToList();
+        }
+
+        internal async Task<List<ClanRatingTableDTO>> GetClanRatingTable()
+        {
+            List<ClanRatingTableDTO> clans = await _clanRepository.GetClanRatingTable();
+            return clans.OrderByDescending(c => c.WonBattlesCount).ToList();
         }
     }
 }

@@ -1,5 +1,8 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.Interfaces;
+using FreshCode.Mappers;
+using FreshCode.ModelsDTO;
+using Microsoft.EntityFrameworkCore;
 
 namespace FreshCode.Repositories
 {
@@ -9,8 +12,14 @@ namespace FreshCode.Repositories
 
         public void DeleteClan(Clan clan)
         {
-
             _dbContext.Clans.Remove(clan);
+        }
+
+        public async Task<List<ClanRatingTableDTO>> GetClanRatingTable()
+        {
+            return await _dbContext.Clans
+                .Select(c=>ClanMapper.ToRatingTableDTO(c))
+                .ToListAsync();
         }
     }
 }

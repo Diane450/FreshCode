@@ -18,5 +18,14 @@ namespace FreshCode.Mappers
                 Background = BackgroundMapper.ToDTO(user.Background)
             };
         }
+
+        public static UserRatingTableDTO ToRatingTableDTO(User user)
+        {
+            return new UserRatingTableDTO
+            {
+                Vk_user_id = user.VkId,
+                WonBattlesCount = user.WonBattlesCount,
+            };
+        }
     }
 }
