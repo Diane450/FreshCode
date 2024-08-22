@@ -32,13 +32,13 @@ namespace FreshCode.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPut]
         public async Task<ActionResult<PetDTO>> SetArtifact([FromBody] SetArtifactRequest setArtifactRequest)
         {
             return Ok(await _petsUseCase.SetArtifact(setArtifactRequest));
         }
 
-        [HttpPost]
+        [HttpPut]
         public async Task<ActionResult<PetDTO>> RemoveArtifact([FromBody] RemoveArtifactRequest removeArtifactRequest)
         {
             return Ok(await _petsUseCase.RemoveArtifact(removeArtifactRequest));
