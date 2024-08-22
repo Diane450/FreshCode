@@ -22,5 +22,12 @@ namespace FreshCode.Controllers
         {
             return await _userUseCase.GetClanRatingTable();
         }
+
+        [HttpGet]
+        public async Task<List<UserRatingTableDTO>> GetFriendsRatingTable()
+        {
+            return await _userUseCase.GetAllUsersRatingTable();
+        }
+
     }
 }

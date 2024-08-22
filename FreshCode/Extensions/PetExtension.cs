@@ -1,4 +1,5 @@
 ﻿using FreshCode.DbModels;
+using FreshCode.Enums;
 using FreshCode.ModelsDTO;
 using System.Security.Cryptography;
 
@@ -48,6 +49,7 @@ namespace FreshCode.Extensions
             }
 
         }
+        
         public static void RemoveArtifactBonuses(this Pet pet, Artifact artifact)
         {
             foreach (var artifactbonus in artifact.ArtifactBonuses)
@@ -130,6 +132,37 @@ namespace FreshCode.Extensions
                 stat += (stat / 100) * value;
             }
             return stat;
+        }
+
+        public static void IncreaseStat(this Pet pet, CharacteristicType CharacteristicType)
+        {
+            switch (CharacteristicType)
+            {
+                case CharacteristicType.Health:
+                    pet.CurrentHealth = (int)(pet.CurrentHealth * pet.Level.EnhancementCoefficient);
+                    CheckStatIsValid(pet.CurrentHealth, pet.Level.MaxHealth);
+                    break;
+                case CharacteristicType.Defence:
+                    pet.CurrentDefence = (int)(pet.CurrentDefence * pet.Level.EnhancementCoefficient);
+                    break;
+                case CharacteristicType.Strength:
+                    pet.CurrentStrength = (int)(pet.CurrentStrength * pet.Level.EnhancementCoefficient);
+                    break;
+                case CharacteristicType.CriticalDamage:
+                    pet.CurrentCriticalDamage = (int)(pet.CurrentCriticalDamage * pet.Level.EnhancementCoefficient);
+                    break;
+                case CharacteristicType.CriticalChance:
+                    pet.CurrentCriticalChance = (int)(pet.CurrentCriticalChance * pet.Level.EnhancementCoefficient);
+                    break;
+            }
+        }
+
+        private static void CheckStatIsValid(int currentValue, int maxValue)
+        {
+            if (currentValue > maxValue)
+            {
+                throw new ArgumentException("Достигнуто максимальное значение");
+            }
         }
     }
 }

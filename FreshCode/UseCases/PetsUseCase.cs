@@ -1,4 +1,5 @@
 ﻿using FreshCode.DbModels;
+using FreshCode.Enums;
 using FreshCode.Exceptions;
 using FreshCode.Extensions;
 using FreshCode.Interfaces;
@@ -74,7 +75,7 @@ namespace FreshCode.UseCases
 
             CheckStatCount(user);
 
-            statRequest.Characteristic.IncreaseStat(pet);
+            pet.IncreaseStat(statRequest.Characteristic);
 
             switch (statRequest.Characteristic)
             {

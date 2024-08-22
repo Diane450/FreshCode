@@ -13,11 +13,5 @@
         public int Price { get; set; }
 
         public List<BonusDTO> Bonuses { get; set; } = null!;
-
-        //public string Characteristic { get; set; } = null!;
-
-        //public decimal Value { get; set; }
-
-        //public string Type { get; set; } = null!;
     }
 }
