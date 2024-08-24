@@ -41,6 +41,8 @@ public partial class FreshCodeContext : DbContext
 
     public virtual DbSet<ClanBattle> ClanBattles { get; set; }
 
+    public virtual DbSet<ContentType> ContentTypes { get; set; }
+
     public virtual DbSet<Eye> Eyes { get; set; }
 
     public virtual DbSet<Food> Foods { get; set; }
@@ -52,6 +54,16 @@ public partial class FreshCodeContext : DbContext
     public virtual DbSet<Level> Levels { get; set; }
 
     public virtual DbSet<Pet> Pets { get; set; }
+
+    public virtual DbSet<Post> Posts { get; set; }
+
+    public virtual DbSet<PostBlock> PostBlocks { get; set; }
+
+    public virtual DbSet<PostComment> PostComments { get; set; }
+
+    public virtual DbSet<PostRating> PostRatings { get; set; }
+
+    public virtual DbSet<PostView> PostViews { get; set; }
 
     public virtual DbSet<Rarity> Rarities { get; set; }
 
@@ -261,6 +273,16 @@ public partial class FreshCodeContext : DbContext
                 .HasConstraintName("ClanBattles_Winner");
         });
 
+        modelBuilder.Entity<ContentType>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Content_type_pkey");
+
+            entity.ToTable("Content_type");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Type).HasColumnType("character varying");
+        });
+
         modelBuilder.Entity<Eye>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("eyes_pkey");
@@ -372,6 +394,112 @@ public partial class FreshCodeContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Pets_User_Id");
+        });
+
+        modelBuilder.Entity<Post>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("post_pkey");
+
+            entity.ToTable("Post");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.CreatedAt).HasColumnName("Created_at");
+            entity.Property(e => e.DeletedAt).HasColumnName("deleted_at");
+            entity.Property(e => e.Title).HasColumnType("character varying");
+            entity.Property(e => e.UpdatedAt).HasColumnName("Updated_at");
+            entity.Property(e => e.UserId).HasColumnName("User_id");
+
+            entity.HasOne(d => d.User).WithMany(p => p.Posts)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Post_User");
+        });
+
+        modelBuilder.Entity<PostBlock>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Post_block _pkey");
+
+            entity.ToTable("Post_block ");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.ContentTypeId).HasColumnName("Content_type_Id");
+            entity.Property(e => e.PostId).HasColumnName("Post_id");
+
+            entity.HasOne(d => d.ContentType).WithMany(p => p.PostBlocks)
+                .HasForeignKey(d => d.ContentTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("PostBlock_ContentType");
+
+            entity.HasOne(d => d.Post).WithMany(p => p.PostBlocks)
+                .HasForeignKey(d => d.PostId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("PostBlock_PostId");
+        });
+
+        modelBuilder.Entity<PostComment>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Post_comments _pkey");
+
+            entity.ToTable("Post_comments ");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.CreatedAt).HasColumnName("Created_at");
+            entity.Property(e => e.PostId).HasColumnName("Post_id");
+            entity.Property(e => e.UpdatedAt).HasColumnName("Updated_at");
+            entity.Property(e => e.UserId).HasColumnName("User_id");
+
+            entity.HasOne(d => d.Post).WithMany(p => p.PostComments)
+                .HasForeignKey(d => d.PostId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Post_comments_Post");
+
+            entity.HasOne(d => d.User).WithMany(p => p.PostComments)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Post_comments_User");
+        });
+
+        modelBuilder.Entity<PostRating>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Post_rating _pkey");
+
+            entity.ToTable("Post_rating ");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.PostId).HasColumnName("Post_id");
+            entity.Property(e => e.UserId).HasColumnName("User_id");
+
+            entity.HasOne(d => d.Post).WithMany(p => p.PostRatings)
+                .HasForeignKey(d => d.PostId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Post_rating_Post");
+
+            entity.HasOne(d => d.User).WithMany(p => p.PostRatings)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Post_rating_User");
+        });
+
+        modelBuilder.Entity<PostView>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Post_view_pkey");
+
+            entity.ToTable("Post_view");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.CreatedAt).HasColumnName("Created_at");
+            entity.Property(e => e.PostId).HasColumnName("Post_id");
+            entity.Property(e => e.UserId).HasColumnName("User_id");
+
+            entity.HasOne(d => d.Post).WithMany(p => p.PostViews)
+                .HasForeignKey(d => d.PostId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Post_View_Post");
+
+            entity.HasOne(d => d.User).WithMany(p => p.PostViews)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("Post_View_User");
         });
 
         modelBuilder.Entity<Rarity>(entity =>

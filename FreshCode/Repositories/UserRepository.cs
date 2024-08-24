@@ -160,5 +160,20 @@ namespace FreshCode.Repositories
                 .Select(u => UserMapper.ToRatingTableDTO(u))
                 .ToListAsync();
         }
+
+        //TODO:test
+        public async Task<List<UserRatingTableDTO>> GetFriendsRatingTable(List<long> friendsIds)
+        {
+            List<UserRatingTableDTO> userFriendsRating = [];
+
+            foreach (long id in friendsIds) 
+            {
+                UserRatingTableDTO userRatingTable = await _dbContext.Users
+                    .Where(u=>u.VkId==id)
+                    .Select(u=> UserMapper.ToRatingTableDTO(u))
+                    .FirstAsync();
+            }
+            return userFriendsRating.OrderByDescending(ufr=>ufr.WonBattlesCount).ToList();
+        }
     }
 }

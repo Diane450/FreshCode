@@ -1,13 +1,15 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.Interfaces;
 using FreshCode.ModelsDTO;
+using FreshCode.Services;
 
 namespace FreshCode.UseCases
 {
-    public class UserUseCase(IUserRepository userRepository, IClanRepository clanRepository)
+    public class UserUseCase(IUserRepository userRepository, IClanRepository clanRepository, VkApiService vkApiService)
     {
         private readonly IUserRepository _userRepository = userRepository;
         private readonly IClanRepository _clanRepository = clanRepository;
+        private readonly VkApiService _vkApiService = vkApiService;
 
         public async Task<UserDTO> GetUserGameInfo(string vk_user_id)
         {
@@ -58,10 +60,17 @@ namespace FreshCode.UseCases
             return users.OrderByDescending(u => u.WonBattlesCount).ToList();
         }
 
-        internal async Task<List<ClanRatingTableDTO>> GetClanRatingTable()
+        public async Task<List<ClanRatingTableDTO>> GetClanRatingTable()
         {
             List<ClanRatingTableDTO> clans = await _clanRepository.GetClanRatingTable();
             return clans.OrderByDescending(c => c.WonBattlesCount).ToList();
+        }
+
+        public async Task<List<UserRatingTableDTO>> GetFriendsRatingTable(string vk_user_id)
+        {
+            List<long> friendsIds = await _vkApiService.GetUserFriendsIds(vk_user_id);
+
+            return await _userRepository.GetFriendsRatingTable(friendsIds);
         }
     }
 }

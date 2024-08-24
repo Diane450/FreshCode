@@ -19,5 +19,6 @@ namespace FreshCode.Interfaces
         System.Threading.Tasks.Task AddUserClan(UserClan userClan);
         Task<Clan> GetClanByUser(long userId);
         Task<List<UserRatingTableDTO>> GetAllUsersRatingTable();
+        Task<List<UserRatingTableDTO>> GetFriendsRatingTable(List<long> friendsIds);
     }
 }

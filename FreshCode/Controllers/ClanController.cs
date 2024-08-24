@@ -19,7 +19,6 @@ namespace FreshCode.Controllers
             await _clanUseCase.CreateNewClan(clanName, vk_user_id);
         }
 
-
         [HttpPost]
         public async Task DeleteClan()
         {

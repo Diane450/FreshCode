@@ -29,6 +29,14 @@ public partial class User
 
     public virtual ICollection<Pet> Pets { get; set; } = new List<Pet>();
 
+    public virtual ICollection<PostComment> PostComments { get; set; } = new List<PostComment>();
+
+    public virtual ICollection<PostRating> PostRatings { get; set; } = new List<PostRating>();
+
+    public virtual ICollection<PostView> PostViews { get; set; } = new List<PostView>();
+
+    public virtual ICollection<Post> Posts { get; set; } = new List<Post>();
+
     public virtual ICollection<UserArtifact> UserArtifacts { get; set; } = new List<UserArtifact>();
 
     public virtual ICollection<UserBackground> UserBackgrounds { get; set; } = new List<UserBackground>();

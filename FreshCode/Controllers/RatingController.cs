@@ -26,8 +26,8 @@ namespace FreshCode.Controllers
         [HttpGet]
         public async Task<List<UserRatingTableDTO>> GetFriendsRatingTable()
         {
-            return await _userUseCase.GetAllUsersRatingTable();
+            string vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
+            return await _userUseCase.GetFriendsRatingTable(vk_user_id);
         }
-
     }
 }
