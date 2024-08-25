@@ -1,12 +1,11 @@
 using FreshCode.DbModels;
 using FreshCode.Interfaces;
 using FreshCode.MiddleWare;
-using FreshCode.Models;
 using FreshCode.Repositories;
 using FreshCode.Services;
+using FreshCode.Settings;
 using FreshCode.UseCases;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,14 +36,16 @@ builder.Services.AddScoped<IClanRepository, ClanRepository>();
 
 builder.Services.AddScoped<PurchaseUseCase>();
 
-
 builder.Services.AddScoped<VkLaunchParamsService>();
-builder.Services.AddScoped<VkApiService>();
 
-//builder.Services.AddHttpClient("vk", (httpClient) =>
-//{
-//    httpClient.
-//});
+builder.Services.Configure<VkApiSettings>(builder.Configuration.GetSection("VkApi"));
+
+builder.Services.AddHttpClient<VkApiService>((httpClient) =>
+{
+    httpClient.BaseAddress = new Uri("https://api.vk.com/");
+
+    httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+});
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

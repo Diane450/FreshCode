@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using FreshCode.Settings;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace FreshCode.Services
 {
@@ -8,18 +10,19 @@ namespace FreshCode.Services
         private readonly string _accessToken;
         private readonly string _apiVersion;
 
-        public VkApiService(HttpClient httpClient, string accessToken, string apiVersion = "5.131")
+        public VkApiService(HttpClient httpClient, IOptions<VkApiSettings> options)
         {
             _httpClient = httpClient;
-            _accessToken = accessToken;
-            _apiVersion = apiVersion;
+            var settings = options.Value;
+            _accessToken = settings.AccessToken;
+            _apiVersion = settings.ApiVersion;
         }
 
-        //TODO: изменить _accessToken
         public async Task<List<long>> GetUserFriendsIds(string userId)
         {
-            var url = $"https://api.vk.com/method/friends.get?user_ids={userId}&access_token={_accessToken}&v={_apiVersion}";
-            var response = await _httpClient.GetAsync(url);
+            var url = $"friends.get?user_ids={userId}&v={_apiVersion}&access_token={_accessToken}";
+
+            var response = await _httpClient.GetAsync(_httpClient.BaseAddress + url);
             response.EnsureSuccessStatusCode();
 
             var content = await response.Content.ReadAsStringAsync();
