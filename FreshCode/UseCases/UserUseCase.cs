@@ -2,6 +2,7 @@
 using FreshCode.Interfaces;
 using FreshCode.ModelsDTO;
 using FreshCode.Services;
+using System.Diagnostics;
 
 namespace FreshCode.UseCases
 {
@@ -72,5 +73,6 @@ namespace FreshCode.UseCases
 
             return await _userRepository.GetFriendsRatingTable(friendsIds);
         }
+
     }
 }
