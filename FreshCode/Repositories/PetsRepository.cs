@@ -95,7 +95,6 @@ namespace FreshCode.Repositories
             }
         }
 
-
         public async System.Threading.Tasks.Task ChangePetsArtifact(PetDTO petDTO)
         {
             Pet pet = await _dbContext.Pets.FindAsync(petDTO.Id);

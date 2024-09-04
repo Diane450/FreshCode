@@ -11,11 +11,13 @@ public partial class Post
 
     public string Title { get; set; } = null!;
 
-    public DateOnly CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
-    public DateOnly UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
 
-    public DateOnly DeletedAt { get; set; }
+    public DateTime? DeletedAt { get; set; }
+
+    public long TagId { get; set; }
 
     public virtual ICollection<PostBlock> PostBlocks { get; set; } = new List<PostBlock>();
 
@@ -24,6 +26,8 @@ public partial class Post
     public virtual ICollection<PostRating> PostRatings { get; set; } = new List<PostRating>();
 
     public virtual ICollection<PostView> PostViews { get; set; } = new List<PostView>();
+
+    public virtual Tag Tag { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
 }

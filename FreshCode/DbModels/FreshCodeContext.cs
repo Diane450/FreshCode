@@ -69,6 +69,8 @@ public partial class FreshCodeContext : DbContext
 
     public virtual DbSet<Role> Roles { get; set; }
 
+    public virtual DbSet<Tag> Tags { get; set; }
+
     public virtual DbSet<Task> Tasks { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
@@ -403,11 +405,23 @@ public partial class FreshCodeContext : DbContext
             entity.ToTable("Post");
 
             entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.CreatedAt).HasColumnName("Created_at");
-            entity.Property(e => e.DeletedAt).HasColumnName("deleted_at");
+            entity.Property(e => e.CreatedAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("Created_at");
+            entity.Property(e => e.DeletedAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("deleted_at");
+            entity.Property(e => e.TagId).HasColumnName("Tag_Id");
             entity.Property(e => e.Title).HasColumnType("character varying");
-            entity.Property(e => e.UpdatedAt).HasColumnName("Updated_at");
+            entity.Property(e => e.UpdatedAt)
+                .HasColumnType("timestamp without time zone")
+                .HasColumnName("Updated_at");
             entity.Property(e => e.UserId).HasColumnName("User_id");
+
+            entity.HasOne(d => d.Tag).WithMany(p => p.Posts)
+                .HasForeignKey(d => d.TagId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Post_Tag");
 
             entity.HasOne(d => d.User).WithMany(p => p.Posts)
                 .HasForeignKey(d => d.UserId)
@@ -520,6 +534,16 @@ public partial class FreshCodeContext : DbContext
             entity.Property(e => e.Role1)
                 .HasMaxLength(100)
                 .HasColumnName("Role");
+        });
+
+        modelBuilder.Entity<Tag>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("Tags_pkey");
+
+            entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.Tag1)
+                .HasColumnType("character varying")
+                .HasColumnName("Tag");
         });
 
         modelBuilder.Entity<Task>(entity =>
