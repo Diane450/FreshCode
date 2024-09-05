@@ -65,7 +65,7 @@ namespace FreshCode.UseCases
             user.UserBackgrounds.Add(new UserBackground
             {
                 UserId = user.Id,
-                BackgroundId = backgroundToBuy.Id,
+                BackgroundId = backgroundToBuy.BackgroundId,
             });
 
             await _userRepository.SaveChangesAsync();

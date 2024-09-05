@@ -210,7 +210,7 @@ public partial class FreshCodeContext : DbContext
             entity.HasKey(e => e.Id).HasName("Bonus_pkey");
 
             entity.Property(e => e.CharacteristicId).HasColumnName("Characteristic_Id");
-            entity.Property(e => e.TypeId).HasColumnName("Type_ Id");
+            entity.Property(e => e.TypeId).HasColumnName("Type_ BackgroundId");
 
             entity.HasOne(d => d.Characteristic).WithMany(p => p.Bonus)
                 .HasForeignKey(d => d.CharacteristicId)

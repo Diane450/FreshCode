@@ -2,7 +2,7 @@
 {
     public class BackgroundDTO
     {
-        public long Id { get; set; }
+        public long BackgroundId { get; set; }
 
         public int X { get; set; }
 

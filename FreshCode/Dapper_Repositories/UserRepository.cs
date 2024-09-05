@@ -4,6 +4,8 @@ using FreshCode.DbModels;
 using FreshCode.ModelsDTO;
 using Npgsql;
 using System.Diagnostics;
+using System.Linq;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace FreshCode.Dapper_Repositories
 {
@@ -34,6 +36,34 @@ namespace FreshCode.Dapper_Repositories
             var tasks = await connection.QueryAsync<TaskDTO>(sql, parameters);
 
             return tasks.AsList();
+        }
+
+        public async Task<UserDTO> GetUserGameInfo(long vk_user_id)
+        {
+            using var connection = _connectionFactory.Create();
+            connection.Open();
+
+            var sql = """
+                SELECT "User"."Id", "Money", "StatPoints", "WonBattles_Count" AS "WonBattlesCount",
+                "Vk_Id", "Primogems_Count" AS "PrimogemsCount", "Fates_Count" AS "FatesCount", "Background"."Id" AS "BackgroundId",
+                "X", "Y", "Price"
+                FROM "User"
+                JOIN "Background" ON "User"."Background_Id" = "Background"."Id"
+                Where "User"."Vk_Id" = @vkId
+                """
+            ;
+
+            var user = await connection.QueryAsync<UserDTO, BackgroundDTO, UserDTO>(
+                sql,
+                (userDto, backgroundDto) =>
+                {
+                    userDto.Background = backgroundDto;
+                    return userDto;
+                },
+                splitOn: "BackgroundId",
+                param: new { vkId = vk_user_id }
+            );
+            return user.First();
         }
 
         public System.Threading.Tasks.Task AddUserClan(UserClan userClan)
@@ -86,10 +116,6 @@ namespace FreshCode.Dapper_Repositories
             throw new NotImplementedException();
         }
 
-        public Task<UserDTO> GetUserGameInfo(long userId)
-        {
-            throw new NotImplementedException();
-        }
 
         public Task<long> GetUserIdByVkId(string vk_user_id)
         {

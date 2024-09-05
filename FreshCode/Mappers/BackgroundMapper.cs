@@ -9,7 +9,7 @@ namespace FreshCode.Mappers
         {
             return new BackgroundDTO
             {
-                Id = background.Id,
+                BackgroundId = background.Id,
                 X = background.X,
                 Y = background.Y,
                 Price = background.Price,
