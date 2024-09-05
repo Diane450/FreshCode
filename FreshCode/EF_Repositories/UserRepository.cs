@@ -1,10 +1,11 @@
 ﻿using FreshCode.DbModels;
-using FreshCode.Interfaces;
+using FreshCode.EF_Interfaces;
 using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
-namespace FreshCode.Repositories
+namespace FreshCode.EF_Repositories
 {
     public class UserRepository(FreshCodeContext dbContext) : IUserRepository
     {

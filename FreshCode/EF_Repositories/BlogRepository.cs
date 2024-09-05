@@ -1,12 +1,12 @@
 ﻿using FreshCode.DbModels;
-using FreshCode.Interfaces;
+using FreshCode.EF_Interfaces;
 using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
 using FreshCode.Requests;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace FreshCode.Repositories
+namespace FreshCode.EF_Repositories
 {
     public class BlogRepository(FreshCodeContext dbContext) : IBlogRepository
     {

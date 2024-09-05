@@ -549,8 +549,6 @@ public partial class FreshCodeContext : DbContext
         modelBuilder.Entity<Task>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("Tasks_pkey");
-
-            entity.Property(e => e.PrimogemsReward).HasColumnName("PrimogemsReward ");
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -558,6 +556,8 @@ public partial class FreshCodeContext : DbContext
             entity.HasKey(e => e.Id).HasName("User_pkey");
 
             entity.ToTable("User");
+
+            entity.HasIndex(e => e.VkId, "vkid");
 
             entity.Property(e => e.BackgroundId).HasColumnName("Background_Id");
             entity.Property(e => e.FatesCount).HasColumnName("Fates_Count");

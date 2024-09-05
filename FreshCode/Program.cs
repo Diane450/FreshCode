@@ -1,12 +1,15 @@
 using FreshCode.DbModels;
-using FreshCode.Interfaces;
+using FreshCode.EF_Interfaces;
+using FreshCode.Dapper_Interfaces;
+using FreshCode.Dapper_Repositories;
 using FreshCode.MiddleWare;
-using FreshCode.Repositories;
+using FreshCode.EF_Repositories;
 using FreshCode.Services;
 using FreshCode.Settings;
 using FreshCode.UseCases;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using FreshCode;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +20,8 @@ builder.Services.AddControllers();
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<FreshCodeContext>(options => options.UseNpgsql(connectionString));
 
+builder.Services.AddSingleton<ISqlConnectionFactory, SqlConnectionFactory>();
+
 builder.Services.AddScoped<PetsUseCase>();
 builder.Services.AddScoped<IPetsRepository, PetsRepository>();
 
@@ -24,7 +29,9 @@ builder.Services.AddScoped<ShopUseCase>();
 builder.Services.AddScoped<IShopRepository, ShopRepository>();
 
 builder.Services.AddScoped<UserUseCase>();
-builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserRepositoryDapper, FreshCode.Dapper_Repositories.UserRepository>();
+
+builder.Services.AddScoped<IUserRepository, FreshCode.EF_Repositories.UserRepository>();
 
 builder.Services.AddScoped<CreatePetUseCase>();
 builder.Services.AddScoped<IEyesRepository, EyesRepository>();

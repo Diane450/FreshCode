@@ -2,7 +2,7 @@
 using FreshCode.ModelsDTO;
 using FreshCode.Requests;
 
-namespace FreshCode.Interfaces
+namespace FreshCode.EF_Interfaces
 {
     public interface IEyesRepository
     {

@@ -1,7 +1,7 @@
 ﻿
 using FreshCode.DbModels;
-using FreshCode.Interfaces;
-using FreshCode.Repositories;
+using FreshCode.EF_Interfaces;
+using FreshCode.EF_Repositories;
 using FreshCode.Requests;
 
 namespace FreshCode.UseCases

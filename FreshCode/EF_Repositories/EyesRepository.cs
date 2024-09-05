@@ -1,11 +1,11 @@
 ﻿using FreshCode.DbModels;
-using FreshCode.Interfaces;
+using FreshCode.EF_Interfaces;
 using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
 using FreshCode.Requests;
 using Microsoft.EntityFrameworkCore;
 
-namespace FreshCode.Repositories
+namespace FreshCode.EF_Repositories
 {
     public class EyesRepository : IEyesRepository
     {

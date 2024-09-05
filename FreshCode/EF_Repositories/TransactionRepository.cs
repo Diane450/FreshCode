@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Data;
 
-namespace FreshCode.Repositories
+namespace FreshCode.EF_Repositories
 {
     public class TransactionRepository(FreshCodeContext dbContext)
     {

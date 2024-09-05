@@ -1,8 +1,8 @@
 ﻿using FreshCode.DbModels;
-using FreshCode.Interfaces;
+using FreshCode.EF_Interfaces;
 using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
-using FreshCode.Repositories;
+using FreshCode.EF_Repositories;
 using FreshCode.Requests;
 using System.Runtime.InteropServices;
 

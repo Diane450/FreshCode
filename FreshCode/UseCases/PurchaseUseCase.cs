@@ -1,6 +1,6 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.Exceptions;
-using FreshCode.Interfaces;
+using FreshCode.EF_Interfaces;
 using FreshCode.ModelsDTO;
 
 namespace FreshCode.UseCases

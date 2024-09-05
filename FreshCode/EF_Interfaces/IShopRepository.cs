@@ -1,7 +1,7 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.ModelsDTO;
 
-namespace FreshCode.Interfaces
+namespace FreshCode.EF_Interfaces
 {
     public interface IShopRepository
     {

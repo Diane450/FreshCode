@@ -2,7 +2,7 @@
 using FreshCode.Enums;
 using FreshCode.Exceptions;
 using FreshCode.Extensions;
-using FreshCode.Interfaces;
+using FreshCode.EF_Interfaces;
 using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
 using FreshCode.Requests;
