@@ -2,7 +2,7 @@
 {
     public class ArtifactHistoryDTO
     {
-        public long Id { get; set; }
+        public long ArtifactHistoryId { get; set; }
 
         public ArtifactDTO Artifact { get; set; } = null!;
 

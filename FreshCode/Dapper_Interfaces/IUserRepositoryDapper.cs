@@ -8,7 +8,7 @@ namespace FreshCode.Dapper_Interfaces
     {
         Task <UserDTO> GetUserGameInfo(long userId);
         Task<List<TaskDTO>> GetUserTasks(long vk_user_id);
-        Task<List<ArtifactHistoryDTO>> GetArtifactHistory(long userId);
+        Task<List<ArtifactHistoryDTO>> GetArtifactHistory(long vk_user_id);
         Task<List<UserFoodDTO>> GetUserFood(long userId);
         Task<List<ArtifactDTO>> GetUserArtifact(long userId);
         Task<List<BackgroundDTO>> GetUserBackgrounds(long userId);

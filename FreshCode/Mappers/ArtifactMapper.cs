@@ -13,7 +13,7 @@ namespace FreshCode.Mappers
             }
             return new ArtifactDTO
             {
-                Id = artifact.Id,
+                ArtifactId = artifact.Id,
                 X = artifact.X,
                 Y = artifact.Y,
                 Price = artifact.Price,

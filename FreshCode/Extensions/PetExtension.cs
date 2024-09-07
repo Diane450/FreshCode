@@ -13,12 +13,12 @@ namespace FreshCode.Extensions
             switch (artifactDTO.Type)
             {
                 case "Шапка":
-                    pet.HatId = artifactDTO.Id;
+                    pet.HatId = artifactDTO.ArtifactId;
                     EquipArtifact(pet, artifactDTO, pet.Hat);
                     break;
 
                 case "Аксессуар":
-                    pet.AccessoryId = artifactDTO.Id;
+                    pet.AccessoryId = artifactDTO.ArtifactId;
                     EquipArtifact(pet, artifactDTO, pet.Accessory);
                     break;
             }
@@ -56,7 +56,7 @@ namespace FreshCode.Extensions
             {
                 var characteristic = artifactbonus.Bonus.Characteristic.Characteristic1;
                 var bonusValue = artifactbonus.Bonus.Value;
-                var bonusType = artifactbonus.Bonus.Type.Type == "flat" ? ModelsDTO.BonusType.Flat : ModelsDTO.BonusType.Percentage;
+                var bonusType = artifactbonus.Bonus.Type.Type == "flat" ? ModelsDTO.BonusType.flat : ModelsDTO.BonusType.percent;
                 
                 switch (characteristic)
                 {
@@ -85,7 +85,7 @@ namespace FreshCode.Extensions
             {
                 var characteristic = bonus.Characteristic;
                 var bonusValue = bonus.Value;
-                var bonusType = bonus.Type;
+                var bonusType = bonus.BonusType;
 
                 switch (characteristic)
                 {
@@ -110,7 +110,7 @@ namespace FreshCode.Extensions
 
         private static int RemoveBonus(int stat, int value, ModelsDTO.BonusType type)
         {
-            if (type == ModelsDTO.BonusType.Flat)
+            if (type == ModelsDTO.BonusType.flat)
             {
                 stat -= value;
             }
@@ -123,7 +123,7 @@ namespace FreshCode.Extensions
 
         private static int ApplyBonus(int stat, int value, ModelsDTO.BonusType type)
         {
-            if (type == ModelsDTO.BonusType.Flat)
+            if (type == ModelsDTO.BonusType.flat)
             {
                 stat += value;
             }

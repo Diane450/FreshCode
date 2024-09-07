@@ -98,8 +98,8 @@ namespace FreshCode.EF_Repositories
         public async System.Threading.Tasks.Task ChangePetsArtifact(PetDTO petDTO)
         {
             Pet pet = await _dbContext.Pets.FindAsync(petDTO.Id);
-            pet.AccessoryId = petDTO.Accessory.Id;
-            pet.HatId = petDTO.Hat.Id;
+            pet.AccessoryId = petDTO.Accessory.ArtifactId;
+            pet.HatId = petDTO.Hat.ArtifactId;
 
             pet.CurrentCriticalChance = petDTO.CurrentCriticalChance;
             pet.CurrentDefence = petDTO.CurrentDefence;

@@ -2,14 +2,14 @@
 {
     public class BonusDTO
     {
-        public long Id { get; set; }
+        public long BonusId { get; set; }
         public string Characteristic { get; set; } = null!;
         public int Value { get; set; }
-        public BonusType Type { get; set; }
+        public BonusType BonusType { get; set; }
     }
     public enum BonusType
     {
-        Flat,
-        Percentage
+        flat,
+        percent
     }
 }

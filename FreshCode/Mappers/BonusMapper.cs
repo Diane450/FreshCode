@@ -10,10 +10,10 @@ namespace FreshCode.Mappers
         {
             return new BonusDTO
             {
-                Id = bonus.Id,
+                BonusId = bonus.Id,
                 Value = bonus.Value,
                 Characteristic = bonus.Characteristic.Characteristic1,
-                Type = bonus.Type.Type == "flat" ? BonusType.Flat : BonusType.Percentage
+                BonusType = bonus.Type.Type == "flat" ? BonusType.flat : BonusType.percent
             };
         }
     }

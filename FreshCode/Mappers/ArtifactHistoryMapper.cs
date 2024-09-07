@@ -10,7 +10,7 @@ namespace FreshCode.Mappers
         {
             return new ArtifactHistoryDTO
             {
-                Id = artifactHistory.Id,
+                ArtifactHistoryId = artifactHistory.Id,
                 Artifact = ArtifactMapper.ToDTO(artifactHistory.Artifact),
                 GotAt = artifactHistory.GotAt
             };

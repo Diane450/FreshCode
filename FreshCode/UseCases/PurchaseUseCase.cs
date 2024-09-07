@@ -24,7 +24,7 @@ namespace FreshCode.UseCases
             user.UserArtifacts.Add(new UserArtifact
             {
                 UserId = user.Id,
-                ArtifactId = artifactToBuy.Id,
+                ArtifactId = artifactToBuy.ArtifactId,
             });
 
             await _userRepository.SaveChangesAsync();

@@ -4,7 +4,7 @@ namespace FreshCode.ModelsDTO
 {
     public class ArtifactDTO
     {
-        public long Id { get; set; }
+        public long ArtifactId { get; set; }
 
         public int X { get; set; }
 
