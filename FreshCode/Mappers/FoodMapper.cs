@@ -9,7 +9,7 @@ namespace FreshCode.Mappers
         {
             return new FoodDTO
             {
-                Id = food.Id,
+                FoodId = food.Id,
                 X = food.X,
                 Y = food.Y,
                 Name = food.Name,

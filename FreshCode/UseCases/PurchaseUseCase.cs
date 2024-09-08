@@ -38,7 +38,7 @@ namespace FreshCode.UseCases
             HasPositiveBalance(user);
 
             var userFoodList = await _userRepository.GetUserFood(user.Id);
-            var userFood = user.UserFoods.First(uf => uf.Food.Id == foodToBuy.Id);
+            var userFood = user.UserFoods.First(uf => uf.Food.Id == foodToBuy.FoodId);
             if (userFood is not null)
             {
                 userFood.Count += 1;
@@ -48,7 +48,7 @@ namespace FreshCode.UseCases
                 user.UserFoods.Add(new UserFood
                 {
                     UserId = user.Id,
-                    FoodId = foodToBuy.Id,
+                    FoodId = foodToBuy.FoodId,
                     Count = 1
                 });
             }

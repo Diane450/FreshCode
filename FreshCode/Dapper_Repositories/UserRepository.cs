@@ -117,7 +117,6 @@ namespace FreshCode.Dapper_Repositories
                             artifactDictionary.Add(existingArtifactHistory.ArtifactHistoryId, existingArtifactHistory);
                         }
 
-                        // Add bonus if it is not null
                         if (bonusDto != null)
                         {
                             existingArtifactHistory.Artifact.Bonuses.Add(bonusDto);
@@ -156,9 +155,51 @@ namespace FreshCode.Dapper_Repositories
             throw new NotImplementedException();
         }
 
-        public Task<List<UserFoodDTO>> GetUserFood(long userId)
+        public async Task<List<UserFoodDTO>> GetUserFood(long vk_user_id)
         {
-            throw new NotImplementedException();
+            Dictionary<long, UserFoodDTO> userFoodDictionary = new Dictionary<long, UserFoodDTO>();
+
+            using var connection = _connectionFactory.Create();
+            connection.Open();
+
+            var sql = """
+                SELECT "User_Food"."Id" AS "UserFoodId", "Count",
+                "Food"."Id" AS "FoodId", "X", "Y", "Price", "Name",
+                "Bonus"."Id" AS "BonusId", "Characteristics"."Characteristic" AS "Characteristic", "Value", "BonusType"."Type" AS "BonusType"
+                FROM "User_Food"
+                JOIN "User" ON "User_Food"."User_Id" = "User"."Id"
+                JOIN "Food" ON "User_Food"."Food_Id" = "Food"."Id"
+                LEFT JOIN "Food_Bonuses" ON "Food"."Id" = "Food_Bonuses"."Food_Id"
+                LEFT JOIN "Bonus" ON "Food_Bonuses"."Bonus_Id" = "Bonus"."Id"
+                JOIN "Characteristics" ON "Bonus"."Characteristic_Id" = "Characteristics"."Id"
+                JOIN "BonusType" ON "Bonus"."Type_Id" = "BonusType"."Id"
+                WHERE "User"."Vk_Id" = @vk_user_id
+                """;
+
+            var artifact = await connection.QueryAsync<UserFoodDTO, FoodDTO, BonusDTO, UserFoodDTO>(
+                sql,
+                    (userFoodDTO, foodDto, bonusDto) =>
+                    {
+                        if (!userFoodDictionary.TryGetValue(userFoodDTO.UserFoodId, out var existingUserFoodDto))
+                        {
+                            existingUserFoodDto = userFoodDTO;
+                            existingUserFoodDto.Food = foodDto;
+                            existingUserFoodDto.Food.Bonuses = new List<BonusDTO>();
+                            userFoodDictionary.Add(existingUserFoodDto.UserFoodId, existingUserFoodDto);
+                        }
+
+                        if (bonusDto != null)
+                        {
+                            existingUserFoodDto.Food.Bonuses.Add(bonusDto);
+                        }
+
+                        return existingUserFoodDto;
+                    },
+                splitOn: "FoodId, BonusId",
+                param: new { vk_user_id }
+                );
+
+            return userFoodDictionary.Values.ToList();
         }
 
 

@@ -10,7 +10,7 @@ namespace FreshCode.Mappers
         {
             return new UserFoodDTO
             {
-                Id = userFood.Id,
+                UserFoodId = userFood.Id,
                 Food = FoodMapper.ToDTO(userFood.Food),
                 Count = userFood.Count
             };

@@ -39,7 +39,7 @@ namespace FreshCode.Controllers
         public async Task<List<UserFoodDTO>> GetUserFood()
         {
             var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-            return null;
+            return await _userRepositoryDapper.GetUserFood(Convert.ToInt64(vk_user_id));
         }
 
         [HttpGet]

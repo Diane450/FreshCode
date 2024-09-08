@@ -2,7 +2,7 @@
 {
     public class FoodDTO
     {
-        public long Id { get; set; }
+        public long FoodId { get; set; }
 
         public int X { get; set; }
 
