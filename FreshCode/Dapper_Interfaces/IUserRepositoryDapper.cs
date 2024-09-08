@@ -10,7 +10,7 @@ namespace FreshCode.Dapper_Interfaces
         Task<List<TaskDTO>> GetUserTasks(long vk_user_id);
         Task<List<ArtifactHistoryDTO>> GetArtifactHistory(long vk_user_id);
         Task<List<UserFoodDTO>> GetUserFood(long userId);
-        Task<List<ArtifactDTO>> GetUserArtifact(long userId);
+        Task<List<ArtifactDTO>> GetUserArtifacts(long userId);
         Task<List<BackgroundDTO>> GetUserBackgrounds(long userId);
         Task<long> GetUserIdByVkId(string vk_user_id);
         Task<User> GetUserByVkId(string vk_user_id);

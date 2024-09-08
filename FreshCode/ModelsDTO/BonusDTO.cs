@@ -9,7 +9,7 @@
     }
     public enum BonusType
     {
-        flat,
-        percent
+        percent = 1,
+        flat = 2
     }
 }

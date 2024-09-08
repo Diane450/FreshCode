@@ -110,7 +110,6 @@ namespace FreshCode.Dapper_Repositories
                 sql,
                     (artifactHistoryDto, artifactDto, bonusDto) =>
                     {
-                        // Check if the ArtifactHistoryDTO already exists in the dictionary
                         if (!artifactDictionary.TryGetValue(artifactHistoryDto.ArtifactHistoryId, out var existingArtifactHistory))
                         {
                             existingArtifactHistory = artifactHistoryDto;
@@ -129,7 +128,7 @@ namespace FreshCode.Dapper_Repositories
                 splitOn: "ArtifactId, BonusId",
                 param: new { vk_user_id }
                 );
-             
+
             return artifactDictionary.Values.ToList();
         }
 
@@ -143,9 +142,57 @@ namespace FreshCode.Dapper_Repositories
             throw new NotImplementedException();
         }
 
-        public Task<List<ArtifactDTO>> GetUserArtifact(long userId)
+        public async Task<List<ArtifactDTO>> GetUserArtifacts(long vk_user_id)
         {
-            throw new NotImplementedException();
+            Dictionary<long, ArtifactDTO> artifactDictionary = new Dictionary<long, ArtifactDTO>();
+
+            using var connection = _connectionFactory.Create();
+            connection.Open();
+
+            var sql = """
+                         SELECT "Artifact"."Id" AS "ArtifactId", "X", "Y", "Rarity",
+                         "ArtifactType"."Type" AS "Type",
+                         "Bonus"."Id" AS "BonusId", "Characteristics"."Characteristic" AS "Characteristic", "Value", "BonusType"."Type" AS "BonusType"
+                         FROM "User_Artifact"
+                         JOIN "Artifact" ON "User_Artifact"."Artifact_Id" = "Artifact"."Id"
+                         JOIN "User" ON "User_Artifact"."User_Id" = "User"."Id"
+                         JOIN "Rarity" ON "Artifact"."Rarity_Id" =  "Rarity"."Id"
+                         JOIN "ArtifactType" ON "Artifact"."ArtifactType_Id" = "ArtifactType"."Id"
+                         LEFT JOIN "Artifact_Bonuses" ON "Artifact"."Id" = "Artifact_Bonuses"."Artifact_Id"
+                         LEFT JOIN "Bonus" ON "Artifact_Bonuses"."Bonus_Id" = "Bonus"."Id"
+                         JOIN "Characteristics" ON "Bonus"."Characteristic_Id" = "Characteristics"."Id"
+                         JOIN "BonusType" ON "Bonus"."Type_Id" = "BonusType"."Id"
+                         WHERE "User"."Vk_Id" = @vk_user_id
+                      """;
+
+            var artifactDict = new Dictionary<long, ArtifactDTO>();
+
+            var artifacts = await connection.QueryAsync<ArtifactDTO, BonusDTO, ArtifactDTO>(
+                sql,
+                (artifactDto, bonusDto) =>
+                {
+                    if (!artifactDict.TryGetValue(artifactDto.ArtifactId, out var existingArtifact))
+                    {
+                        existingArtifact = artifactDto;
+                        existingArtifact.Bonuses = new List<BonusDTO>(); // Инициализация списка бонусов
+                        artifactDict.Add(existingArtifact.ArtifactId, existingArtifact);
+                    }
+
+                    // Добавляем бонус только если он существует (чтобы избежать null-значений)
+                    if (bonusDto != null)
+                    {
+                        existingArtifact.Bonuses.Add(bonusDto);
+                    }
+
+                    return existingArtifact;
+                },
+                splitOn: "BonusId",
+                param: new { vk_user_id }
+            );
+
+            // Возвращаем список артефактов с бонусами
+            return artifactDict.Values.ToList();
+
         }
 
         public Task<List<BackgroundDTO>> GetUserBackgrounds(long userId)
