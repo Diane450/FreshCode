@@ -95,6 +95,7 @@ namespace FreshCode.Dapper_Repositories
                 "ArtifactType"."Type" AS "Type",
                 "Bonus"."Id" AS "BonusId", "Characteristics"."Characteristic" AS "Characteristic", "Value", "BonusType"."Type" AS "BonusType"
                 FROM "ArtifactHistory"
+                JOIN "User" ON "ArtifactHistory"."User_Id" = "User"."Id"
                 JOIN "Artifact" ON "ArtifactHistory"."Artifact_Id" = "Artifact"."Id"
                 JOIN "Rarity" ON "Artifact"."Rarity_Id" =  "Rarity"."Id"
                 JOIN "ArtifactType" ON "Artifact"."ArtifactType_Id" = "ArtifactType"."Id"
@@ -102,6 +103,7 @@ namespace FreshCode.Dapper_Repositories
                 LEFT JOIN "Bonus" ON "Artifact_Bonuses"."Bonus_Id" = "Bonus"."Id"
                 JOIN "Characteristics" ON "Bonus"."Characteristic_Id" = "Characteristics"."Id"
                 JOIN "BonusType" ON "Bonus"."Type_Id" = "BonusType"."Id"
+                WHERE "User"."Vk_Id" = @vk_user_id
                 """;
 
             var artifact = await connection.QueryAsync<ArtifactHistoryDTO, ArtifactDTO, BonusDTO, ArtifactHistoryDTO>(
@@ -124,7 +126,8 @@ namespace FreshCode.Dapper_Repositories
 
                         return existingArtifactHistory;
                     },
-                splitOn: "ArtifactId, BonusId"
+                splitOn: "ArtifactId, BonusId",
+                param: new { vk_user_id }
                 );
              
             return artifactDictionary.Values.ToList();
