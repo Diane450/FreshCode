@@ -22,5 +22,10 @@ namespace FreshCode.Repositories
         {
             await _dbContext.SaveChangesAsync();
         }
+
+        public void Update<T>(T entity) where T : class
+        {
+             _dbContext.Set<T>().Update(entity);
+        }
     }
 }

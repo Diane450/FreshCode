@@ -8,17 +8,15 @@
 
         public string Title { get; set; } = null!;
 
-        public DateOnly CreatedAt { get; set; }
+        public DateTimeOffset CreatedAt { get; set; }
 
-        public DateOnly? UpdatedAt { get; set; }
+        public DateTimeOffset? UpdatedAt { get; set; }
 
-        public DateOnly? DeletedAt { get; set; }
+        public DateTimeOffset? DeletedAt { get; set; }
 
         public long TagId { get; set; }
 
         public long ViewsCount { get; set; }
-
-        public List<CommentDTO>? Comments { get; set; }
 
         public List<PostBlockDTO> PostBlocks { get; set; } = null!;
 

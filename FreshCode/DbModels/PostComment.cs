@@ -15,5 +15,9 @@ public partial class PostComment
 
     public DateOnly UpdatedAt { get; set; }
 
+    public long PostId { get; set; }
+
+    public virtual Post Post { get; set; } = null!;
+
     public virtual User User { get; set; } = null!;
 }

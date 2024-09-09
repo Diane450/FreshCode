@@ -11,11 +11,16 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FreshCode.UseCases
 {
-    public class PetsUseCase(IPetsRepository petsRepository, IUserRepository userRepository, TransactionRepository transactionRepository)
+    public class PetsUseCase(IPetsRepository petsRepository,
+        IUserRepository userRepository,
+        TransactionRepository transactionRepository,
+        IBaseRepository baseRepository)
     {
         private readonly IPetsRepository _petsRepository = petsRepository;
         private readonly IUserRepository _userRepository = userRepository;
         private readonly TransactionRepository _transactionRepository = transactionRepository;
+        private readonly IBaseRepository _baseRepository = baseRepository;
+
 
         public async Task<PetDTO> GetPetByIdAsync(string vk_user_id)
         {
@@ -31,14 +36,9 @@ namespace FreshCode.UseCases
             pet.Points = 0;
 
             pet.Level = await _petsRepository.GelLevelValues(pet.LevelId + 1);
-            _petsRepository.UpdateAsync(pet);
-            await _petsRepository.SaveShangesAsync();
+            _baseRepository.Update(pet);
+            await _baseRepository.SaveChangesAsync();
             return PetMapper.ToDto(pet);
-        }
-
-        public async System.Threading.Tasks.Task ChangePetsArtifact(PetDTO pet)
-        {
-            await _petsRepository.ChangePetsArtifact(pet);
         }
 
         public async Task<PetDTO> IncreaseHealth(string vk_user_id, PetDTO petDTO)
@@ -61,8 +61,8 @@ namespace FreshCode.UseCases
             }
 
             petDTO.CurrentHealth = pet.CurrentHealth;
-            _petsRepository.UpdateAsync(pet);
-            await _petsRepository.SaveShangesAsync();
+            _baseRepository.Update(pet);
+            await _baseRepository.SaveChangesAsync();
             return petDTO;
         }
 
@@ -98,8 +98,8 @@ namespace FreshCode.UseCases
                     break;
             }
 
-            _petsRepository.UpdateAsync(pet);
-            await _petsRepository.SaveShangesAsync();
+            _baseRepository.Update(pet);
+            await _baseRepository.SaveChangesAsync();
             return statRequest.PetDTO;
         }
 
@@ -117,7 +117,7 @@ namespace FreshCode.UseCases
 
             pet.AssignArtifact(setArtifactRequest.Artifact);
 
-            await _petsRepository.SaveShangesAsync();
+            await _baseRepository.SaveChangesAsync();
             return PetMapper.ToDto(pet);
         }
 
@@ -127,6 +127,5 @@ namespace FreshCode.UseCases
             pet.RemoveArtifact(removeArtifactRequest.ArtifactToRemove);
             return PetMapper.ToDto(pet);
         }
-
     }
 }

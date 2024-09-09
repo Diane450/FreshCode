@@ -13,7 +13,6 @@ namespace FreshCode.Services
 
         public static bool VerifySignature(IHeaderDictionary header)
         {
-            //TODO:проверка header на null
             string url = Decode(header.Authorization);
             var queryParams = GetQueryParams(url);
             var checkString = string.Join("&", queryParams

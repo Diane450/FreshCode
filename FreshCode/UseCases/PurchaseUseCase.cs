@@ -8,10 +8,12 @@ namespace FreshCode.UseCases
     public class PurchaseUseCase
     {
         private readonly IUserRepository _userRepository;
+        private readonly IBaseRepository _baseRepository;
 
-        public PurchaseUseCase(IUserRepository userRepository)
+        public PurchaseUseCase(IUserRepository userRepository, IBaseRepository baseRepository)
         {
             _userRepository = userRepository;
+            _baseRepository = baseRepository;
         }
         public async System.Threading.Tasks.Task BuyArtifact(ArtifactDTO artifactToBuy, string vk_user_id)
         {
@@ -27,7 +29,7 @@ namespace FreshCode.UseCases
                 ArtifactId = artifactToBuy.Id,
             });
 
-            await _userRepository.SaveChangesAsync();
+            await _baseRepository.SaveChangesAsync();
         }
 
         public async System.Threading.Tasks.Task BuyFood(FoodDTO foodToBuy, string vk_user_id)
@@ -52,7 +54,7 @@ namespace FreshCode.UseCases
                     Count = 1
                 });
             }
-            await _userRepository.SaveChangesAsync();
+            await _baseRepository.SaveChangesAsync();
         }
 
         public async System.Threading.Tasks.Task BuyBackground(BackgroundDTO backgroundToBuy, string vk_user_id)
@@ -68,7 +70,7 @@ namespace FreshCode.UseCases
                 BackgroundId = backgroundToBuy.Id,
             });
 
-            await _userRepository.SaveChangesAsync();
+            await _baseRepository.SaveChangesAsync();
         }
 
         private void HasPositiveBalance(User user)

@@ -95,22 +95,6 @@ namespace FreshCode.Repositories
             }
         }
 
-        public async System.Threading.Tasks.Task ChangePetsArtifact(PetDTO petDTO)
-        {
-            Pet pet = await _dbContext.Pets.FindAsync(petDTO.Id);
-            pet.AccessoryId = petDTO.Accessory.Id;
-            pet.HatId = petDTO.Hat.Id;
-
-            pet.CurrentCriticalChance = petDTO.CurrentCriticalChance;
-            pet.CurrentDefence = petDTO.CurrentDefence;
-            pet.CurrentCriticalDamage = petDTO.CurrentCriticalDamage;
-            pet.CurrentHealth = petDTO.CurrentHealth;
-            pet.CurrentStrength = petDTO.CurrentStrength;
-            //TODO: Изменить на формулу
-            pet.AveragePower = petDTO.AveragePower;
-            //await _dbContext.SaveChangesAsync();
-        }
-
         public async Task<Pet> CreatePetAsync(CreatePetRequest request, long userId)
         {
             Pet pet = new()
@@ -132,19 +116,7 @@ namespace FreshCode.Repositories
                 CurrentCriticalChance = 0,
                 AveragePower = 0
             };
-            await _dbContext.Pets.AddAsync(pet);
-            await _dbContext.SaveChangesAsync();
             return pet;
-        }
-
-        public async System.Threading.Tasks.Task SaveShangesAsync()
-        {
-            await _dbContext.SaveChangesAsync();
-        }
-
-        public void UpdateAsync(Pet pet)
-        {
-            _dbContext.Pets.Update(pet);
         }
 
         public async Task<Level> GelLevelValues(long levelId)

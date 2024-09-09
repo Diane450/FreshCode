@@ -6,6 +6,8 @@
 
         public System.Threading.Tasks.Task AddAsync<T>(T entity) where T : class;
 
+        public void Update<T>(T entity) where T : class;
+
         public System.Threading.Tasks.Task SaveChangesAsync();
     }
 }

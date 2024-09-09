@@ -10,11 +10,6 @@ namespace FreshCode.Repositories
     {
         private readonly FreshCodeContext _dbContext = dbContext;
 
-        public void DeleteClan(Clan clan)
-        {
-            _dbContext.Clans.Remove(clan);
-        }
-
         public async Task<List<ClanRatingTableDTO>> GetClanRatingTable()
         {
             return await _dbContext.Clans

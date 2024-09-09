@@ -11,13 +11,15 @@ namespace FreshCode.UseCases
     public class CreatePetUseCase(IEyesRepository eyesRepository,
         IUserRepository userRepository,
         IPetsRepository petRepository,
-        IBodyRepository bodyRepository)
+        IBodyRepository bodyRepository,
+        IBaseRepository baseRepository)
 
     {
         private readonly IEyesRepository _eyesRepository = eyesRepository;
         private readonly IUserRepository _userRepository = userRepository;
         private readonly IPetsRepository _petRepository = petRepository;
         private readonly IBodyRepository _bodyRepository = bodyRepository;
+        private readonly IBaseRepository _baseRepository= baseRepository;
 
 
         public async Task<List<EyeDTO>> GetEyesAsync()
@@ -35,6 +37,9 @@ namespace FreshCode.UseCases
             long userId = await _userRepository.GetUserIdByVkId(vk_user_id);
 
             Pet pet = await _petRepository.CreatePetAsync(request, userId);
+
+            await _baseRepository.AddAsync(pet);
+            await _baseRepository.SaveChangesAsync();
             return PetMapper.ToDto(pet);
         }
     }

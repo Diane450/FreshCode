@@ -5,7 +5,6 @@ namespace FreshCode.Interfaces
 {
     public interface IClanRepository
     {
-        void DeleteClan(Clan clan);
         Task<List<ClanRatingTableDTO>> GetClanRatingTable();
     }
 }

@@ -439,11 +439,17 @@ public partial class FreshCodeContext : DbContext
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.ContentTypeId).HasColumnName("Content_type_Id");
+            entity.Property(e => e.PostId).HasColumnName("Post_Id");
 
             entity.HasOne(d => d.ContentType).WithMany(p => p.PostBlocks)
                 .HasForeignKey(d => d.ContentTypeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("PostBlock_ContentType");
+
+            entity.HasOne(d => d.Post).WithMany(p => p.PostBlocks)
+                .HasForeignKey(d => d.PostId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("PostBlock_Post");
         });
 
         modelBuilder.Entity<PostComment>(entity =>
@@ -454,8 +460,14 @@ public partial class FreshCodeContext : DbContext
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CreatedAt).HasColumnName("Created_at");
+            entity.Property(e => e.PostId).HasColumnName("Post_Id");
             entity.Property(e => e.UpdatedAt).HasColumnName("Updated_at");
             entity.Property(e => e.UserId).HasColumnName("User_id");
+
+            entity.HasOne(d => d.Post).WithMany(p => p.PostComments)
+                .HasForeignKey(d => d.PostId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("PostComment_Post");
 
             entity.HasOne(d => d.User).WithMany(p => p.PostComments)
                 .HasForeignKey(d => d.UserId)
@@ -470,7 +482,12 @@ public partial class FreshCodeContext : DbContext
             entity.ToTable("Post_rating ");
 
             entity.Property(e => e.Id).ValueGeneratedNever();
+            entity.Property(e => e.PostId).HasColumnName("Post_Id");
             entity.Property(e => e.UserId).HasColumnName("User_id");
+
+            entity.HasOne(d => d.Post).WithMany(p => p.PostRatings)
+                .HasForeignKey(d => d.PostId)
+                .HasConstraintName("Post_rating_Post");
 
             entity.HasOne(d => d.User).WithMany(p => p.PostRatings)
                 .HasForeignKey(d => d.UserId)
@@ -486,7 +503,13 @@ public partial class FreshCodeContext : DbContext
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CreatedAt).HasColumnName("Created_at");
+            entity.Property(e => e.PostId).HasColumnName("Post_Id");
             entity.Property(e => e.UserId).HasColumnName("User_id");
+
+            entity.HasOne(d => d.Post).WithMany(p => p.PostViews)
+                .HasForeignKey(d => d.PostId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("PostView_Post");
 
             entity.HasOne(d => d.User).WithMany(p => p.PostViews)
                 .HasForeignKey(d => d.UserId)

@@ -14,7 +14,6 @@ namespace FreshCode.Interfaces
         Task<List<BackgroundDTO>> GetUserBackgrounds(long userId);
         Task<long> GetUserIdByVkId(string vk_user_id);
         Task<User> GetUserByVkId(string vk_user_id);
-        System.Threading.Tasks.Task SaveChangesAsync();
         System.Threading.Tasks.Task CreateNewClan(Clan clan);
         System.Threading.Tasks.Task AddUserClan(UserClan userClan);
         Task<Clan> GetClanByUser(long userId);

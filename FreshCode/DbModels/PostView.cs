@@ -11,5 +11,9 @@ public partial class PostView
 
     public DateOnly CreatedAt { get; set; }
 
+    public long PostId { get; set; }
+
+    public virtual Post Post { get; set; } = null!;
+
     public virtual User User { get; set; } = null!;
 }

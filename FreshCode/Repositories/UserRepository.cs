@@ -108,11 +108,6 @@ namespace FreshCode.Repositories
                 .ToListAsync();
         }
 
-        public async System.Threading.Tasks.Task SaveChangesAsync()
-        {
-            await _dbContext.SaveChangesAsync();
-        }
-
         public async Task<User> GetUserByVkId(string vk_user_id)
         {
             try
@@ -178,7 +173,5 @@ namespace FreshCode.Repositories
         {
             return _dbContext.UserFoods.FirstAsync(uf => uf.FoodId == foodId);
         }
-
-        
     }
 }

@@ -1,16 +1,21 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.Interfaces;
 using FreshCode.ModelsDTO;
+using FreshCode.Repositories;
 using FreshCode.Services;
 using System.Diagnostics;
 
 namespace FreshCode.UseCases
 {
-    public class UserUseCase(IUserRepository userRepository, IClanRepository clanRepository, VkApiService vkApiService)
+    public class UserUseCase(IUserRepository userRepository,
+        IClanRepository clanRepository,
+        VkApiService vkApiService,
+        IBaseRepository baseRepository)
     {
         private readonly IUserRepository _userRepository = userRepository;
         private readonly IClanRepository _clanRepository = clanRepository;
         private readonly VkApiService _vkApiService = vkApiService;
+        private readonly IBaseRepository _baseRepository = baseRepository;
 
         public async Task<UserDTO> GetUserGameInfo(string vk_user_id)
         {
@@ -52,7 +57,7 @@ namespace FreshCode.UseCases
         {
             User user = await _userRepository.GetUserByVkId(vk_user_id);
             user.BackgroundId = backgroundId;
-            await _userRepository.SaveChangesAsync();
+            await _baseRepository.SaveChangesAsync();
         }
 
         public async Task<List<UserRatingTableDTO>> GetAllUsersRatingTable()
@@ -73,6 +78,5 @@ namespace FreshCode.UseCases
 
             return await _userRepository.GetFriendsRatingTable(friendsIds);
         }
-
     }
 }

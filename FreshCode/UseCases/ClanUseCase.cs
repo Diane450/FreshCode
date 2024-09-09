@@ -6,11 +6,20 @@ using FreshCode.Requests;
 
 namespace FreshCode.UseCases
 {
-    public class ClanUseCase(IUserRepository userRepository, IPetsRepository petsRepository, TransactionRepository transactionRepository, IClanRepository clanRepository)
+    public class ClanUseCase(IUserRepository userRepository,
+        IPetsRepository petsRepository,
+        TransactionRepository transactionRepository,
+        IClanRepository clanRepository,
+        IBaseRepository baseRepository
+        )
+
+
     {
         private readonly IUserRepository _userRepository = userRepository;
         private readonly IPetsRepository _petsRepository = petsRepository;
         private readonly IClanRepository _clanRepository = clanRepository;
+        private readonly IBaseRepository _baseRepository = baseRepository;
+
 
         private readonly TransactionRepository _transactionRepository = transactionRepository;
 
@@ -30,7 +39,7 @@ namespace FreshCode.UseCases
                     AverageClanPower = pet.AveragePower,
                 };
                 await _userRepository.CreateNewClan(clan);
-                await _userRepository.SaveChangesAsync();
+                await _baseRepository.SaveChangesAsync();
                 UserClan userClan = new()
                 {
                     ClanId = clan.Id,
@@ -38,7 +47,7 @@ namespace FreshCode.UseCases
                     RoleId = 1
                 };
                 await _userRepository.AddUserClan(userClan);
-                await _userRepository.SaveChangesAsync();
+                await _baseRepository.SaveChangesAsync();
                 transaction.Commit();
 
             }
@@ -52,9 +61,9 @@ namespace FreshCode.UseCases
         {
             long userId = await _userRepository.GetUserIdByVkId(vk_user_id);
             Clan clan = await _userRepository.GetClanByUser(userId);
-            
-            _clanRepository.DeleteClan(clan);
-            await _userRepository.SaveChangesAsync();
+
+            _baseRepository.DeleteAsync(clan);
+            await _baseRepository.SaveChangesAsync();
         }
     }
 }

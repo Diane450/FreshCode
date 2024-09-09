@@ -1,5 +1,6 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.ModelsDTO;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace FreshCode.Mappers
 {
@@ -7,10 +8,20 @@ namespace FreshCode.Mappers
     {
         public static PostDTO ToDTO(Post post)
         {
-            return new PostDTO
-            {
-
-            };
+            return null;
+            //return new PostDTO
+            //{
+            //    Id = post.Id,
+            //    Title = post.Title,
+            //    CreatedAt = post.CreatedAt,
+            //    UpdatedAt = post.UpdatedAt,
+            //    DeletedAt = post.DeletedAt,
+            //    TagId = post.TagId,
+            //    ViewsCount = post.PostViews.Count,
+            //    Ratings = post.PostRatings,
+            //    Tag = post.Tag,
+            //    PostBlocks = post.PostBlocks
+            //};
         }
     }
 }
