@@ -48,7 +48,7 @@ namespace FreshCode.Repositories
             return await _dbContext.ArtifactHistories
                 .Where(ah => ah.UserId == userId)
                 .Include(ah => ah.Artifact)
-                .ThenInclude(a => a.ArtifatcType)
+                .ThenInclude(a => a.ArtifactType)
                 .Include(ah => ah.Artifact)
                 .ThenInclude(a => a.Rarity)
                 .Include(ah => ah.Artifact)
@@ -84,7 +84,7 @@ namespace FreshCode.Repositories
             return await _dbContext.UserArtifacts
                 .Where(ua => ua.UserId == userId)
                 .Include(ah => ah.Artifact)
-                .ThenInclude(a => a.ArtifatcType)
+                .ThenInclude(a => a.ArtifactType)
                 .Include(ah => ah.Artifact)
                 .ThenInclude(a => a.Rarity)
                 .Include(ah => ah.Artifact)
@@ -164,14 +164,21 @@ namespace FreshCode.Repositories
         {
             List<UserRatingTableDTO> userFriendsRating = [];
 
-            foreach (long id in friendsIds) 
+            foreach (long id in friendsIds)
             {
                 UserRatingTableDTO userRatingTable = await _dbContext.Users
-                    .Where(u=>u.VkId==id)
-                    .Select(u=> UserMapper.ToRatingTableDTO(u))
+                    .Where(u => u.VkId == id)
+                    .Select(u => UserMapper.ToRatingTableDTO(u))
                     .FirstAsync();
             }
-            return userFriendsRating.OrderByDescending(ufr=>ufr.WonBattlesCount).ToList();
+            return userFriendsRating.OrderByDescending(ufr => ufr.WonBattlesCount).ToList();
         }
+
+        public Task<UserFood> GetUserFoodByFoodId(long foodId)
+        {
+            return _dbContext.UserFoods.FirstAsync(uf => uf.FoodId == foodId);
+        }
+
+        
     }
 }

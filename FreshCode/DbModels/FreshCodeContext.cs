@@ -97,13 +97,14 @@ public partial class FreshCodeContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("Artifact _pkey");
 
-            entity.ToTable("Artifact ");
+            entity.ToTable("Artifact");
 
-            entity.Property(e => e.ArtifatcTypeId).HasColumnName("ArtifatcType_Id");
+            entity.Property(e => e.Id).HasDefaultValueSql("nextval('\"Artifact _Id_seq\"'::regclass)");
+            entity.Property(e => e.ArtifactTypeId).HasColumnName("ArtifactType_Id");
             entity.Property(e => e.RarityId).HasColumnName("Rarity_Id");
 
-            entity.HasOne(d => d.ArtifatcType).WithMany(p => p.Artifacts)
-                .HasForeignKey(d => d.ArtifatcTypeId)
+            entity.HasOne(d => d.ArtifactType).WithMany(p => p.Artifacts)
+                .HasForeignKey(d => d.ArtifactTypeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Artifact_ArtifactType");
 
@@ -141,7 +142,7 @@ public partial class FreshCodeContext : DbContext
 
             entity.Property(e => e.ArtifactId).HasColumnName("Artifact_Id");
             entity.Property(e => e.GotAt).HasColumnName("Got_at");
-            entity.Property(e => e.UserId).HasColumnName("User_Id ");
+            entity.Property(e => e.UserId).HasColumnName("User_Id");
 
             entity.HasOne(d => d.Artifact).WithMany(p => p.ArtifactHistories)
                 .HasForeignKey(d => d.ArtifactId)
@@ -210,7 +211,7 @@ public partial class FreshCodeContext : DbContext
             entity.HasKey(e => e.Id).HasName("Bonus_pkey");
 
             entity.Property(e => e.CharacteristicId).HasColumnName("Characteristic_Id");
-            entity.Property(e => e.TypeId).HasColumnName("Type_ Id");
+            entity.Property(e => e.TypeId).HasColumnName("Type_Id");
 
             entity.HasOne(d => d.Characteristic).WithMany(p => p.Bonus)
                 .HasForeignKey(d => d.CharacteristicId)
@@ -400,23 +401,24 @@ public partial class FreshCodeContext : DbContext
 
         modelBuilder.Entity<Post>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("post_pkey");
+            entity.HasKey(e => e.Id).HasName("Post_pkey");
 
             entity.ToTable("Post");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CreatedAt)
-                .HasColumnType("timestamp without time zone")
+                .HasColumnType("time with time zone")
                 .HasColumnName("Created_at");
             entity.Property(e => e.DeletedAt)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("deleted_at");
+                .HasColumnType("time with time zone")
+                .HasColumnName("Deleted_at");
             entity.Property(e => e.TagId).HasColumnName("Tag_Id");
-            entity.Property(e => e.Title).HasColumnType("character varying");
+            entity.Property(e => e.Title)
+                .HasColumnType("character varying")
+                .HasColumnName("TItle");
             entity.Property(e => e.UpdatedAt)
-                .HasColumnType("timestamp without time zone")
+                .HasColumnType("time with time zone")
                 .HasColumnName("Updated_at");
-            entity.Property(e => e.UserId).HasColumnName("User_id");
+            entity.Property(e => e.UserId).HasColumnName("User_Id");
 
             entity.HasOne(d => d.Tag).WithMany(p => p.Posts)
                 .HasForeignKey(d => d.TagId)
@@ -437,17 +439,11 @@ public partial class FreshCodeContext : DbContext
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.ContentTypeId).HasColumnName("Content_type_Id");
-            entity.Property(e => e.PostId).HasColumnName("Post_id");
 
             entity.HasOne(d => d.ContentType).WithMany(p => p.PostBlocks)
                 .HasForeignKey(d => d.ContentTypeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("PostBlock_ContentType");
-
-            entity.HasOne(d => d.Post).WithMany(p => p.PostBlocks)
-                .HasForeignKey(d => d.PostId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("PostBlock_PostId");
         });
 
         modelBuilder.Entity<PostComment>(entity =>
@@ -458,14 +454,8 @@ public partial class FreshCodeContext : DbContext
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CreatedAt).HasColumnName("Created_at");
-            entity.Property(e => e.PostId).HasColumnName("Post_id");
             entity.Property(e => e.UpdatedAt).HasColumnName("Updated_at");
             entity.Property(e => e.UserId).HasColumnName("User_id");
-
-            entity.HasOne(d => d.Post).WithMany(p => p.PostComments)
-                .HasForeignKey(d => d.PostId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("Post_comments_Post");
 
             entity.HasOne(d => d.User).WithMany(p => p.PostComments)
                 .HasForeignKey(d => d.UserId)
@@ -480,13 +470,7 @@ public partial class FreshCodeContext : DbContext
             entity.ToTable("Post_rating ");
 
             entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.PostId).HasColumnName("Post_id");
             entity.Property(e => e.UserId).HasColumnName("User_id");
-
-            entity.HasOne(d => d.Post).WithMany(p => p.PostRatings)
-                .HasForeignKey(d => d.PostId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("Post_rating_Post");
 
             entity.HasOne(d => d.User).WithMany(p => p.PostRatings)
                 .HasForeignKey(d => d.UserId)
@@ -502,13 +486,7 @@ public partial class FreshCodeContext : DbContext
 
             entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CreatedAt).HasColumnName("Created_at");
-            entity.Property(e => e.PostId).HasColumnName("Post_id");
             entity.Property(e => e.UserId).HasColumnName("User_id");
-
-            entity.HasOne(d => d.Post).WithMany(p => p.PostViews)
-                .HasForeignKey(d => d.PostId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("Post_View_Post");
 
             entity.HasOne(d => d.User).WithMany(p => p.PostViews)
                 .HasForeignKey(d => d.UserId)
@@ -522,7 +500,9 @@ public partial class FreshCodeContext : DbContext
 
             entity.ToTable("Rarity");
 
-            entity.Property(e => e.Name).HasMaxLength(45);
+            entity.Property(e => e.Rarity1)
+                .HasMaxLength(45)
+                .HasColumnName("Rarity");
         });
 
         modelBuilder.Entity<Role>(entity =>
@@ -540,17 +520,14 @@ public partial class FreshCodeContext : DbContext
         {
             entity.HasKey(e => e.Id).HasName("Tags_pkey");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Tag1)
-                .HasColumnType("character varying")
+                .HasMaxLength(50)
                 .HasColumnName("Tag");
         });
 
         modelBuilder.Entity<Task>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("Tasks_pkey");
-
-            entity.Property(e => e.PrimogemsReward).HasColumnName("PrimogemsReward ");
         });
 
         modelBuilder.Entity<User>(entity =>
@@ -558,6 +535,8 @@ public partial class FreshCodeContext : DbContext
             entity.HasKey(e => e.Id).HasName("User_pkey");
 
             entity.ToTable("User");
+
+            entity.HasIndex(e => e.VkId, "vkid");
 
             entity.Property(e => e.BackgroundId).HasColumnName("Background_Id");
             entity.Property(e => e.FatesCount).HasColumnName("Fates_Count");

@@ -20,7 +20,7 @@ namespace FreshCode.Repositories
         {
             return await _dbContext.Artifacts
                 .Include(a=>a.Rarity)
-                .Include(a=>a.ArtifatcType)
+                .Include(a=>a.ArtifactType)
                 .Include(a=>a.ArtifactBonuses)
                 .ThenInclude(ab=>ab.Bonus)
                 .ThenInclude(b=>b.Characteristic)

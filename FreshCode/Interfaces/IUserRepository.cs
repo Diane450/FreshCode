@@ -20,5 +20,6 @@ namespace FreshCode.Interfaces
         Task<Clan> GetClanByUser(long userId);
         Task<List<UserRatingTableDTO>> GetAllUsersRatingTable();
         Task<List<UserRatingTableDTO>> GetFriendsRatingTable(List<long> friendsIds);
+        Task<UserFood> GetUserFoodByFoodId(long id);
     }
 }

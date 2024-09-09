@@ -13,7 +13,7 @@ public partial class Artifact
 
     public long RarityId { get; set; }
 
-    public long ArtifatcTypeId { get; set; }
+    public long ArtifactTypeId { get; set; }
 
     public int Price { get; set; }
 
@@ -21,7 +21,7 @@ public partial class Artifact
 
     public virtual ICollection<ArtifactHistory> ArtifactHistories { get; set; } = new List<ArtifactHistory>();
 
-    public virtual ArtifactType ArtifatcType { get; set; } = null!;
+    public virtual ArtifactType ArtifactType { get; set; } = null!;
 
     public virtual ICollection<BannerItem> BannerItems { get; set; } = new List<BannerItem>();
 

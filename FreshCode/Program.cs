@@ -7,6 +7,7 @@ using FreshCode.Settings;
 using FreshCode.UseCases;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using System.Buffers.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -34,7 +35,12 @@ builder.Services.AddScoped<TransactionRepository>();
 builder.Services.AddScoped<ClanUseCase>();
 builder.Services.AddScoped<IClanRepository, ClanRepository>();
 
+builder.Services.AddScoped<IBaseRepository, BaseRepository>();
+
 builder.Services.AddScoped<PurchaseUseCase>();
+
+builder.Services.AddScoped<BlogUseCase>();
+builder.Services.AddScoped<IBlogRepository, BlogRepository>();
 
 builder.Services.AddScoped<VkLaunchParamsService>();
 

@@ -12,6 +12,6 @@
 
         public int Price { get; set; }
 
-        public List<BonusDTO> Bonuses { get; set; } = null!;
+        public List<BonusDTO>? Bonuses { get; set; }
     }
 }

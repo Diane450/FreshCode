@@ -66,13 +66,12 @@ namespace FreshCode.Controllers
             }
         }
 
-        //[HttpPut]
-        //public async System.Threading.Tasks.Task Feed([FromBody] FeedRequest request)
-        //{
-        // TODO: Pet_Bonuses
-        //    var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-        //    await _petsUseCase.FeedAsync(request);
-        //    await _userUseCase.InventoryDecreaseFoodCountAsync(vk_user_id, request.Food);
-        //}
+        
+        [HttpPut]
+        public async System.Threading.Tasks.Task Feed([FromBody] FeedRequest request)
+        {
+        //TODO: Pet_Bonuses
+            //await _userUseCase.InventoryDecreaseFoodCountAsync(vk_user_id, request.Food);
+        }
     }
 }

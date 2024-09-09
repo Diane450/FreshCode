@@ -164,5 +164,34 @@ namespace FreshCode.Extensions
                 throw new ArgumentException("Достигнуто максимальное значение");
             }
         }
+
+        public static void Feed(this Pet pet, FoodDTO foodDTO)
+        {
+            foreach (var bonus in foodDTO.Bonuses)
+            {
+                var characteristic = bonus.Characteristic;
+                var bonusValue = bonus.Value;
+                var bonusType = bonus.Type;
+
+                switch (characteristic)
+                {
+                    case ("Критический урон"):
+                        pet.CurrentCriticalDamage += bonusValue;
+                        break;
+                    case ("Защита"):
+                        pet.CurrentDefence = ApplyBonus(pet.CurrentDefence, bonusValue, bonusType);
+                        break;
+                    case ("Критический шанс"):
+                        pet.CurrentCriticalChance += bonusValue;
+                        break;
+                    case ("Здоровье"):
+                        pet.CurrentHealth = ApplyBonus(pet.CurrentHealth, bonusValue, bonusType);
+                        break;
+                    case ("Сила"):
+                        pet.CurrentStrength = ApplyBonus(pet.CurrentStrength, bonusValue, bonusType);
+                        break;
+                }
+            }
+        }
     }
 }

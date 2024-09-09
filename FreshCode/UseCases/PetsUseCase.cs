@@ -5,15 +5,17 @@ using FreshCode.Extensions;
 using FreshCode.Interfaces;
 using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
+using FreshCode.Repositories;
 using FreshCode.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FreshCode.UseCases
 {
-    public class PetsUseCase(IPetsRepository petsRepository, IUserRepository userRepository)
+    public class PetsUseCase(IPetsRepository petsRepository, IUserRepository userRepository, TransactionRepository transactionRepository)
     {
         private readonly IPetsRepository _petsRepository = petsRepository;
         private readonly IUserRepository _userRepository = userRepository;
+        private readonly TransactionRepository _transactionRepository = transactionRepository;
 
         public async Task<PetDTO> GetPetByIdAsync(string vk_user_id)
         {
@@ -125,5 +127,6 @@ namespace FreshCode.UseCases
             pet.RemoveArtifact(removeArtifactRequest.ArtifactToRemove);
             return PetMapper.ToDto(pet);
         }
+
     }
 }
