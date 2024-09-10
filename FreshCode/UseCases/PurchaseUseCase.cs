@@ -2,6 +2,7 @@
 using FreshCode.Exceptions;
 using FreshCode.Interfaces;
 using FreshCode.ModelsDTO;
+using FreshCode.Requests;
 
 namespace FreshCode.UseCases
 {
@@ -19,25 +20,24 @@ namespace FreshCode.UseCases
                 _baseRepository = baseRepository;
                 _artifactRepository = artifactRepository;
             }
-        public async System.Threading.Tasks.Task BuyArtifact(long artifactToBuyId, string vk_user_id)
+        public async System.Threading.Tasks.Task BuyArtifact(BuyArtifactRequest artifactToBuy, string vk_user_id)
         {
             User user = await _userRepository.GetUserByVkId(vk_user_id);
 
-            int price = await _artifactRepository.GetArtifactPriceById(artifactToBuyId);
-            user.Money -= price;
+            user.Money -= artifactToBuy.Price;
 
             HasPositiveBalance(user);
 
             user.UserArtifacts.Add(new UserArtifact
             {
                 UserId = user.Id,
-                ArtifactId = artifactToBuyId,
+                ArtifactId = artifactToBuy.ArtifactId,
             });
 
             await _baseRepository.SaveChangesAsync();
         }
 
-        public async System.Threading.Tasks.Task BuyFood(FoodDTO foodToBuy, string vk_user_id)
+        public async System.Threading.Tasks.Task BuyFood(long foodToBuyId, string vk_user_id)
         {
             User user = await _userRepository.GetUserByVkId(vk_user_id);
 
