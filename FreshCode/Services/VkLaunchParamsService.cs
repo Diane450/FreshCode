@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using Microsoft.Extensions.Primitives;
+using System.Net;
+using System.Reflection.PortableExecutable;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
@@ -13,7 +15,9 @@ namespace FreshCode.Services
 
         public static bool VerifySignature(IHeaderDictionary header)
         {
-            string url = Decode(header.Authorization);
+            ValidateAuthorizationHeader(header.Authorization);
+
+            string url = Decode(header.Authorization!);
             var queryParams = GetQueryParams(url);
             var checkString = string.Join("&", queryParams
             .Where(entry => entry.Key.StartsWith("vk_"))
@@ -26,11 +30,19 @@ namespace FreshCode.Services
 
         public static async Task<string?> GetParamValueAsync(IHeaderDictionary header, string key)
         {
-            string url = Decode(header.Authorization);
+            string url = Decode(header.Authorization!);
             var queryParams = await Task.Run(() => GetQueryParams(url));
             return queryParams.ContainsKey(key) ? queryParams[key] : throw new ArgumentException("Пользователь не найден");
         }
 
+        private static void ValidateAuthorizationHeader(StringValues header)
+        {
+            if (StringValues.IsNullOrEmpty(header))
+            {
+                throw new ArgumentNullException(nameof(header), "Authorization header is missing or empty");
+            }
+        }
+        
         private static Dictionary<string, string> GetQueryParams(string url)
         {
             Dictionary<string, string> result = [];
