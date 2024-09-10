@@ -37,7 +37,7 @@ namespace FreshCode.UseCases
             await _baseRepository.SaveChangesAsync();
         }
 
-        public async System.Threading.Tasks.Task BuyFood(long foodToBuyId, string vk_user_id)
+        public async System.Threading.Tasks.Task BuyFood(BuyFoodRequest foodToBuy, string vk_user_id)
         {
             User user = await _userRepository.GetUserByVkId(vk_user_id);
 
@@ -45,7 +45,7 @@ namespace FreshCode.UseCases
             HasPositiveBalance(user);
 
             var userFoodList = await _userRepository.GetUserFood(user.Id);
-            var userFood = user.UserFoods.First(uf => uf.Food.Id == foodToBuy.Id);
+            var userFood = user.UserFoods.First(uf => uf.Food.Id == foodToBuy.FoodId);
             if (userFood is not null)
             {
                 userFood.Count += 1;
@@ -55,14 +55,14 @@ namespace FreshCode.UseCases
                 user.UserFoods.Add(new UserFood
                 {
                     UserId = user.Id,
-                    FoodId = foodToBuy.Id,
+                    FoodId = foodToBuy.FoodId,
                     Count = 1
                 });
             }
             await _baseRepository.SaveChangesAsync();
         }
 
-        public async System.Threading.Tasks.Task BuyBackground(BackgroundDTO backgroundToBuy, string vk_user_id)
+        public async System.Threading.Tasks.Task BuyBackground(BuyBackgroundRequest backgroundToBuy, string vk_user_id)
         {
             User user = await _userRepository.GetUserByVkId(vk_user_id);
 
@@ -72,7 +72,7 @@ namespace FreshCode.UseCases
             user.UserBackgrounds.Add(new UserBackground
             {
                 UserId = user.Id,
-                BackgroundId = backgroundToBuy.Id,
+                BackgroundId = backgroundToBuy.BackgroundId,
             });
 
             await _baseRepository.SaveChangesAsync();

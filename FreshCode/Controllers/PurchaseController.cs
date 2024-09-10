@@ -43,12 +43,12 @@ namespace FreshCode.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> BuyFood([FromBody] long foodToBuyId)
+        public async Task<ActionResult> BuyFood([FromBody] BuyFoodRequest foodToBuy)
         {
             try
             {
                 var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-                await _purchaseUseCase.BuyFood(foodToBuyId, vk_user_id);
+                await _purchaseUseCase.BuyFood(foodToBuy, vk_user_id);
                 return Ok();
             }
             catch (ArgumentException exception)
@@ -66,7 +66,7 @@ namespace FreshCode.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> BuyBackground([FromBody] BackgroundDTO backgroundToBuy)
+        public async Task<ActionResult> BuyBackground([FromBody] BuyBackgroundRequest backgroundToBuy)
         {
             try
             {
