@@ -1,5 +1,6 @@
 ﻿using FreshCode.Exceptions;
 using FreshCode.ModelsDTO;
+using FreshCode.Requests;
 using FreshCode.Services;
 using FreshCode.UseCases;
 using Microsoft.AspNetCore.Mvc;
@@ -19,12 +20,12 @@ namespace FreshCode.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> BuyArtifact([FromBody] long artifactToBuyId)
+        public async Task<ActionResult> BuyArtifact([FromBody] BuyArtifactRequest artifactToBuy)
         {
             try
             {
                 string vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-                await _purchaseUseCase.BuyArtifact(artifactToBuyId, vk_user_id);
+                await _purchaseUseCase.BuyArtifact(artifactToBuy, vk_user_id);
                 return Ok();
             }
             catch (ArgumentException exception)
