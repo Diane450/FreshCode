@@ -25,9 +25,9 @@ namespace FreshCode.Controllers
         }
 
         [HttpPut]
-        public async Task<PetDTO> LevelUp([FromBody] PetDTO pet)
+        public async Task<PetDTO> LevelUp([FromBody] long petId)
         {
-            return await _petsUseCase.LevelUpAsync(pet);
+            return await _petsUseCase.LevelUpAsync(petId);
         }
 
         [HttpPut]

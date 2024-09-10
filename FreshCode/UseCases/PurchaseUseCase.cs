@@ -9,24 +9,29 @@ namespace FreshCode.UseCases
     {
         private readonly IUserRepository _userRepository;
         private readonly IBaseRepository _baseRepository;
+        private readonly IArtifactRepository _artifactRepository;
 
-        public PurchaseUseCase(IUserRepository userRepository, IBaseRepository baseRepository)
-        {
-            _userRepository = userRepository;
-            _baseRepository = baseRepository;
-        }
-        public async System.Threading.Tasks.Task BuyArtifact(ArtifactDTO artifactToBuy, string vk_user_id)
+        public PurchaseUseCase(IUserRepository userRepository,
+            IBaseRepository baseRepository,
+            IArtifactRepository artifactRepository)
+            {
+                _userRepository = userRepository;
+                _baseRepository = baseRepository;
+                _artifactRepository = artifactRepository;
+            }
+        public async System.Threading.Tasks.Task BuyArtifact(long artifactToBuyId, string vk_user_id)
         {
             User user = await _userRepository.GetUserByVkId(vk_user_id);
 
-            user.Money -= artifactToBuy.Price;
+            int price = await _artifactRepository.GetArtifactPriceById(artifactToBuyId);
+            user.Money -= price;
 
             HasPositiveBalance(user);
 
             user.UserArtifacts.Add(new UserArtifact
             {
                 UserId = user.Id,
-                ArtifactId = artifactToBuy.Id,
+                ArtifactId = artifactToBuyId,
             });
 
             await _baseRepository.SaveChangesAsync();

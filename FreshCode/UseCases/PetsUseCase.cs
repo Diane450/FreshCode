@@ -29,9 +29,9 @@ namespace FreshCode.UseCases
             return PetMapper.ToDto(pet);
         }
 
-        public async Task<PetDTO> LevelUpAsync(PetDTO petDTO)
+        public async Task<PetDTO> LevelUpAsync(long petId)
         {
-            Pet pet = await _petsRepository.GetPetById(petDTO.Id);
+            Pet pet = await _petsRepository.GetPetById(petId);
 
             pet.Points = 0;
 
@@ -71,7 +71,6 @@ namespace FreshCode.UseCases
             //TODO: обновить среднюю силу питомца
             User user = await _userRepository.GetUserByVkId(vk_user_id);
             Pet pet = await _petsRepository.GetPetById(statRequest.PetDTO.Id);
-            
             
             user.StatPoints -= 1;
 
@@ -113,7 +112,7 @@ namespace FreshCode.UseCases
 
         public async Task<PetDTO> SetArtifact(SetArtifactRequest setArtifactRequest)
         {
-            Pet pet = await _petsRepository.GetPetById(setArtifactRequest.Pet.Id);
+            Pet pet = await _petsRepository.GetPetById(setArtifactRequest.PetId);
 
             pet.AssignArtifact(setArtifactRequest.Artifact);
 
@@ -123,7 +122,7 @@ namespace FreshCode.UseCases
 
         public async Task<PetDTO> RemoveArtifact(RemoveArtifactRequest removeArtifactRequest)
         {
-            Pet pet = await _petsRepository.GetPetById(removeArtifactRequest.Pet.Id);
+            Pet pet = await _petsRepository.GetPetById(removeArtifactRequest.PetId);
             pet.RemoveArtifact(removeArtifactRequest.ArtifactToRemove);
             return PetMapper.ToDto(pet);
         }
