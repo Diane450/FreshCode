@@ -10,7 +10,6 @@ namespace FreshCode.UseCases
     {
         private readonly IUserRepository _userRepository;
         private readonly IBaseRepository _baseRepository;
-        private readonly IArtifactRepository _artifactRepository;
 
         public PurchaseUseCase(IUserRepository userRepository,
             IBaseRepository baseRepository)
@@ -69,11 +68,10 @@ namespace FreshCode.UseCases
         {
             User user = await _userRepository.GetUserByVkId(vk_user_id);
 
-            if (await _artifactRepository.isBackgroundAbsent(backgroundToBuy.BackgroundId, user.Id))
+            if (await _userRepository.isBackgroundAbsent(backgroundToBuy.BackgroundId, user.Id))
             {
                 throw new InvalidOperationException("User already owns this item.");
             }
-
 
             user.Money -= backgroundToBuy.Price;
             HasPositiveBalance(user);

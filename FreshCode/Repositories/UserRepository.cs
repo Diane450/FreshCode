@@ -182,5 +182,14 @@ namespace FreshCode.Repositories
 
             return count == 0;
         }
+
+        public async Task<bool> isBackgroundAbsent(long backgroundId, long userId)
+        {
+            var count = await _dbContext.UserArtifacts
+                .Where(a => a.Id == backgroundId && a.UserId == userId)
+                .CountAsync();
+
+            return count == 0;
+        }
     }
 }

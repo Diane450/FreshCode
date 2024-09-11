@@ -21,5 +21,6 @@ namespace FreshCode.Interfaces
         Task<List<UserRatingTableDTO>> GetFriendsRatingTable(List<long> friendsIds);
         Task<UserFood> GetUserFoodByFoodId(long id);
         public Task<bool> isArtifactAbsent(long artifactId, long userId);
+        public Task<bool> isBackgroundAbsent(long backgroundId, long userId);
     }
 }
