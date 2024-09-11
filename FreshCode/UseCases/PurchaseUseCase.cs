@@ -89,7 +89,7 @@ namespace FreshCode.UseCases
         {
             if (user.Money < 0)
             {
-                throw new InsufficientFundsException();
+                throw new InvalidOperationException("User does not have enough funds");
             }
         }
     }

@@ -32,7 +32,7 @@ namespace FreshCode.Controllers
             {
                 return BadRequest(exception.Message);
             }
-            catch (InsufficientFundsException exception)
+            catch (InvalidOperationException exception)
             {
                 return Conflict(exception.Message);
             }
@@ -55,7 +55,7 @@ namespace FreshCode.Controllers
             {
                 return BadRequest(exception.Message);
             }
-            catch (InsufficientFundsException exception)
+            catch (InvalidOperationException exception)
             {
                 return Conflict(exception.Message);
             }
