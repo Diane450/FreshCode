@@ -19,11 +19,19 @@ namespace FreshCode.Controllers
             await _clanUseCase.CreateNewClan(clanName, vk_user_id);
         }
 
-        [HttpPost]
+        [HttpDelete]
         public async Task DeleteClan()
         {
             var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
             await _clanUseCase.DeleteClan(vk_user_id);
+        }
+
+
+        [HttpPost]
+        public async Task AddUserToClan([FromBody]int clanId)
+        {
+            var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
+            await _clanUseCase.AddUserToClan(vk_user_id); 
         }
     }
 }

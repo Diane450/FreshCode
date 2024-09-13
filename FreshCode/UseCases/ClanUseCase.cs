@@ -65,5 +65,10 @@ namespace FreshCode.UseCases
             _baseRepository.DeleteAsync(clan);
             await _baseRepository.SaveChangesAsync();
         }
+
+        internal async System.Threading.Tasks.Task AddUserToClan(string? vk_user_id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

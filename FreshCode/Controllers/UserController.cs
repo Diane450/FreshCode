@@ -8,51 +8,54 @@ namespace FreshCode.Controllers
     [ApiController]
     [Route("[controller]/[action]")]
 
-    public class UserController(UserUseCase userUseCase) : Controller
+    public class UserController : BaseController
     {
 
-        private readonly UserUseCase _userUseCase = userUseCase;
+        public UserController(UserUseCase userUseCase):base(userUseCase)
+        {
+
+        }
 
         [HttpGet]
         public async Task <UserDTO> GetUserGameInfo()
         {
-            var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-            return await _userUseCase.GetUserGameInfo(vk_user_id);
+            var user_id = GetUserIdFromCookies();
+            return await _userUseCase.GetUserGameInfo(user_id);
         }
 
         [HttpGet]
         public async Task<List<TaskDTO>> GetUserTasks()
         {
-            var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-            return await _userUseCase.GetUserTasks(vk_user_id);
+            var user_id = Request.Cookies["userId"]!;
+            return await _userUseCase.GetUserTasks(user_id);
         }
 
         [HttpGet]
         public async Task<List<ArtifactHistoryDTO>> GetArtifactHistory()
         {
-            var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-            return await _userUseCase.GetArtifactHistory(vk_user_id);
+            var user_id = Request.Cookies["userId"]!;
+            return await _userUseCase.GetArtifactHistory(user_id);
         }
 
         [HttpGet]
         public async Task<List<UserFoodDTO>> GetUserFood()
         {
-            var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-            return await _userUseCase.GetUserFood(vk_user_id);
+            var user_id = GetUserIdFromCookies();
+            return await _userUseCase.GetUserFood(user_id);
         }
 
         [HttpGet]
         public async Task<List<ArtifactDTO>> GetUserArtifact()
         {
-            var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-            return await _userUseCase.GetUserArtifact(vk_user_id);
+            var user_id = Request.Cookies["userId"]!;
+            return await _userUseCase.GetUserArtifact(user_id);
         }
 
         [HttpGet]
         public async Task<List<BackgroundDTO>> GetUserBackgrounds()
         {
-            var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-            return await _userUseCase.GetUserBackgrounds(vk_user_id);
+            var user_id = Request.Cookies["userId"]!;
+            return await _userUseCase.GetUserBackgrounds(user_id);
         }
     }
 }
