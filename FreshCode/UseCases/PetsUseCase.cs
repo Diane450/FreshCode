@@ -40,31 +40,6 @@ namespace FreshCode.UseCases
             return PetMapper.ToDto(pet);
         }
 
-        public async Task<PetDTO> IncreaseHealth(string vk_user_id, PetDTO petDTO)
-        {
-            User user = await _userRepository.GetUserByVkId(vk_user_id);
-            Pet pet = await _petsRepository.GetPetById(petDTO.Id);
-
-            user.StatPoints -= 1;
-
-            if (user.StatPoints < 0)
-            {
-                throw new InsufficientFundsException();
-            }
-            //TODO: изменить логику повышения стата
-            pet.CurrentHealth *= (int)pet.Level.EnhancementCoefficient;
-
-            if (pet.CurrentHealth > pet.Level.MaxHealth)
-            {
-                throw new ArgumentException("Достигнуто максимальное значение свойства");
-            }
-
-            petDTO.CurrentHealth = pet.CurrentHealth;
-            _baseRepository.Update(pet);
-            await _baseRepository.SaveChangesAsync();
-            return petDTO;
-        }
-
         public async Task<ActionResult<PetDTO>> IncreaseStat(long userId, IncreaseStatRequest statRequest)
         {
             //TODO: обновить среднюю силу питомца

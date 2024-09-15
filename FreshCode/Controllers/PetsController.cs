@@ -30,23 +30,23 @@ namespace FreshCode.Controllers
             return await _petsUseCase.LevelUpAsync(petId);
         }
 
-        [HttpPut]
-        public async Task<ActionResult<PetDTO>> IncreaseHealth([FromBody] PetDTO pet)
-        {
-            try
-            {
-                var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-                return await _petsUseCase.IncreaseHealth(vk_user_id, pet);
-            }
-            catch (InsufficientFundsException ex)
-            {
-                return Conflict(ex.Message);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
+        //[HttpPut]
+        //public async Task<ActionResult<PetDTO>> IncreaseHealth([FromBody] PetDTO pet)
+        //{
+        //    try
+        //    {
+        //        var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
+        //        return await _petsUseCase.IncreaseHealth(vk_user_id, pet);
+        //    }
+        //    catch (InsufficientFundsException ex)
+        //    {
+        //        return Conflict(ex.Message);
+        //    }
+        //    catch (ArgumentException ex)
+        //    {
+        //        return BadRequest(ex.Message);
+        //    }
+        //}
 
         [HttpPut]
         public async Task<ActionResult<PetDTO>> IncreaseStat([FromBody] IncreaseStatRequest statRequest)

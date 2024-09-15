@@ -6,6 +6,11 @@ namespace FreshCode.MiddleWare
     {
         Dictionary<string, string> IMiddleWare.QueryParams { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
+        public Task<long> GetInnerId(HttpContext context)
+        {
+            throw new NotImplementedException();
+        }
+
         public (bool, int) Verify(HttpContext httpContext)
         {
             throw new NotImplementedException();

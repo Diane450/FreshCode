@@ -25,7 +25,7 @@ namespace FreshCode.MiddleWare
             {
                 var platform = _httpContext.Request.Headers["Platform"].FirstOrDefault();
 
-                _middleWare = MiddlewareFabric.Create(platform);
+                _middleWare = MiddlewareFabric.Create(platform, _userUseCase);
                 
                 VerifySignature(_middleWare, _httpContext);
 
@@ -49,7 +49,7 @@ namespace FreshCode.MiddleWare
         {
             if (!_httpContext.Request.Cookies.ContainsKey("userId"))
             {
-                long id = await GetUserId(_middleWare.QueryParams["vk_user_id"]);
+                long id = await _middleWare.GetInnerId(_httpContext);
                 await SetUserIdCookie(id);
                 return id;
             }
@@ -75,11 +75,6 @@ namespace FreshCode.MiddleWare
             var isVerified = middleware.VerifySignature(context.Request.Headers);
             if (!isVerified)
                 throw new Exception("Signature is not valid");
-        }
-
-        private async Task<long> GetUserId(string vk_user_id)
-        {
-            return await _userUseCase.GetUserId(vk_user_id);
         }
     }
 }

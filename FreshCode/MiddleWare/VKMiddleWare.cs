@@ -1,6 +1,7 @@
 ﻿
 using FreshCode.Interfaces;
 using FreshCode.UseCases;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using System.Security.Cryptography;
 using System.Text;
@@ -8,12 +9,14 @@ using System.Web;
 
 namespace FreshCode.MiddleWare
 {
-    public class VKMiddleWare : IMiddleWare
+    public class VKMiddleWare(UserUseCase userUseCase) : IMiddleWare
     {
         private readonly static string  clientSecret = "wvl68m4dR1UpLrVRli";
         
-        public Dictionary<string, string> QueryParams { get; set; } = [];
+        private readonly UserUseCase _userUseCase = userUseCase;
 
+        public Dictionary<string, string> QueryParams { get; set; } = [];
+        
         public bool VerifySignature(IHeaderDictionary header)
         {
             ValidateAuthorizationHeader(header.Authorization);
@@ -89,6 +92,12 @@ namespace FreshCode.MiddleWare
             DateTime dateTime = DateTime.Now;
             int now = (int)(dateTime.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
             return Convert.ToInt32(now - vk_ts) >= hour;
+        }
+
+        public async Task<long> GetInnerId(HttpContext context)
+        {
+            long vk_user_id = Convert.ToInt64(QueryParams["vk_user_id"]);
+            return await _userUseCase.GetUserIdByVkId(vk_user_id);
         }
     }
 }

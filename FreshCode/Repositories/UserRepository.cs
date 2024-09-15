@@ -10,7 +10,7 @@ namespace FreshCode.Repositories
     {
         private readonly FreshCodeContext _dbContext = dbContext;
 
-        public async Task<long> GetUserIdByVkId(string vk_user_id)
+        public async Task<long> GetUserIdByVkId(long vk_user_id)
         {
             try
             {
@@ -108,7 +108,7 @@ namespace FreshCode.Repositories
                 .ToListAsync();
         }
 
-        public async Task<User> GetUserByVkId(string vk_user_id)
+        public async Task<User> GetUserByVkId(long vk_user_id)
         {
             try
             {
