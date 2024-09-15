@@ -23,13 +23,11 @@ namespace FreshCode.UseCases
 
         private readonly TransactionRepository _transactionRepository = transactionRepository;
 
-        public async System.Threading.Tasks.Task CreateNewClan(string clanName, string vk_user_id)
+        public async System.Threading.Tasks.Task CreateNewClan(string clanName, long userId)
         {
             using var transaction = _transactionRepository.BeginTransaction();
             try
             {
-                long userId = await _userRepository.GetUserIdByVkId(vk_user_id);
-
                 Pet pet = await _petsRepository.GetPetByUserId(userId);
 
                 Clan clan = new()
@@ -57,16 +55,15 @@ namespace FreshCode.UseCases
             }
         }
 
-        public async System.Threading.Tasks.Task DeleteClan(string vk_user_id)
+        public async System.Threading.Tasks.Task DeleteClan(long userId)
         {
-            long userId = await _userRepository.GetUserIdByVkId(vk_user_id);
             Clan clan = await _userRepository.GetClanByUser(userId);
 
             _baseRepository.DeleteAsync(clan);
             await _baseRepository.SaveChangesAsync();
         }
 
-        internal async System.Threading.Tasks.Task AddUserToClan(string? vk_user_id)
+        internal async System.Threading.Tasks.Task AddUserToClan(long userId)
         {
             throw new NotImplementedException();
         }

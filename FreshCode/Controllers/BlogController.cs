@@ -8,7 +8,7 @@ namespace FreshCode.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class BlogController : Controller
+    public class BlogController : BaseController
     {
         private readonly BlogUseCase _blogUseCase;
 
@@ -26,8 +26,8 @@ namespace FreshCode.Controllers
         [HttpPost]
         public async Task CreatePost([FromBody] CreatePostRequest request)
         {
-            var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-            await _blogUseCase.CreatePost(request, vk_user_id);
+            long userId = GetUserId();
+            await _blogUseCase.CreatePost(request, userId);
         }
 
         [HttpPost]
