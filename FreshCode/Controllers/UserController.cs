@@ -22,8 +22,8 @@ namespace FreshCode.Controllers
         [HttpGet]
         public async Task<List<TaskDTO>> GetUserTasks()
         {
-            var user_id = Request.Cookies["userId"]!;
-            return await _userUseCase.GetUserTasks(user_id);
+            var userId = GetUserId(HttpContext);
+            return await _userUseCase.GetUserTasks(userId);
         }
 
         [HttpGet]
