@@ -15,8 +15,8 @@ namespace FreshCode.Controllers
         [HttpGet]
         public async Task <UserDTO> GetUserGameInfo()
         {
-            var user_id = GetUserId(HttpContext);
-            return await _userUseCase.GetUserGameInfo(user_id);
+            var userId = GetUserId(HttpContext);
+            return await _userUseCase.GetUserGameInfo(userId);
         }
 
         [HttpGet]
@@ -29,29 +29,29 @@ namespace FreshCode.Controllers
         [HttpGet]
         public async Task<List<ArtifactHistoryDTO>> GetArtifactHistory()
         {
-            var user_id = Request.Cookies["userId"]!;
-            return await _userUseCase.GetArtifactHistory(user_id);
+            var userId = GetUserId(HttpContext);
+            return await _userUseCase.GetArtifactHistory(userId);
         }
 
         [HttpGet]
         public async Task<List<UserFoodDTO>> GetUserFood()
         {
-            var user_id = "";
-            return await _userUseCase.GetUserFood(user_id);
+            var userId = GetUserId(HttpContext);
+            return await _userUseCase.GetUserFood(userId);
         }
 
         [HttpGet]
         public async Task<List<ArtifactDTO>> GetUserArtifact()
         {
-            var user_id = Request.Cookies["userId"]!;
-            return await _userUseCase.GetUserArtifact(user_id);
+            var userId = GetUserId(HttpContext);
+            return await _userUseCase.GetUserArtifact(userId);
         }
 
         [HttpGet]
         public async Task<List<BackgroundDTO>> GetUserBackgrounds()
         {
-            var user_id = Request.Cookies["userId"]!;
-            return await _userUseCase.GetUserBackgrounds(user_id);
+            var userId = GetUserId(HttpContext);
+            return await _userUseCase.GetUserBackgrounds(userId);
         }
     }
 }
