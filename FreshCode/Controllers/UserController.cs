@@ -8,18 +8,14 @@ namespace FreshCode.Controllers
     [ApiController]
     [Route("[controller]/[action]")]
 
-    public class UserController : BaseController
+    public class UserController(UserUseCase userUseCase):BaseController
     {
-
-        public UserController(UserUseCase userUseCase):base(userUseCase)
-        {
-
-        }
-
+        private readonly UserUseCase _userUseCase = userUseCase;
+        
         [HttpGet]
         public async Task <UserDTO> GetUserGameInfo()
         {
-            var user_id = GetUserIdFromCookies();
+            var user_id = GetUserId(HttpContext);
             return await _userUseCase.GetUserGameInfo(user_id);
         }
 
@@ -40,7 +36,7 @@ namespace FreshCode.Controllers
         [HttpGet]
         public async Task<List<UserFoodDTO>> GetUserFood()
         {
-            var user_id = GetUserIdFromCookies();
+            var user_id = "";
             return await _userUseCase.GetUserFood(user_id);
         }
 

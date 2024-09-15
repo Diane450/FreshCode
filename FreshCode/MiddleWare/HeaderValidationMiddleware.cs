@@ -10,9 +10,11 @@ namespace FreshCode.MiddleWare
     public class HeaderValidationMiddleware
     {
         private readonly RequestDelegate _next;
+        
         private UserUseCase _userUseCase;
-        public HttpContext _httpContext { get; set; }
+        private HttpContext _httpContext { get; set; }
 
+        private IMiddleWare _middleWare;
 
         public HeaderValidationMiddleware(RequestDelegate next)
         {
@@ -22,20 +24,21 @@ namespace FreshCode.MiddleWare
         public async Task InvokeAsync(HttpContext context, UserUseCase userUseCase)
         {
             _userUseCase = userUseCase;
+            _httpContext = context;
+            
             try
             {
-                var platform = context.Request.Headers["Platform"].FirstOrDefault();
+                var platform = _httpContext.Request.Headers["Platform"].FirstOrDefault();
 
-                var middleware = MiddlewareFabric.Create(platform);
+                _middleWare = MiddlewareFabric.Create(platform);
                 
-                VerifySignature(middleware, context);
+                VerifySignature(_middleWare, _httpContext);
 
-                if (!context.Request.Cookies.ContainsKey("userId"))
-                {
-                    long id = await GetUserId(middleware.QueryParams["vk_user_id"]);
-                    SetUserIdCookie(context, id);
-                }
-                await _next(context);
+                var userId = await GetUserId();
+
+                _httpContext.Items["userId"] = userId;
+
+                await _next(_httpContext);
             }
             catch (Exception ex)
             {
@@ -47,6 +50,18 @@ namespace FreshCode.MiddleWare
             }
         }
 
+        private async Task<long> GetUserId()
+        {
+            if (!_httpContext.Request.Cookies.ContainsKey("userId"))
+            {
+                long id = await GetUserId(_middleWare.QueryParams["vk_user_id"]);
+                await SetUserIdCookie(_httpContext, id);
+                return id;
+            }
+            return Convert.ToInt64(_httpContext.Request.Cookies["userId"]);
+        }
+
+
         private Task SetUserIdCookie(HttpContext context, long innerId)
         {
             var cookieOptions = new CookieOptions
@@ -56,7 +71,7 @@ namespace FreshCode.MiddleWare
                 SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict, // Политика SameSite
                 Expires = DateTime.UtcNow.AddDays(7) // Срок действия cookie
             };
-            _httpContext.Response.Cookies.Append("userId", "test");
+            _httpContext.Response.Cookies.Append("userId", innerId.ToString());
             return Task.FromResult(0);
         }
 

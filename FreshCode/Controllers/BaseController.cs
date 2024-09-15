@@ -1,19 +1,12 @@
-﻿using FreshCode.UseCases;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 
 namespace FreshCode.Controllers
 {
-    public class BaseController : ControllerBase
+    public class BaseController : Controller
     {
-        private readonly UserUseCase _userUseCase;
-
-        public BaseController(UserUseCase userUseCase)
+        protected long GetUserId(HttpContext context)
         {
-            _userUseCase = userUseCase;
-        }
-        protected string GetUserIdFromCookies()
-        {
-            return null;
+            return (long)context.Items["userId"]!;
         }
     }
 }

@@ -17,9 +17,8 @@ namespace FreshCode.UseCases
         private readonly VkApiService _vkApiService = vkApiService;
         private readonly IBaseRepository _baseRepository = baseRepository;
 
-        public async Task<UserDTO> GetUserGameInfo(string vk_user_id)
+        public async Task<UserDTO> GetUserGameInfo(long userId)
         {
-            long userId = await _userRepository.GetUserIdByVkId(vk_user_id);
             return await _userRepository.GetUserGameInfo(userId);
         }
 
