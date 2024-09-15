@@ -10,7 +10,7 @@ namespace FreshCode.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class PurchaseController : Controller
+    public class PurchaseController : BaseController
     {
         private readonly PurchaseUseCase _purchaseUseCase;
 
@@ -24,8 +24,8 @@ namespace FreshCode.Controllers
         {
             try
             {
-                string vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-                await _purchaseUseCase.BuyArtifact(artifactToBuy, vk_user_id);
+                var userId = GetUserId(HttpContext);
+                await _purchaseUseCase.BuyArtifact(artifactToBuy, userId);
                 return Ok();
             }
             catch (ArgumentException exception)
@@ -47,8 +47,8 @@ namespace FreshCode.Controllers
         {
             try
             {
-                var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-                await _purchaseUseCase.BuyFood(foodToBuy, vk_user_id);
+                var userId = GetUserId(HttpContext);
+                await _purchaseUseCase.BuyFood(foodToBuy, userId);
                 return Ok();
             }
             catch (ArgumentException exception)
@@ -70,8 +70,8 @@ namespace FreshCode.Controllers
         {
             try
             {
-                var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-                await _purchaseUseCase.BuyBackground(backgroundToBuy, vk_user_id);
+                var userId = GetUserId(HttpContext);
+                await _purchaseUseCase.BuyBackground(backgroundToBuy, userId);
                 return Ok();
             }
             catch (ArgumentException exception)

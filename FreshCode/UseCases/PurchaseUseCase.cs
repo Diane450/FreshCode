@@ -17,9 +17,9 @@ namespace FreshCode.UseCases
                 _userRepository = userRepository;
                 _baseRepository = baseRepository;
             }
-        public async System.Threading.Tasks.Task BuyArtifact(BuyArtifactRequest artifactToBuy, string vk_user_id)
+        public async System.Threading.Tasks.Task BuyArtifact(BuyArtifactRequest artifactToBuy, long userId)
         {
-            User user = await _userRepository.GetUserByVkId(vk_user_id);
+            User user = await _userRepository.GetUserById(userId);
 
             if (await _userRepository.isArtifactAbsent(artifactToBuy.ArtifactId, user.Id))
             {
@@ -39,9 +39,9 @@ namespace FreshCode.UseCases
             await _baseRepository.SaveChangesAsync();
         }
 
-        public async System.Threading.Tasks.Task BuyFood(BuyFoodRequest foodToBuy, string vk_user_id)
+        public async System.Threading.Tasks.Task BuyFood(BuyFoodRequest foodToBuy, long userId)
         {
-            User user = await _userRepository.GetUserByVkId(vk_user_id);
+            User user = await _userRepository.GetUserById(userId);
 
             user.Money -= foodToBuy.Price;
             HasPositiveBalance(user);
@@ -64,9 +64,9 @@ namespace FreshCode.UseCases
             await _baseRepository.SaveChangesAsync();
         }
 
-        public async System.Threading.Tasks.Task BuyBackground(BuyBackgroundRequest backgroundToBuy, string vk_user_id)
+        public async System.Threading.Tasks.Task BuyBackground(BuyBackgroundRequest backgroundToBuy, long userId)
         {
-            User user = await _userRepository.GetUserByVkId(vk_user_id);
+            User user = await _userRepository.GetUserById(userId);
 
             if (await _userRepository.isBackgroundAbsent(backgroundToBuy.BackgroundId, user.Id))
             {
