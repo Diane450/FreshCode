@@ -15,7 +15,7 @@ namespace FreshCode.Repositories
             try
             {
                 return await _dbContext.Users
-                    .Where(u => u.VkId == Convert.ToInt32(vk_user_id))
+                    .Where(u => u.VkId == Convert.ToInt64(vk_user_id))
                     .Select(u => u.Id)
                     .FirstAsync();
             }
@@ -190,6 +190,20 @@ namespace FreshCode.Repositories
                 .CountAsync();
 
             return count == 0;
+        }
+
+        public async Task<User> GetUserById(long userId)
+        {
+            try
+            {
+                return await _dbContext.Users
+                    .Where(u => u.Id == userId)
+                    .FirstAsync();
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException("Пользователь не найден");
+            }
         }
     }
 }

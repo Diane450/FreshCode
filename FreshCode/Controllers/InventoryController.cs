@@ -8,7 +8,7 @@ namespace FreshCode.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class InventoryController(UserUseCase userUseCase, PetsUseCase petsUseCase) : Controller
+    public class InventoryController(UserUseCase userUseCase, PetsUseCase petsUseCase) : BaseController
     {
         private readonly UserUseCase _userUseCase = userUseCase;
         private readonly PetsUseCase _petsUseCase = petsUseCase;
@@ -18,8 +18,8 @@ namespace FreshCode.Controllers
         {
             try
             {
-                var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-                await _userUseCase.SetBackground(backgroundId, vk_user_id);
+                long userId = GetUserId(HttpContext);
+                await _userUseCase.SetBackground(backgroundId, userId);
                 return Ok();
             }
             catch (ArgumentException ex)
