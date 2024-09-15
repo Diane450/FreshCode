@@ -22,9 +22,8 @@ namespace FreshCode.UseCases
         private readonly IBaseRepository _baseRepository = baseRepository;
 
 
-        public async Task<PetDTO> GetPetByIdAsync(string vk_user_id)
+        public async Task<PetDTO> GetPetByUserIdAsync(long userId)
         {
-            long userId = await _userRepository.GetUserIdByVkId(vk_user_id);
             Pet pet = await _petsRepository.GetPetByUserId(userId);
             return PetMapper.ToDto(pet);
         }
@@ -66,10 +65,10 @@ namespace FreshCode.UseCases
             return petDTO;
         }
 
-        public async Task<ActionResult<PetDTO>> IncreaseStat(string? vk_user_id, IncreaseStatRequest statRequest)
+        public async Task<ActionResult<PetDTO>> IncreaseStat(long userId, IncreaseStatRequest statRequest)
         {
             //TODO: обновить среднюю силу питомца
-            User user = await _userRepository.GetUserByVkId(vk_user_id);
+            User user = await _userRepository.GetUserById(userId);
             Pet pet = await _petsRepository.GetPetById(statRequest.PetDTO.Id);
             
             user.StatPoints -= 1;

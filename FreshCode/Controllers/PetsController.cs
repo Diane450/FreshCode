@@ -10,7 +10,7 @@ namespace FreshCode.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class PetsController(PetsUseCase petsUseCase, UserUseCase userUseCase) : ControllerBase
+    public class PetsController(PetsUseCase petsUseCase, UserUseCase userUseCase) : BaseController
     {
         private readonly PetsUseCase _petsUseCase = petsUseCase;
         
@@ -20,8 +20,8 @@ namespace FreshCode.Controllers
         [HttpGet]
         public async Task<PetDTO> GetPetAsync()
         {
-            var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-            return await _petsUseCase.GetPetByIdAsync(vk_user_id);
+            var userId = GetUserId(HttpContext);
+            return await _petsUseCase.GetPetByUserIdAsync(userId);
         }
 
         [HttpPut]
@@ -53,8 +53,8 @@ namespace FreshCode.Controllers
         {
             try
             {
-                var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-                return await _petsUseCase.IncreaseStat(vk_user_id, statRequest);
+                var userId = GetUserId(HttpContext);
+                return await _petsUseCase.IncreaseStat(userId, statRequest);
             }
             catch (InsufficientFundsException ex)
             {
