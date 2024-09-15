@@ -27,33 +27,28 @@ namespace FreshCode.UseCases
             return await _userRepository.GetUserIdByVkId(vk_user_id);
         }
 
-        public async Task<List<TaskDTO>> GetUserTasks(string vk_user_id)
+        public async Task<List<TaskDTO>> GetUserTasks(long userId)
         {
-            long userId = await _userRepository.GetUserIdByVkId(vk_user_id);
             return await _userRepository.GetUserTasks(userId);
         }
 
-        public async Task<List<ArtifactHistoryDTO>> GetArtifactHistory(string vk_user_id)
+        public async Task<List<ArtifactHistoryDTO>> GetArtifactHistory(long userId)
         {
-            long userId = await _userRepository.GetUserIdByVkId(vk_user_id);
             return await _userRepository.GetArtifactHistory(userId);
         }
 
-        public async Task<List<UserFoodDTO>> GetUserFood(string vk_user_id)
+        public async Task<List<UserFoodDTO>> GetUserFood(long userId)
         {
-            long userId = await _userRepository.GetUserIdByVkId(vk_user_id);
             return await _userRepository.GetUserFood(userId);
         }
 
-        public async Task<List<ArtifactDTO>> GetUserArtifact(string vk_user_id)
+        public async Task<List<ArtifactDTO>> GetUserArtifact(long userId)
         {
-            long userId = await _userRepository.GetUserIdByVkId(vk_user_id);
             return await _userRepository.GetUserArtifact(userId);
         }
 
-        public async Task<List<BackgroundDTO>> GetUserBackgrounds(string vk_user_id)
+        public async Task<List<BackgroundDTO>> GetUserBackgrounds(long userId)
         {
-            long userId = await _userRepository.GetUserIdByVkId(vk_user_id);
             return await _userRepository.GetUserBackgrounds(userId);
         }
 
