@@ -95,7 +95,7 @@ namespace FreshCode.Repositories
             }
         }
 
-        public async Task<Pet> CreatePetAsync(CreatePetRequest request, long userId)
+        public Pet CreatePet(CreatePetRequest request, long userId)
         {
             Pet pet = new()
             {

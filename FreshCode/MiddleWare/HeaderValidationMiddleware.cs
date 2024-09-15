@@ -7,19 +7,14 @@ using System.Text;
 
 namespace FreshCode.MiddleWare
 {
-    public class HeaderValidationMiddleware
+    public class HeaderValidationMiddleware(RequestDelegate next)
     {
-        private readonly RequestDelegate _next;
+        private readonly RequestDelegate _next = next;
         
         private UserUseCase _userUseCase;
-        private HttpContext _httpContext { get; set; }
+        private HttpContext _httpContext;
 
         private IMiddleWare _middleWare;
-
-        public HeaderValidationMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
 
         public async Task InvokeAsync(HttpContext context, UserUseCase userUseCase)
         {
@@ -55,14 +50,14 @@ namespace FreshCode.MiddleWare
             if (!_httpContext.Request.Cookies.ContainsKey("userId"))
             {
                 long id = await GetUserId(_middleWare.QueryParams["vk_user_id"]);
-                await SetUserIdCookie(_httpContext, id);
+                await SetUserIdCookie(id);
                 return id;
             }
             return Convert.ToInt64(_httpContext.Request.Cookies["userId"]);
         }
 
 
-        private Task SetUserIdCookie(HttpContext context, long innerId)
+        private Task SetUserIdCookie(long innerId)
         {
             var cookieOptions = new CookieOptions
             {
@@ -71,7 +66,7 @@ namespace FreshCode.MiddleWare
                 SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict, // Политика SameSite
                 Expires = DateTime.UtcNow.AddDays(7) // Срок действия cookie
             };
-            _httpContext.Response.Cookies.Append("userId", innerId.ToString());
+            _httpContext.Response.Cookies.Append("userId", innerId.ToString(), cookieOptions);
             return Task.FromResult(0);
         }
 

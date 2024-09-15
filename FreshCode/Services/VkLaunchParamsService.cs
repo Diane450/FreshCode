@@ -53,8 +53,8 @@ namespace FreshCode.Services
             foreach (var pair in pairs)
             {
                 int equalsCharIndex = pair.IndexOf('=');
-                string key = equalsCharIndex > 0 ? (pair.Substring(0, pair.Length - (pair.Length - equalsCharIndex))) : pair;
-                string? value = equalsCharIndex > 0 && pair.Length > equalsCharIndex + 1 ? (pair.Substring(equalsCharIndex + 1)) : null;
+                string key = equalsCharIndex > 0 ? (pair[..^(pair.Length - equalsCharIndex)]) : pair;
+                string? value = equalsCharIndex > 0 && pair.Length > equalsCharIndex + 1 ? (pair[(equalsCharIndex + 1)..]) : null;
                 result.Add(key, value);
             }
             return result;
@@ -93,17 +93,15 @@ namespace FreshCode.Services
 
         private static string GetHashCode(string data, string key)
         {
-            using (var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(key)))
-            {
-                byte[] hmacData = hmac.ComputeHash(Encoding.UTF8.GetBytes(data));
-                return Convert.ToBase64String(hmacData).TrimEnd('=').Replace('+', '-').Replace('/', '_');
-            }
+            using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(key));
+            byte[] hmacData = hmac.ComputeHash(Encoding.UTF8.GetBytes(data));
+            return Convert.ToBase64String(hmacData).TrimEnd('=').Replace('+', '-').Replace('/', '_');
         }
 
         private static bool IsExpired(Dictionary<string, string> queryParams)
         {
             int hour = 3600;
-            int vk_ts = Convert.ToInt32(queryParams.ContainsKey("vk_ts") ? queryParams["vk_ts"] : 0);
+            int vk_ts = Convert.ToInt32(queryParams.TryGetValue("vk_ts", out string? value) ? value : 0);
             DateTime dateTime = DateTime.Now;
             int now = (int)(dateTime.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
             return Convert.ToInt32(now - vk_ts) >= hour;

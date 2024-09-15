@@ -10,20 +10,9 @@ namespace FreshCode.MiddleWare
 {
     public class VKMiddleWare : IMiddleWare
     {
-        private static string clientSecret = "wvl68m4dR1UpLrVRli";
+        private readonly static string  clientSecret = "wvl68m4dR1UpLrVRli";
         
-        public Dictionary<string, string> QueryParams { get; set; } = new Dictionary<string, string>();
-
-        public async Task<long> GetInnerId()
-        {
-            //return await _userUseCase.GetUserId(QueryParams["vk_user_id"]);
-            return 0;
-        }
-
-        public (bool, int) Verify(HttpContext httpContext)
-        {
-            return (true, 1);
-        }
+        public Dictionary<string, string> QueryParams { get; set; } = [];
 
         public bool VerifySignature(IHeaderDictionary header)
         {
@@ -63,8 +52,8 @@ namespace FreshCode.MiddleWare
             foreach (var pair in pairs)
             {
                 int equalsCharIndex = pair.IndexOf('=');
-                string key = equalsCharIndex > 0 ? (pair.Substring(0, pair.Length - (pair.Length - equalsCharIndex))) : pair;
-                string? value = equalsCharIndex > 0 && pair.Length > equalsCharIndex + 1 ? (pair.Substring(equalsCharIndex + 1)) : null;
+                string key = equalsCharIndex > 0 ? (pair[..^(pair.Length - equalsCharIndex)]) : pair;
+                string? value = equalsCharIndex > 0 && pair.Length > equalsCharIndex + 1 ? (pair[(equalsCharIndex + 1)..]) : null;
                 QueryParams.Add(key, value);
             }
             return QueryParams;
@@ -86,34 +75,17 @@ namespace FreshCode.MiddleWare
             return decodedStr;
         }
 
-        private string Encode(string value)
-        {
-            string encodedString = String.Empty;
-            try
-            {
-                byte[] bytesToEncode = Encoding.UTF8.GetBytes(value);
-                encodedString = Convert.ToBase64String(bytesToEncode);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            return encodedString;
-        }
-
         private string GetHashCode(string data, string key)
         {
-            using (var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(key)))
-            {
-                byte[] hmacData = hmac.ComputeHash(Encoding.UTF8.GetBytes(data));
-                return Convert.ToBase64String(hmacData).TrimEnd('=').Replace('+', '-').Replace('/', '_');
-            }
+            using var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(key));
+            byte[] hmacData = hmac.ComputeHash(Encoding.UTF8.GetBytes(data));
+            return Convert.ToBase64String(hmacData).TrimEnd('=').Replace('+', '-').Replace('/', '_');
         }
 
         private bool IsExpired(Dictionary<string, string> queryParams)
         {
             int hour = 3600;
-            int vk_ts = Convert.ToInt32(queryParams.ContainsKey("vk_ts") ? queryParams["vk_ts"] : 0);
+            int vk_ts = Convert.ToInt32(queryParams.TryGetValue("vk_ts", out string? value) ? value : 0);
             DateTime dateTime = DateTime.Now;
             int now = (int)(dateTime.Subtract(new DateTime(1970, 1, 1))).TotalSeconds;
             return Convert.ToInt32(now - vk_ts) >= hour;

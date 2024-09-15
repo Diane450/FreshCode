@@ -67,13 +67,13 @@ namespace FreshCode.UseCases
         public async Task<List<UserRatingTableDTO>> GetAllUsersRatingTable()
         {
             List<UserRatingTableDTO> users = await _userRepository.GetAllUsersRatingTable();
-            return users.OrderByDescending(u => u.WonBattlesCount).ToList();
+            return [.. users.OrderByDescending(u => u.WonBattlesCount)];
         }
 
         public async Task<List<ClanRatingTableDTO>> GetClanRatingTable()
         {
             List<ClanRatingTableDTO> clans = await _clanRepository.GetClanRatingTable();
-            return clans.OrderByDescending(c => c.WonBattlesCount).ToList();
+            return [.. clans.OrderByDescending(c => c.WonBattlesCount)];
         }
 
         public async Task<List<UserRatingTableDTO>> GetFriendsRatingTable(string vk_user_id)

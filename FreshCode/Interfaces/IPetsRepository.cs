@@ -8,7 +8,7 @@ namespace FreshCode.Interfaces
     {
         Task<Pet> GetPetByUserId(long userId);
         Task<Pet> GetPetById(long id);
-        Task<Pet> CreatePetAsync(CreatePetRequest request, long userId);
+        Pet CreatePet(CreatePetRequest request, long userId);
         Task<Level> GelLevelValues(long levelId);
     }
 }
