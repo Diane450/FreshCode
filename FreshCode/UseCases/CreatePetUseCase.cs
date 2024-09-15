@@ -32,11 +32,9 @@ namespace FreshCode.UseCases
             return await _bodyRepository.GetBodiesAsync();
         }
 
-        public async Task<PetDTO> CreatePetAsync(CreatePetRequest request, string? vk_user_id)
+        public async Task<PetDTO> CreatePetAsync(CreatePetRequest request, long userId)
         {
-            long userId = await _userRepository.GetUserIdByVkId(vk_user_id);
-
-            Pet pet = await _petRepository.CreatePetAsync(request, userId);
+            Pet pet = _petRepository.CreatePet(request, userId);
 
             await _baseRepository.AddAsync(pet);
             await _baseRepository.SaveChangesAsync();

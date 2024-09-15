@@ -8,30 +8,30 @@ namespace FreshCode.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class ClanController(ClanUseCase clanUseCase) : Controller
+    public class ClanController(ClanUseCase clanUseCase) : BaseController
     {
         private readonly ClanUseCase _clanUseCase = clanUseCase;
 
         [HttpPost]
         public async Task CreateNewClan([FromBody] string clanName)
         {
-            var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-            await _clanUseCase.CreateNewClan(clanName, vk_user_id);
+            var userId = GetUserId(HttpContext);
+            await _clanUseCase.CreateNewClan(clanName, userId);
         }
 
         [HttpDelete]
         public async Task DeleteClan()
         {
-            var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-            await _clanUseCase.DeleteClan(vk_user_id);
+            var userId = GetUserId(HttpContext);
+            await _clanUseCase.DeleteClan(userId);
         }
 
 
         [HttpPost]
-        public async Task AddUserToClan([FromBody]int clanId)
+        public async Task AddUserToClan([FromBody] int clanId)
         {
-            var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-            await _clanUseCase.AddUserToClan(vk_user_id); 
+            var userId = GetUserId(HttpContext);
+            await _clanUseCase.AddUserToClan(userId); 
         }
     }
 }

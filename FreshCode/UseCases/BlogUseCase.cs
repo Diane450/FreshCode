@@ -17,9 +17,8 @@ namespace FreshCode.UseCases
            return await _blogRepository.GetAllPosts();
         }
 
-        public async System.Threading.Tasks.Task CreatePost(CreatePostRequest request, string? vk_user_id)
+        public async System.Threading.Tasks.Task CreatePost(CreatePostRequest request, long userId)
         {
-            long userId = await _userRepository.GetUserIdByVkId(vk_user_id);
             Post post = new()
             {
                 Title = request.Title,

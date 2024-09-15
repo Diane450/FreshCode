@@ -26,7 +26,7 @@ namespace FreshCode.Controllers
         [HttpPost]
         public async Task CreatePost([FromBody] CreatePostRequest request)
         {
-            long userId = GetUserId();
+            long userId = GetUserId(HttpContext);
             await _blogUseCase.CreatePost(request, userId);
         }
 

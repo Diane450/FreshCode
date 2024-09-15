@@ -9,7 +9,7 @@ namespace FreshCode.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class CreatePetController(CreatePetUseCase createPetUseCase) : ControllerBase
+    public class CreatePetController(CreatePetUseCase createPetUseCase) : BaseController
     {
         private readonly CreatePetUseCase _createPetUseCase = createPetUseCase;
 
@@ -31,8 +31,8 @@ namespace FreshCode.Controllers
         {
             try
             {
-                var vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
-                return await _createPetUseCase.CreatePetAsync(request, vk_user_id);
+                var userId = GetUserId(HttpContext);
+                return await _createPetUseCase.CreatePetAsync(request, userId);
             }
             catch (ArgumentException exception)
             {
