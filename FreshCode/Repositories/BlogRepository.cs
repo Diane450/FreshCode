@@ -12,15 +12,11 @@ namespace FreshCode.Repositories
     {
         private readonly FreshCodeContext _dbContext = dbContext;
         
-        [HttpGet]
-        public async Task<List<PostDTO>> GetAllPosts()
+        public async Task<IQueryable<Post>> GetAllPosts()
         {
-            return await _dbContext.Posts
-                .Select(p => PostMapper.ToDTO(p))
-                .ToListAsync();
+            return _dbContext.Posts;
         }
 
-        [HttpPost]
         public async System.Threading.Tasks.Task CreatePost(Post post)
         {
             await _dbContext.Posts.AddAsync(post);

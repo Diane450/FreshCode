@@ -1,6 +1,6 @@
-﻿using FreshCode.ModelsDTO;
+﻿using FreshCode.Models;
+using FreshCode.ModelsDTO;
 using FreshCode.Requests;
-using FreshCode.Services;
 using FreshCode.UseCases;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,19 +8,14 @@ namespace FreshCode.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
-    public class BlogController : BaseController
+    public class BlogController(BlogUseCase blogUseCase) : BaseController
     {
-        private readonly BlogUseCase _blogUseCase;
-
-        public BlogController(BlogUseCase blogUseCase)
-        {
-            _blogUseCase = blogUseCase;
-        }
+        private readonly BlogUseCase _blogUseCase = blogUseCase;
 
         [HttpGet]
-        public async Task<List<PostDTO>> GetAllPosts()
+        public async Task<List<PostDTO>> GetPosts([FromQuery] QueryParameters parameters)
         {
-            return await _blogUseCase.GetAllPosts();
+            return await _blogUseCase.GetPosts(parameters);
         }
 
         [HttpPost]

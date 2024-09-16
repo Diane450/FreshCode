@@ -1,8 +1,12 @@
 ﻿
 using FreshCode.DbModels;
+using FreshCode.Extensions;
 using FreshCode.Interfaces;
+using FreshCode.Mappers;
+using FreshCode.Models;
 using FreshCode.ModelsDTO;
 using FreshCode.Requests;
+using Microsoft.EntityFrameworkCore;
 
 namespace FreshCode.UseCases
 {
@@ -12,9 +16,19 @@ namespace FreshCode.UseCases
         private readonly IUserRepository _userRepository = userRepository;
         private readonly IBaseRepository _baseRepository = baseRepository;
 
-        public async Task<List<PostDTO>> GetAllPosts()
+        public async Task<List<PostDTO>> GetPosts(QueryParameters parameters)
         {
-           return await _blogRepository.GetAllPosts();
+            IQueryable<Post>posts = await _blogRepository.GetAllPosts();
+
+            posts = posts.Sort(parameters.SortBy, parameters.SortDescending);
+
+            var pagedOrders = await posts
+                .Paginate(parameters.Page, parameters.PageSize)
+                .ToListAsync();
+
+            var pagedPosts = new PagedResult<Post>(pagedOrders, parameters.Page, parameters.PageSize);
+            var result = PostMapper.ToDTO(pagedPosts.Items);
+            return result;
         }
 
         public async System.Threading.Tasks.Task CreatePost(CreatePostRequest request, long userId)
@@ -32,7 +46,7 @@ namespace FreshCode.UseCases
 
         public async System.Threading.Tasks.Task GetPostStatistics(long postId)
         {
-            
+
         }
     }
 }

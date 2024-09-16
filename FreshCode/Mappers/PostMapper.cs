@@ -8,20 +8,28 @@ namespace FreshCode.Mappers
     {
         public static PostDTO ToDTO(Post post)
         {
-            return null;
-            //return new PostDTO
-            //{
-            //    Id = post.Id,
-            //    Title = post.Title,
-            //    CreatedAt = post.CreatedAt,
-            //    UpdatedAt = post.UpdatedAt,
-            //    DeletedAt = post.DeletedAt,
-            //    TagId = post.TagId,
-            //    ViewsCount = post.PostViews.Count,
-            //    Ratings = post.PostRatings,
-            //    Tag = post.Tag,
-            //    PostBlocks = post.PostBlocks
-            //};
+            return new PostDTO
+            {
+                Id = post.Id,
+                Title = post.Title,
+                CreatedAt = post.CreatedAt,
+                UpdatedAt = post.UpdatedAt,
+                DeletedAt = post.DeletedAt,
+                TagId = post.TagId,
+                ViewsCount = post.PostViews.Count
+                //Ratings = post.PostRatings,
+                //Tag = post.Tag,
+                //PostBlocks = post.PostBlocks
+            };
+        }
+        public static List<PostDTO> ToDTO(List<Post> posts)
+        {
+            List<PostDTO> postsDTO = new List<PostDTO>();
+            foreach (var post in posts)
+            {
+                postsDTO.Add(ToDTO(post));
+            }
+            return postsDTO;
         }
     }
 }
