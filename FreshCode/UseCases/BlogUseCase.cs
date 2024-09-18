@@ -97,6 +97,7 @@ namespace FreshCode.UseCases
         {
             PostComment comment = await _commentRepository.GetCommentById(commentId);
             comment.Comment = newText;
+            comment.UpdatedAt = DateTime.UtcNow;
             await _baseRepository.SaveChangesAsync();
         }
     }
