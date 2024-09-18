@@ -5,7 +5,8 @@ namespace FreshCode.Interfaces
 {
     public interface IBlogRepository
     {
-        System.Threading.Tasks.Task CreatePost(Post post);
         IQueryable<Post> GetAllPosts();
+
+        Task<Post> GetPostById(long id);
     }
 }

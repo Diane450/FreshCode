@@ -21,5 +21,11 @@ namespace FreshCode.Repositories
         {
             await _dbContext.Posts.AddAsync(post);
         }
+
+        public async Task<Post> GetPostById(long id)
+        {
+            return await _dbContext.Posts
+                .FindAsync(id);
+        }
     }
 }

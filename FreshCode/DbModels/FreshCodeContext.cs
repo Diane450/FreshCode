@@ -452,7 +452,6 @@ public partial class FreshCodeContext : DbContext
 
             entity.ToTable("Post_comments ");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CreatedAt).HasColumnName("Created_at");
             entity.Property(e => e.PostId).HasColumnName("Post_Id");
             entity.Property(e => e.UpdatedAt).HasColumnName("Updated_at");

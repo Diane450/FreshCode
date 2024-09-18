@@ -13,7 +13,7 @@ namespace FreshCode.Extensions
         {
             if (string.IsNullOrWhiteSpace(sortBy))
             {
-                throw new ArgumentException("Sort by expression cannot be null or empty.", nameof(sortBy));
+                return query;
             }
 
             var parameter = Expression.Parameter(typeof(T), "x");

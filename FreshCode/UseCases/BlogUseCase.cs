@@ -8,14 +8,15 @@ using FreshCode.ModelsDTO;
 using FreshCode.Requests;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Query.ExpressionTranslators.Internal;
 
 namespace FreshCode.UseCases
 {
-    public class BlogUseCase(IBlogRepository blogRepository, IUserRepository userRepository, IBaseRepository baseRepository)
+    public class BlogUseCase(IBlogRepository blogRepository, ICommentRepository commentRepository, IBaseRepository baseRepository)
     {
         private readonly IBlogRepository _blogRepository = blogRepository;
-        private readonly IUserRepository _userRepository = userRepository;
         private readonly IBaseRepository _baseRepository = baseRepository;
+        private readonly ICommentRepository _commentRepository = commentRepository;
 
         public async Task<PagedList<PostDTO>> GetPosts(QueryParameters parameters)
         {
@@ -30,8 +31,7 @@ namespace FreshCode.UseCases
                     DeletedAt = p.DeletedAt,
                     TagId = p.TagId,
                     ViewsCount = p.PostViews.Count
-                })
-                ;
+                });
 
             posts = posts.Sort(parameters.SortBy, parameters.SortDescending);
 
@@ -49,13 +49,47 @@ namespace FreshCode.UseCases
                 TagId = request.Tag.Id,
                 UserId = userId,
             };
-            await _blogRepository.CreatePost(post);
+            await _baseRepository.AddAsync(post);
             await _baseRepository.SaveChangesAsync();
         }
 
-        public async System.Threading.Tasks.Task GetPostStatistics(long postId)
+        public async Task<PagedList<CommentDTO>> GetCommentsByPostId(QueryParameters parameters, int blogId)
         {
+            IQueryable<CommentDTO> comments = _commentRepository.GetCommentsByPostId(blogId)
+                .Select(c => new CommentDTO()
+                {
+                    Id = c.Id,
+                    UserId= c.User.Id,
+                    Comment = c.Comment,
+                    CreatedAt = c.CreatedAt,
+                    UpdatedAt = c.UpdatedAt,
+                });
+            comments = comments.Sort(parameters.SortBy, parameters.SortDescending);
 
+            var pagedListResult = await PagedList<CommentDTO>.CreateAsync(comments, parameters.Page, parameters.PageSize);
+            return pagedListResult;
+        }
+
+        public async System.Threading.Tasks.Task DeletePost(int postId)
+        {
+            var post = await _blogRepository.GetPostById(postId);
+
+            post.DeletedAt = DateTime.UtcNow;
+
+            await _baseRepository.SaveChangesAsync();
+        }
+
+        public async System.Threading.Tasks.Task CreateComment(CreateCommentRequest request, int postId)
+        {
+            PostComment postComment = new PostComment()
+            {
+                Comment = request.Comment,
+                UserId = request.UserId,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _baseRepository.AddAsync(postComment);
+            await _baseRepository.SaveChangesAsync();
         }
     }
 }
