@@ -405,9 +405,7 @@ public partial class FreshCodeContext : DbContext
 
             entity.ToTable("Post");
 
-            entity.Property(e => e.CreatedAt)
-                .HasColumnType("time with time zone")
-                .HasColumnName("Created_at");
+            entity.Property(e => e.CreatedAt).HasColumnName("Created_at");
             entity.Property(e => e.DeletedAt)
                 .HasColumnType("time with time zone")
                 .HasColumnName("Deleted_at");

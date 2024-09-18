@@ -22,7 +22,7 @@ namespace FreshCode.UseCases
             Post post = new()
             {
                 Title = request.Title,
-                CreatedAt = request.CreatedAt,
+                CreatedAt = DateTime.UtcNow,
                 TagId = request.Tag.Id,
                 UserId = userId,
             };
