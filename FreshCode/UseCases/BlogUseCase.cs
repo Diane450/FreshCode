@@ -1,8 +1,13 @@
 ﻿
 using FreshCode.DbModels;
+using FreshCode.Extensions;
 using FreshCode.Interfaces;
+using FreshCode.Mappers;
+using FreshCode.Models;
 using FreshCode.ModelsDTO;
 using FreshCode.Requests;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting;
 
 namespace FreshCode.UseCases
 {
@@ -12,9 +17,27 @@ namespace FreshCode.UseCases
         private readonly IUserRepository _userRepository = userRepository;
         private readonly IBaseRepository _baseRepository = baseRepository;
 
-        public async Task<List<PostDTO>> GetAllPosts()
+        public async Task<PagedList<PostDTO>> GetPosts(QueryParameters parameters)
         {
-           return await _blogRepository.GetAllPosts();
+            IQueryable<PostDTO> posts = _blogRepository.GetAllPosts()
+                .Select(p=>new PostDTO()
+                {
+                    Id = p.Id,
+                    UserId = p.UserId,
+                    Title = p.Title,
+                    CreatedAt = p.CreatedAt,
+                    UpdatedAt = p.UpdatedAt,
+                    DeletedAt = p.DeletedAt,
+                    TagId = p.TagId,
+                    ViewsCount = p.PostViews.Count
+                })
+                ;
+
+            posts = posts.Sort(parameters.SortBy, parameters.SortDescending);
+
+            var pagedListResult = await PagedList<PostDTO>.CreateAsync(posts, parameters.Page, parameters.PageSize);
+
+            return pagedListResult;
         }
 
         public async System.Threading.Tasks.Task CreatePost(CreatePostRequest request, long userId)
@@ -32,7 +55,7 @@ namespace FreshCode.UseCases
 
         public async System.Threading.Tasks.Task GetPostStatistics(long postId)
         {
-            
+
         }
     }
 }
