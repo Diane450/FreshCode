@@ -45,7 +45,7 @@ namespace FreshCode.UseCases
             Post post = new()
             {
                 Title = request.Title,
-                CreatedAt = DateTime.UtcNow,
+                CreatedAt = request.CreatedAt,
                 TagId = request.Tag.Id,
                 UserId = userId,
             };

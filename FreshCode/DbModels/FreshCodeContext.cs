@@ -406,16 +406,12 @@ public partial class FreshCodeContext : DbContext
             entity.ToTable("Post");
 
             entity.Property(e => e.CreatedAt).HasColumnName("Created_at");
-            entity.Property(e => e.DeletedAt)
-                .HasColumnType("time with time zone")
-                .HasColumnName("Deleted_at");
+            entity.Property(e => e.DeletedAt).HasColumnName("Deleted_at");
             entity.Property(e => e.TagId).HasColumnName("Tag_Id");
             entity.Property(e => e.Title)
                 .HasColumnType("character varying")
                 .HasColumnName("TItle");
-            entity.Property(e => e.UpdatedAt)
-                .HasColumnType("time with time zone")
-                .HasColumnName("Updated_at");
+            entity.Property(e => e.UpdatedAt).HasColumnName("Updated_at");
             entity.Property(e => e.UserId).HasColumnName("User_Id");
 
             entity.HasOne(d => d.Tag).WithMany(p => p.Posts)

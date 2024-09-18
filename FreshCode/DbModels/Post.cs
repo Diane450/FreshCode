@@ -11,13 +11,13 @@ public partial class Post
 
     public string Title { get; set; } = null!;
 
-    public DateTimeOffset? UpdatedAt { get; set; }
-
-    public DateTimeOffset? DeletedAt { get; set; }
-
     public long TagId { get; set; }
 
     public DateTime CreatedAt { get; set; }
+
+    public DateTime? UpdatedAt { get; set; }
+
+    public DateTime? DeletedAt { get; set; }
 
     public virtual ICollection<PostBlock> PostBlocks { get; set; } = new List<PostBlock>();
 
