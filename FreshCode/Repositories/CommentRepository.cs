@@ -7,10 +7,18 @@ namespace FreshCode.Repositories
     {
         private readonly FreshCodeContext _dbContext = dbContext;
 
+        public async Task<PostComment> GetCommentById(long commentId)
+        {
+            return await _dbContext.PostComments
+                .FindAsync(commentId);
+        }
+
         public IQueryable<PostComment> GetCommentsByPostId(long postId)
         {
             return _dbContext.PostComments
-                .Where(p=>p.PostId == postId);
+                .Where(p => p.PostId == postId);
         }
+
+
     }
 }

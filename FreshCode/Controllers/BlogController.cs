@@ -26,28 +26,29 @@ namespace FreshCode.Controllers
         }
 
         [HttpDelete("posts/{postId}")]
-        public async Task DeletePost(int postId)
+        public async Task DeletePost(long postId)
         {
             await _blogUseCase.DeletePost(postId);
         }
 
         [HttpGet("posts/{postId}/comments")]
-        public async Task<PagedList<CommentDTO>> GetCommentsByPost([FromQuery] QueryParameters parameters, int postId)
+        public async Task<PagedList<CommentDTO>> GetCommentsByPost([FromQuery] QueryParameters parameters, long postId)
         {
             return await _blogUseCase.GetCommentsByPostId(parameters, postId);
         }
 
         [HttpPost("posts/{postId}/comments")]
-        public async Task<IActionResult> CreateComment([FromBody] CreateCommentRequest request, int postId)
+        public async Task<IActionResult> CreateComment([FromBody] CreateCommentRequest request, long postId)
         {
             await _blogUseCase.CreateComment(request, postId);
             return Ok();
         }
 
-        //[HttpPost]
-        //public async Task GetPostStatistics([FromBody] long postId)
-        //{
-        //    await _blogUseCase.GetPostStatistics(postId);
-        //}
+        [HttpPut("comments/{commentId}")]
+        public async Task<IActionResult> EditComment([FromBody] string newText, long commentId)
+        {
+            await _blogUseCase.EditComment(newText, commentId);
+            return Ok();
+        }
     }
 }

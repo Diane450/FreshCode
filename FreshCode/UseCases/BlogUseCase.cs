@@ -53,7 +53,7 @@ namespace FreshCode.UseCases
             await _baseRepository.SaveChangesAsync();
         }
 
-        public async Task<PagedList<CommentDTO>> GetCommentsByPostId(QueryParameters parameters, int blogId)
+        public async Task<PagedList<CommentDTO>> GetCommentsByPostId(QueryParameters parameters, long blogId)
         {
             IQueryable<CommentDTO> comments = _commentRepository.GetCommentsByPostId(blogId)
                 .Select(c => new CommentDTO()
@@ -70,7 +70,7 @@ namespace FreshCode.UseCases
             return pagedListResult;
         }
 
-        public async System.Threading.Tasks.Task DeletePost(int postId)
+        public async System.Threading.Tasks.Task DeletePost(long postId)
         {
             var post = await _blogRepository.GetPostById(postId);
 
@@ -79,16 +79,24 @@ namespace FreshCode.UseCases
             await _baseRepository.SaveChangesAsync();
         }
 
-        public async System.Threading.Tasks.Task CreateComment(CreateCommentRequest request, int postId)
+        public async System.Threading.Tasks.Task CreateComment(CreateCommentRequest request, long postId)
         {
             PostComment postComment = new PostComment()
             {
                 Comment = request.Comment,
                 UserId = request.UserId,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                PostId = postId
             };
 
             await _baseRepository.AddAsync(postComment);
+            await _baseRepository.SaveChangesAsync();
+        }
+
+        public async System.Threading.Tasks.Task EditComment(string newText, long commentId)
+        {
+            PostComment comment = await _commentRepository.GetCommentById(commentId);
+            comment.Comment = newText;
             await _baseRepository.SaveChangesAsync();
         }
     }
