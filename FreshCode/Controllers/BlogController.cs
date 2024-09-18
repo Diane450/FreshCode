@@ -13,7 +13,7 @@ namespace FreshCode.Controllers
         private readonly BlogUseCase _blogUseCase = blogUseCase;
 
         [HttpGet]
-        public async Task<List<PostDTO>> GetPosts([FromQuery] QueryParameters parameters)
+        public async Task<PagedList<PostDTO>> GetPosts([FromQuery] QueryParameters parameters)
         {
             return await _blogUseCase.GetPosts(parameters);
         }

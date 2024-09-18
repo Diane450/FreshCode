@@ -12,7 +12,7 @@ namespace FreshCode.Repositories
     {
         private readonly FreshCodeContext _dbContext = dbContext;
         
-        public async Task<IQueryable<Post>> GetAllPosts()
+        public IQueryable<Post> GetAllPosts()
         {
             return _dbContext.Posts;
         }
