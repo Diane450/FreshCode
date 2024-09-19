@@ -474,7 +474,6 @@ public partial class FreshCodeContext : DbContext
 
             entity.ToTable("Post_rating ");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.PostId).HasColumnName("Post_Id");
             entity.Property(e => e.UserId).HasColumnName("User_id");
 
@@ -494,7 +493,6 @@ public partial class FreshCodeContext : DbContext
 
             entity.ToTable("Post_view");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CreatedAt).HasColumnName("Created_at");
             entity.Property(e => e.PostId).HasColumnName("Post_Id");
             entity.Property(e => e.UserId).HasColumnName("User_id");

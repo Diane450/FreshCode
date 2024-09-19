@@ -51,6 +51,13 @@ namespace FreshCode.Controllers
             return Ok();
         }
 
+        [HttpPost("post/{postId}/reaction/{reactionValue}")]
+        public async Task<IActionResult> AddReactionToPost(long postId, bool reactionValue)
+        {
+            var userId = GetUserId(HttpContext);
+            await _blogUseCase.AddReactionToPost(userId, postId, reactionValue);
+            return Ok();
+        }
 
 
 

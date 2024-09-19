@@ -21,7 +21,7 @@ namespace FreshCode.UseCases
         public async Task<PagedList<PostDTO>> GetPosts(QueryParameters parameters)
         {
             IQueryable<PostDTO> posts = _blogRepository.GetAllPosts()
-                .Select(p=>new PostDTO()
+                .Select(p => new PostDTO()
                 {
                     Id = p.Id,
                     UserId = p.UserId,
@@ -29,8 +29,14 @@ namespace FreshCode.UseCases
                     CreatedAt = p.CreatedAt,
                     UpdatedAt = p.UpdatedAt,
                     DeletedAt = p.DeletedAt,
-                    Tag = p.Tag.Tag1,
-                    ViewsCount = p.PostViews.Count
+                    Tag = new TagDTO
+                    {
+                        Id = p.TagId,
+                        Tag = p.Tag.Tag1
+                    },
+                    ViewsCount = p.PostViews.Count,
+                    DislikesCount = p.PostRatings.Where(p => p.Rating == false).Count(),
+                    LikesCount = p.PostRatings.Where(p => p.Rating == true).Count(),
                 });
 
             posts = posts.Sort(parameters.SortBy, parameters.SortDescending);
@@ -61,7 +67,7 @@ namespace FreshCode.UseCases
                 .Select(c => new CommentDTO()
                 {
                     Id = c.Id,
-                    UserId= c.User.Id,
+                    UserId = c.User.Id,
                     Comment = c.Comment,
                     CreatedAt = c.CreatedAt,
                     UpdatedAt = c.UpdatedAt,
@@ -103,5 +109,16 @@ namespace FreshCode.UseCases
             await _baseRepository.SaveChangesAsync();
         }
 
+        public async System.Threading.Tasks.Task AddReactionToPost(long userId, long postId, bool reactionValue)
+        {
+            PostRating postRating = new PostRating()
+            {
+                UserId = userId,
+                PostId = postId,
+                Rating = reactionValue
+            };
+            await _baseRepository.AddAsync(postRating);
+            await _baseRepository.SaveChangesAsync();
+        }
     }
 }

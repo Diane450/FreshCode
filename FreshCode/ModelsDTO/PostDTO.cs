@@ -18,8 +18,10 @@
 
         public List<PostBlockDTO> PostBlocks { get; set; } = null!;
 
-        public List<RatingDTO>? Ratings { get; set; }
+        public int DislikesCount { get; set; }
 
-        public string Tag { get; set; } = null!;
+        public int LikesCount { get; set; }
+
+        public TagDTO Tag { get; set; } = null!;
     }
 }

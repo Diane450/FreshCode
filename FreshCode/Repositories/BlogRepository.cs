@@ -11,10 +11,13 @@ namespace FreshCode.Repositories
     public class BlogRepository(FreshCodeContext dbContext) : IBlogRepository
     {
         private readonly FreshCodeContext _dbContext = dbContext;
-        
+
         public IQueryable<Post> GetAllPosts()
         {
-            return _dbContext.Posts;
+            return _dbContext.Posts
+                .Include(p => p.Tag)
+                .Include(p=>p.PostViews)
+                .Include(p=>p.PostRatings);
         }
 
         public async System.Threading.Tasks.Task CreatePost(Post post)
