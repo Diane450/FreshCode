@@ -2,7 +2,7 @@
 {
     public class TagDTO
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         public string Tag { get; set; } = null!;
     }

@@ -18,7 +18,5 @@ namespace FreshCode.Repositories
             return _dbContext.PostComments
                 .Where(p => p.PostId == postId);
         }
-
-
     }
 }

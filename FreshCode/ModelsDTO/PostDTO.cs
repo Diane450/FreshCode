@@ -14,14 +14,12 @@
 
         public DateTimeOffset? DeletedAt { get; set; }
 
-        public long TagId { get; set; }
-
         public long ViewsCount { get; set; }
 
         public List<PostBlockDTO> PostBlocks { get; set; } = null!;
 
         public List<RatingDTO>? Ratings { get; set; }
 
-        public TagDTO? Tag { get; set; }
+        public string Tag { get; set; } = null!;
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Globalization;
+using System.Linq.Expressions;
 
 namespace FreshCode.Extensions
 {
@@ -35,6 +36,37 @@ namespace FreshCode.Extensions
                 Expression.Quote(orderByExpression));
 
             return query.Provider.CreateQuery<T>(resultExpression);
+        }
+
+        public static IQueryable<T> Filter<T>(this IQueryable<T> query, string filterBy, string filterValue)
+        {
+            if (string.IsNullOrWhiteSpace(filterBy) || string.IsNullOrWhiteSpace(filterValue))
+            {
+                return query;
+            }
+
+            var parameter = Expression.Parameter(typeof(T), "x");
+            var property = typeof(T).GetProperty(filterBy);
+            if (property == null)
+            {
+                throw new ArgumentException($"Property '{filterBy}' does not exist on type '{typeof(T)}'.", nameof(filterBy));
+            }
+
+            var constantValue = Expression.Constant(filterValue);
+            var propertyAccess = Expression.MakeMemberAccess(parameter, property);
+            var equalExpression = Expression.Equal(propertyAccess, constantValue);
+
+            var whereExpression = Expression.Lambda<Func<T, bool>>(equalExpression, parameter);
+
+            var resultExpression = Expression.Call(
+                typeof(Queryable),
+                "Where",
+                new Type[] { typeof(T) },
+                query.Expression,
+                Expression.Quote(whereExpression));
+
+            return query.Provider.CreateQuery<T>(resultExpression);
+
         }
     }
 }

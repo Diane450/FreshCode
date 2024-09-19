@@ -50,5 +50,15 @@ namespace FreshCode.Controllers
             await _blogUseCase.EditComment(newText, commentId);
             return Ok();
         }
+
+
+
+
+        //[HttpPut("posts/{postId}")]
+        //public async Task<IActionResult> EditPost([FromBody] List<PostBlockDTO> blocks, int postId)
+        //{
+        //    await _blogUseCase.EditPost(blocks, postId);
+        //    return Ok();
+        //}
     }
 }

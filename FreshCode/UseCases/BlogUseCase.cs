@@ -29,11 +29,13 @@ namespace FreshCode.UseCases
                     CreatedAt = p.CreatedAt,
                     UpdatedAt = p.UpdatedAt,
                     DeletedAt = p.DeletedAt,
-                    TagId = p.TagId,
+                    Tag = p.Tag.Tag1,
                     ViewsCount = p.PostViews.Count
                 });
 
             posts = posts.Sort(parameters.SortBy, parameters.SortDescending);
+
+            posts = posts.Filter(parameters.FilterBy, parameters.FilterValue);
 
             var pagedListResult = await PagedList<PostDTO>.CreateAsync(posts, parameters.Page, parameters.PageSize);
 
@@ -100,5 +102,6 @@ namespace FreshCode.UseCases
             comment.UpdatedAt = DateTime.UtcNow;
             await _baseRepository.SaveChangesAsync();
         }
+
     }
 }
