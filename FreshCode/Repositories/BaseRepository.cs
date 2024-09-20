@@ -8,7 +8,7 @@ namespace FreshCode.Repositories
     {
         private FreshCodeContext _dbContext = dbContext;
 
-        public void DeleteAsync<T>(T entity) where T : class
+        public void Remove<T>(T entity) where T : class
         {
             _dbContext.Set<T>().Remove(entity);
         }
@@ -26,6 +26,11 @@ namespace FreshCode.Repositories
         public void Update<T>(T entity) where T : class
         {
              _dbContext.Set<T>().Update(entity);
+        }
+
+        public void RemoveRange<T>(List<T> entities) where T : class
+        {
+            _dbContext.RemoveRange(entities);
         }
     }
 }

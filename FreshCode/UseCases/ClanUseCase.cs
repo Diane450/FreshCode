@@ -59,7 +59,7 @@ namespace FreshCode.UseCases
         {
             Clan clan = await _userRepository.GetClanByUser(userId);
 
-            _baseRepository.DeleteAsync(clan);
+            _baseRepository.Remove(clan);
             await _baseRepository.SaveChangesAsync();
         }
 

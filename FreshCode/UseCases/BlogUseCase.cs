@@ -9,6 +9,7 @@ using FreshCode.Requests;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Query.ExpressionTranslators.Internal;
+using System.Linq;
 
 namespace FreshCode.UseCases
 {
@@ -21,23 +22,7 @@ namespace FreshCode.UseCases
         public async Task<PagedList<PostDTO>> GetPosts(QueryParameters parameters)
         {
             IQueryable<PostDTO> posts = _blogRepository.GetAllPosts()
-                .Select(p => new PostDTO()
-                {
-                    Id = p.Id,
-                    UserId = p.UserId,
-                    Title = p.Title,
-                    CreatedAt = p.CreatedAt,
-                    UpdatedAt = p.UpdatedAt,
-                    DeletedAt = p.DeletedAt,
-                    Tag = new TagDTO
-                    {
-                        Id = p.TagId,
-                        Tag = p.Tag.Tag1
-                    },
-                    ViewsCount = p.PostViews.Count,
-                    DislikesCount = p.PostRatings.Where(p => p.Rating == false).Count(),
-                    LikesCount = p.PostRatings.Where(p => p.Rating == true).Count(),
-                });
+                .Select(p => PostMapper.ToDTO(p));
 
             posts = posts.Sort(parameters.SortBy, parameters.SortDescending);
 
@@ -118,6 +103,47 @@ namespace FreshCode.UseCases
                 Rating = reactionValue
             };
             await _baseRepository.AddAsync(postRating);
+            await _baseRepository.SaveChangesAsync();
+        }
+
+        public async System.Threading.Tasks.Task EditPost(List<PostBlockDTO> blocks, long postId)
+        {
+            List<PostBlock> existingPostBlocks = await _blogRepository.GetPostBlocks(postId);
+
+            List<long> existingPostBlocksId = existingPostBlocks.Select(x => x.Id).ToList();
+
+            foreach (PostBlockDTO block in blocks)
+            {
+                if (block.Id != 0)
+                {
+                    var existingPostBlock = existingPostBlocks.Find(p => p.Id == block.Id);
+                    if (existingPostBlock != null)
+                    {
+                        existingPostBlock.Content = block.Content;
+                        existingPostBlock.Index = block.Index;
+                        existingPostBlock.ContentTypeId = block.ContentTypeId;
+                    }
+                }
+                else
+                {
+                    var newBlock = new PostBlock()
+                    {
+                        PostId = postId,
+                        Content = block.Content,
+                        Index = block.Index,
+                        ContentTypeId = block.ContentTypeId
+                    };
+                    await _baseRepository.AddAsync(newBlock);
+                }
+            }
+
+            var blockIdsToRemove = existingPostBlocksId.Except(blocks.Where(b => b.Id != 0).Select(b => b.Id)).ToList();
+
+            if (blockIdsToRemove.Any())
+            {
+                var blocksToRemove = existingPostBlocks.Where(b => blockIdsToRemove.Contains(b.Id)).ToList();
+                _baseRepository.RemoveRange(blocksToRemove);
+            }
             await _baseRepository.SaveChangesAsync();
         }
     }

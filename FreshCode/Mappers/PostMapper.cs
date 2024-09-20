@@ -11,6 +11,7 @@ namespace FreshCode.Mappers
             return new PostDTO
             {
                 Id = post.Id,
+                UserId = post.UserId,
                 Title = post.Title,
                 CreatedAt = post.CreatedAt,
                 UpdatedAt = post.UpdatedAt,
@@ -20,10 +21,10 @@ namespace FreshCode.Mappers
                     Id = post.TagId,
                     Tag = post.Tag.Tag1
                 },
-                ViewsCount = post.PostViews.Count
-                //Ratings = post.PostRatings,
-                //Tag = post.Tag,
-                //PostBlocks = post.PostBlocks
+                ViewsCount = post.PostViews.Count,
+                DislikesCount = post.PostRatings.Where(post => post.Rating == false).Count(),
+                LikesCount = post.PostRatings.Where(post => post.Rating == true).Count(),
+                PostBlocks = post.PostBlocks.Select(pb=>PostBlockMapper.ToDTO(pb)).ToList()
             };
         }
         public static List<PostDTO> ToDTO(List<Post> posts)

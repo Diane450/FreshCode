@@ -282,7 +282,6 @@ public partial class FreshCodeContext : DbContext
 
             entity.ToTable("Content_type");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.Type).HasColumnType("character varying");
         });
 
@@ -431,8 +430,7 @@ public partial class FreshCodeContext : DbContext
 
             entity.ToTable("Post_block ");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.ContentTypeId).HasColumnName("Content_type_Id");
+            entity.Property(e => e.ContentTypeId).HasColumnName("ContentType_Id");
             entity.Property(e => e.PostId).HasColumnName("Post_Id");
 
             entity.HasOne(d => d.ContentType).WithMany(p => p.PostBlocks)

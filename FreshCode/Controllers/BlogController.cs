@@ -51,21 +51,19 @@ namespace FreshCode.Controllers
             return Ok();
         }
 
-        [HttpPost("post/{postId}/reaction/{reactionValue}")]
-        public async Task<IActionResult> AddReactionToPost(long postId, bool reactionValue)
+        [HttpPost("post/{postId}/reaction")]
+        public async Task<IActionResult> AddReactionToPost([FromBody] bool reactionValue, long postId)
         {
             var userId = GetUserId(HttpContext);
             await _blogUseCase.AddReactionToPost(userId, postId, reactionValue);
             return Ok();
         }
 
-
-
-        //[HttpPut("posts/{postId}")]
-        //public async Task<IActionResult> EditPost([FromBody] List<PostBlockDTO> blocks, int postId)
-        //{
-        //    await _blogUseCase.EditPost(blocks, postId);
-        //    return Ok();
-        //}
+        [HttpPut("posts/{postId}")]
+        public async Task<IActionResult> EditPost([FromBody] List<PostBlockDTO> blocks, long postId)
+        {
+            await _blogUseCase.EditPost(blocks, postId);
+            return Ok();
+        }
     }
 }

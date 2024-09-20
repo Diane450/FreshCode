@@ -2,9 +2,9 @@
 {
     public class PostBlockDTO
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
 
-        public string Content_Type { get; set; } = null!;
+        public long ContentTypeId { get; set; }
 
         public string Content { get; set; } = null!;
 
