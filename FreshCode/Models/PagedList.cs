@@ -5,7 +5,7 @@ namespace FreshCode.Models
 {
     public class PagedList<T>
     {
-        private PagedList(List<T> items, int page, int pageSize, int totalCount)
+        public PagedList(List<T> items, int page, int pageSize, int totalCount)
         {
             Items = items;
             Page = page;
@@ -19,11 +19,9 @@ namespace FreshCode.Models
         public bool HasNextPage => Page * PageSize < TotalCount;
         public bool HasPreviousPage => Page > 1;
 
-        public async static Task<PagedList<T>> CreateAsync(IQueryable<T> query, int page, int pageSize)
-        {
-            var totalCount = await query.CountAsync();
-            var items = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
-            return new PagedList<T>(items, page, pageSize, totalCount);
-        }
+        //public async static Task<PagedList<T>> CreateAsync(IQueryable<T> query, int page, int pageSize)
+        //{
+            
+        //}
     }
 }

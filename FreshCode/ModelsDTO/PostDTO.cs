@@ -22,6 +22,6 @@
 
         public int LikesCount { get; set; }
 
-        public TagDTO Tag { get; set; } = null!;
+        public long TagId { get; set; }
     }
 }

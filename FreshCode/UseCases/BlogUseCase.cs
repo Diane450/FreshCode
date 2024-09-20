@@ -21,16 +21,19 @@ namespace FreshCode.UseCases
 
         public async Task<PagedList<PostDTO>> GetPosts(QueryParameters parameters)
         {
-            IQueryable<PostDTO> posts = _blogRepository.GetAllPosts()
-                .Select(p => PostMapper.ToDTO(p));
+            IQueryable<Post> posts = _blogRepository.GetAllPosts();
 
             posts = posts.Sort(parameters.SortBy, parameters.SortDescending);
 
             posts = posts.Filter(parameters.FilterBy, parameters.FilterValue);
 
-            var pagedListResult = await PagedList<PostDTO>.CreateAsync(posts, parameters.Page, parameters.PageSize);
+            posts = posts.Paginate(parameters.Page, parameters.PageSize);
 
-            return pagedListResult;
+            int totalCount = await posts.CountAsync();
+
+            List<PostDTO> postsDto = PostMapper.ToDTO(posts.ToList());
+
+            return new PagedList<PostDTO>(postsDto, totalCount, parameters.Page, parameters.PageSize);
         }
 
         public async System.Threading.Tasks.Task CreatePost(CreatePostRequest request, long userId)
@@ -48,19 +51,17 @@ namespace FreshCode.UseCases
 
         public async Task<PagedList<CommentDTO>> GetCommentsByPostId(QueryParameters parameters, long blogId)
         {
-            IQueryable<CommentDTO> comments = _commentRepository.GetCommentsByPostId(blogId)
-                .Select(c => new CommentDTO()
-                {
-                    Id = c.Id,
-                    UserId = c.User.Id,
-                    Comment = c.Comment,
-                    CreatedAt = c.CreatedAt,
-                    UpdatedAt = c.UpdatedAt,
-                });
+            IQueryable<PostComment> comments = _commentRepository.GetCommentsByPostId(blogId);
+            
+            
             comments = comments.Sort(parameters.SortBy, parameters.SortDescending);
+            comments = comments.Paginate(parameters.Page, parameters.PageSize); ;
 
-            var pagedListResult = await PagedList<CommentDTO>.CreateAsync(comments, parameters.Page, parameters.PageSize);
-            return pagedListResult;
+            int totalCount = await comments.CountAsync();
+
+            List<CommentDTO> commentDto = CommentMapper.ToDTO(comments.ToList());
+
+            return new PagedList<CommentDTO>(commentDto, totalCount, parameters.Page, parameters.PageSize);
         }
 
         public async System.Threading.Tasks.Task DeletePost(long postId)

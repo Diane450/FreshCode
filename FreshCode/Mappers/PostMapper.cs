@@ -16,11 +16,7 @@ namespace FreshCode.Mappers
                 CreatedAt = post.CreatedAt,
                 UpdatedAt = post.UpdatedAt,
                 DeletedAt = post.DeletedAt,
-                Tag = new TagDTO
-                {
-                    Id = post.TagId,
-                    Tag = post.Tag.Tag1
-                },
+                TagId = post.TagId,
                 ViewsCount = post.PostViews.Count,
                 DislikesCount = post.PostRatings.Where(post => post.Rating == false).Count(),
                 LikesCount = post.PostRatings.Where(post => post.Rating == true).Count(),
