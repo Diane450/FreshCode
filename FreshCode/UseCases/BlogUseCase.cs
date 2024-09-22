@@ -149,6 +149,10 @@ namespace FreshCode.UseCases
 
         public async Task<PostDTO> EditPost(List<PostBlockDTO> blocks, long postId)
         {
+            if (blocks.Count == 0)
+            {
+                throw new ArgumentException("Post blocks cannot be null");
+            }
             List<PostBlock> existingPostBlocks = await _blogRepository.GetPostBlocks(postId);
 
             List<long> existingPostBlocksId = existingPostBlocks.Select(x => x.Id).ToList();
@@ -158,12 +162,14 @@ namespace FreshCode.UseCases
                 if (block.Id != 0)
                 {
                     var existingPostBlock = existingPostBlocks.Find(p => p.Id == block.Id);
-                    if (existingPostBlock != null)
+                    if (existingPostBlock == null)
                     {
-                        existingPostBlock.Content = block.Content;
-                        existingPostBlock.Index = block.Index;
-                        existingPostBlock.ContentTypeId = block.ContentTypeId;
+                        throw new ArgumentException("Incorrect post Id");
                     }
+                    existingPostBlock.Content = block.Content;
+                    existingPostBlock.Index = block.Index;
+                    existingPostBlock.ContentTypeId = block.ContentTypeId;
+
                 }
                 else
                 {

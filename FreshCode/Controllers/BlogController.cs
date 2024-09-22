@@ -60,6 +60,7 @@ namespace FreshCode.Controllers
         [HttpPut("posts/{postId}")]
         public async Task<PostDTO> EditPost([FromBody] List<PostBlockDTO> blocks, long postId)
         {
+
             return await _blogUseCase.EditPost(blocks, postId);
         }
     }
