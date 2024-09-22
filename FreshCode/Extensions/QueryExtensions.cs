@@ -1,10 +1,20 @@
-﻿using System.Globalization;
+﻿using FreshCode.Models;
+using System.Globalization;
 using System.Linq.Expressions;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace FreshCode.Extensions
 {
     public static class QueryExtensions
     {
+        public static IQueryable<T> ApplyQueryOptions<T>(this IQueryable<T> query, QueryParameters parameters)
+        {
+            query = query.Sort(parameters.SortBy, parameters.SortDescending);
+            query = query.Filter(parameters.FilterBy, parameters.FilterValue);
+            query = query.Paginate(parameters.Page, parameters.PageSize);
+            return query;
+        }
+
         public static IQueryable<T> Paginate<T>(this IQueryable<T> query, int page, int pageSize)
         {
             return query.Skip((page - 1) * pageSize).Take(pageSize);
@@ -52,7 +62,7 @@ namespace FreshCode.Extensions
                 throw new ArgumentException($"Property '{filterBy}' does not exist on type '{typeof(T)}'.", nameof(filterBy));
             }
 
-            var constantValue = Expression.Constant(filterValue);
+            var constantValue = Expression.Constant(long.Parse(filterValue));
             var propertyAccess = Expression.MakeMemberAccess(parameter, property);
             var equalExpression = Expression.Equal(propertyAccess, constantValue);
 

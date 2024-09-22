@@ -13,20 +13,20 @@ namespace FreshCode.Controllers
         private readonly BlogUseCase _blogUseCase = blogUseCase;
 
         [HttpGet("posts")]
-        public async Task<PagedList<PostDTO>> GetPosts([FromQuery] QueryParameters parameters)
+        public async Task<ActionResult<PagedList<PostDTO>>> GetPosts([FromQuery] QueryParameters parameters)
         {
             return await _blogUseCase.GetPosts(parameters);
         }
 
         [HttpPost("posts/create")]
-        public async Task<PostDTO> CreatePost([FromBody] CreatePostRequest request)
+        public async Task<ActionResult<PostDTO>> CreatePost([FromBody] CreatePostRequest request)
         {
             long userId = GetUserId(HttpContext);
             return await _blogUseCase.CreatePost(request, userId);
         }
 
         [HttpDelete("posts/{postId}")]
-        public async Task<IActionResult> DeletePost(long postId)
+        public async Task<ActionResult> DeletePost(long postId)
         {
             await _blogUseCase.DeletePost(postId);
             return Ok();
@@ -60,7 +60,6 @@ namespace FreshCode.Controllers
         [HttpPut("posts/{postId}")]
         public async Task<PostDTO> EditPost([FromBody] List<PostBlockDTO> blocks, long postId)
         {
-
             return await _blogUseCase.EditPost(blocks, postId);
         }
     }

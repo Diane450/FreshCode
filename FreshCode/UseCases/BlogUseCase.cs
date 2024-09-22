@@ -1,5 +1,4 @@
-﻿
-using FreshCode.DbModels;
+﻿using FreshCode.DbModels;
 using FreshCode.Extensions;
 using FreshCode.Interfaces;
 using FreshCode.Mappers;
@@ -8,9 +7,6 @@ using FreshCode.ModelsDTO;
 using FreshCode.Repositories;
 using FreshCode.Requests;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Query.ExpressionTranslators.Internal;
-using System.Linq;
 
 namespace FreshCode.UseCases
 {
@@ -26,19 +22,27 @@ namespace FreshCode.UseCases
 
         public async Task<PagedList<PostDTO>> GetPosts(QueryParameters parameters)
         {
-            IQueryable<Post> posts = _blogRepository.GetAllPosts();
+            try
+            {
+                IQueryable<Post> posts = _blogRepository.GetAllPosts();
 
-            posts = posts.Sort(parameters.SortBy, parameters.SortDescending);
+                posts = posts.Sort(parameters.SortBy, parameters.SortDescending);
 
-            posts = posts.Filter(parameters.FilterBy, parameters.FilterValue);
+                posts = posts.Filter(parameters.FilterBy, parameters.FilterValue);
 
-            posts = posts.Paginate(parameters.Page, parameters.PageSize);
+                int totalCount = await posts.CountAsync();
 
-            int totalCount = await posts.CountAsync();
+                posts = posts.Paginate(parameters.Page, parameters.PageSize);
 
-            List<PostDTO> postsDto = PostMapper.ToDTO(posts.ToList());
 
-            return new PagedList<PostDTO>(postsDto, totalCount, parameters.Page, parameters.PageSize);
+                List<PostDTO> postsDto = PostMapper.ToDTO(posts.ToList());
+
+                return new PagedList<PostDTO>(postsDto, parameters.Page, parameters.PageSize, totalCount);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<PostDTO> CreatePost(CreatePostRequest request, long userId)
@@ -72,10 +76,10 @@ namespace FreshCode.UseCases
                 transaction.Commit();
                 return PostMapper.ToDTO(post);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 transaction.Rollback();
-                return null;
+                throw new Exception(ex.Message);
             }
         }
 
@@ -84,13 +88,15 @@ namespace FreshCode.UseCases
             IQueryable<PostComment> comments = _commentRepository.GetCommentsByPostId(blogId);
 
             comments = comments.Sort(parameters.SortBy, parameters.SortDescending);
-            comments = comments.Paginate(parameters.Page, parameters.PageSize); ;
-
+            
             int totalCount = await comments.CountAsync();
+
+            comments = comments.Paginate(parameters.Page, parameters.PageSize);
+
 
             List<CommentDTO> commentDto = CommentMapper.ToDTO(comments.ToList());
 
-            return new PagedList<CommentDTO>(commentDto, totalCount, parameters.Page, parameters.PageSize);
+            return new PagedList<CommentDTO>(commentDto, parameters.Page, parameters.PageSize, totalCount);
         }
 
         public async System.Threading.Tasks.Task DeletePost(long postId)

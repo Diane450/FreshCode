@@ -20,7 +20,7 @@ namespace FreshCode.Mappers
                 ViewsCount = post.PostViews.Count,
                 DislikesCount = post.PostRatings.Where(post => post.Rating == false).Count(),
                 LikesCount = post.PostRatings.Where(post => post.Rating == true).Count(),
-                PostBlocks = post.PostBlocks.Select(pb=>PostBlockMapper.ToDTO(pb)).ToList()
+                PostBlocks = post.PostBlocks.Select(pb => PostBlockMapper.ToDTO(pb)).ToList()
             };
         }
         public static List<PostDTO> ToDTO(List<Post> posts)

@@ -32,8 +32,6 @@ namespace FreshCode.MiddleWare
                 var userId = await GetUserId();
 
                 _httpContext.Items["userId"] = userId;
-
-                await _next(_httpContext);
             }
             catch (Exception ex)
             {
@@ -43,6 +41,7 @@ namespace FreshCode.MiddleWare
                 context.Response.ContentType = new MediaTypeHeaderValue("application/json").ToString();
                 await context.Response.WriteAsync(jsonString, Encoding.UTF8);
             }
+            await _next(_httpContext);
         }
 
         private async Task<long> GetUserId()
@@ -64,7 +63,7 @@ namespace FreshCode.MiddleWare
                 HttpOnly = true, // Доступ к cookie только через HTTP
                 Secure = _httpContext.Request.IsHttps, // Отправка только по HTTPS
                 SameSite = Microsoft.AspNetCore.Http.SameSiteMode.Strict, // Политика SameSite
-                Expires = DateTime.UtcNow.AddDays(7) // Срок действия cookie
+                Expires = DateTime.UtcNow.AddDays(365) // Срок действия cookie
             };
             _httpContext.Response.Cookies.Append("userId", innerId.ToString(), cookieOptions);
             return Task.FromResult(0);
