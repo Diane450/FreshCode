@@ -41,7 +41,7 @@ namespace FreshCode.UseCases
             return new PagedList<PostDTO>(postsDto, totalCount, parameters.Page, parameters.PageSize);
         }
 
-        public async System.Threading.Tasks.Task CreatePost(CreatePostRequest request, long userId)
+        public async Task<PostDTO> CreatePost(CreatePostRequest request, long userId)
         {
             using var transaction = _transactionRepository.BeginTransaction();
             try
@@ -67,14 +67,15 @@ namespace FreshCode.UseCases
                         PostId = post.Id,
                     };
                     await _baseRepository.AddAsync(postBlock);
-
                 }
                 await _baseRepository.SaveChangesAsync();
                 transaction.Commit();
+                return PostMapper.ToDTO(post);
             }
             catch (Exception)
             {
                 transaction.Rollback();
+                return null;
             }
         }
 

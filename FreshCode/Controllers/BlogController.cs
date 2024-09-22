@@ -19,16 +19,17 @@ namespace FreshCode.Controllers
         }
 
         [HttpPost("posts/create")]
-        public async Task CreatePost([FromBody] CreatePostRequest request)
+        public async Task<PostDTO> CreatePost([FromBody] CreatePostRequest request)
         {
             long userId = GetUserId(HttpContext);
-            await _blogUseCase.CreatePost(request, userId);
+            return await _blogUseCase.CreatePost(request, userId);
         }
 
         [HttpDelete("posts/{postId}")]
-        public async Task DeletePost(long postId)
+        public async Task<IActionResult> DeletePost(long postId)
         {
             await _blogUseCase.DeletePost(postId);
+            return Ok();
         }
 
         [HttpGet("posts/{postId}/comments")]
