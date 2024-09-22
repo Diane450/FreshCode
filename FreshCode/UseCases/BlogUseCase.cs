@@ -5,6 +5,7 @@ using FreshCode.Interfaces;
 using FreshCode.Mappers;
 using FreshCode.Models;
 using FreshCode.ModelsDTO;
+using FreshCode.Repositories;
 using FreshCode.Requests;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Hosting;
@@ -13,11 +14,15 @@ using System.Linq;
 
 namespace FreshCode.UseCases
 {
-    public class BlogUseCase(IBlogRepository blogRepository, ICommentRepository commentRepository, IBaseRepository baseRepository)
+    public class BlogUseCase(IBlogRepository blogRepository,
+        ICommentRepository commentRepository,
+        IBaseRepository baseRepository,
+        TransactionRepository transactionRepository)
     {
         private readonly IBlogRepository _blogRepository = blogRepository;
         private readonly IBaseRepository _baseRepository = baseRepository;
         private readonly ICommentRepository _commentRepository = commentRepository;
+        private readonly TransactionRepository _transactionRepository = transactionRepository;
 
         public async Task<PagedList<PostDTO>> GetPosts(QueryParameters parameters)
         {
@@ -38,21 +43,44 @@ namespace FreshCode.UseCases
 
         public async System.Threading.Tasks.Task CreatePost(CreatePostRequest request, long userId)
         {
-            Post post = new()
+            using var transaction = _transactionRepository.BeginTransaction();
+            try
             {
-                Title = request.Title,
-                CreatedAt = request.CreatedAt,
-                TagId = request.Tag.Id,
-                UserId = userId,
-            };
-            await _baseRepository.AddAsync(post);
-            await _baseRepository.SaveChangesAsync();
+                Post post = new()
+                {
+                    Title = request.Title,
+                    CreatedAt = DateTime.UtcNow,
+                    TagId = request.TagId,
+                    UserId = userId,
+                };
+
+                await _baseRepository.AddAsync(post);
+                await _baseRepository.SaveChangesAsync();
+
+                foreach (var block in request.PostBlock)
+                {
+                    PostBlock postBlock = new PostBlock
+                    {
+                        Content = block.Content,
+                        ContentTypeId = block.ContentTypeId,
+                        Index = block.Index,
+                        PostId = post.Id,
+                    };
+                    await _baseRepository.AddAsync(postBlock);
+
+                }
+                await _baseRepository.SaveChangesAsync();
+                transaction.Commit();
+            }
+            catch (Exception)
+            {
+                transaction.Rollback();
+            }
         }
 
         public async Task<PagedList<CommentDTO>> GetCommentsByPostId(QueryParameters parameters, long blogId)
         {
             IQueryable<PostComment> comments = _commentRepository.GetCommentsByPostId(blogId);
-            
             
             comments = comments.Sort(parameters.SortBy, parameters.SortDescending);
             comments = comments.Paginate(parameters.Page, parameters.PageSize); ;
