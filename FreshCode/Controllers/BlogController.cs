@@ -39,32 +39,28 @@ namespace FreshCode.Controllers
         }
 
         [HttpPost("posts/{postId}/comments")]
-        public async Task<IActionResult> CreateComment([FromBody] CreateCommentRequest request, long postId)
+        public async Task<CommentDTO> CreateComment([FromBody] CreateCommentRequest request, long postId)
         {
-            await _blogUseCase.CreateComment(request, postId);
-            return Ok();
+            return await _blogUseCase.CreateComment(request, postId);
         }
 
         [HttpPut("comments/{commentId}")]
-        public async Task<IActionResult> EditComment([FromBody] string newText, long commentId)
+        public async Task<CommentDTO> EditComment([FromBody] string newText, long commentId)
         {
-            await _blogUseCase.EditComment(newText, commentId);
-            return Ok();
+            return await _blogUseCase.EditComment(newText, commentId);
         }
 
         [HttpPost("post/{postId}/reaction")]
-        public async Task<IActionResult> AddReactionToPost([FromBody] bool reactionValue, long postId)
+        public async Task<int> AddReactionToPost([FromBody] bool reactionValue, long postId)
         {
             var userId = GetUserId(HttpContext);
-            await _blogUseCase.AddReactionToPost(userId, postId, reactionValue);
-            return Ok();
+            return await _blogUseCase.AddReactionToPost(userId, postId, reactionValue);
         }
 
         [HttpPut("posts/{postId}")]
-        public async Task<IActionResult> EditPost([FromBody] List<PostBlockDTO> blocks, long postId)
+        public async Task<PostDTO> EditPost([FromBody] List<PostBlockDTO> blocks, long postId)
         {
-            await _blogUseCase.EditPost(blocks, postId);
-            return Ok();
+            return await _blogUseCase.EditPost(blocks, postId);
         }
     }
 }

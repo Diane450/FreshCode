@@ -82,7 +82,7 @@ namespace FreshCode.UseCases
         public async Task<PagedList<CommentDTO>> GetCommentsByPostId(QueryParameters parameters, long blogId)
         {
             IQueryable<PostComment> comments = _commentRepository.GetCommentsByPostId(blogId);
-            
+
             comments = comments.Sort(parameters.SortBy, parameters.SortDescending);
             comments = comments.Paginate(parameters.Page, parameters.PageSize); ;
 
@@ -102,7 +102,7 @@ namespace FreshCode.UseCases
             await _baseRepository.SaveChangesAsync();
         }
 
-        public async System.Threading.Tasks.Task CreateComment(CreateCommentRequest request, long postId)
+        public async Task<CommentDTO> CreateComment(CreateCommentRequest request, long postId)
         {
             PostComment postComment = new PostComment()
             {
@@ -114,17 +114,20 @@ namespace FreshCode.UseCases
 
             await _baseRepository.AddAsync(postComment);
             await _baseRepository.SaveChangesAsync();
+            return PostCommentMapper.ToDto(postComment);
         }
 
-        public async System.Threading.Tasks.Task EditComment(string newText, long commentId)
+        public async Task<CommentDTO> EditComment(string newText, long commentId)
         {
             PostComment comment = await _commentRepository.GetCommentById(commentId);
             comment.Comment = newText;
             comment.UpdatedAt = DateTime.UtcNow;
             await _baseRepository.SaveChangesAsync();
+
+            return PostCommentMapper.ToDto(comment);
         }
 
-        public async System.Threading.Tasks.Task AddReactionToPost(long userId, long postId, bool reactionValue)
+        public async Task<int> AddReactionToPost(long userId, long postId, bool reactionValue)
         {
             PostRating postRating = new PostRating()
             {
@@ -134,9 +137,17 @@ namespace FreshCode.UseCases
             };
             await _baseRepository.AddAsync(postRating);
             await _baseRepository.SaveChangesAsync();
+
+            IQueryable<PostRating> rating = _blogRepository.GetPostReactions(postId);
+
+            if (reactionValue)
+            {
+                return await rating.Where(pr => pr.Rating == true).CountAsync();
+            }
+            return await rating.Where(pr => pr.Rating == false).CountAsync();
         }
 
-        public async System.Threading.Tasks.Task EditPost(List<PostBlockDTO> blocks, long postId)
+        public async Task<PostDTO> EditPost(List<PostBlockDTO> blocks, long postId)
         {
             List<PostBlock> existingPostBlocks = await _blogRepository.GetPostBlocks(postId);
 
@@ -175,6 +186,9 @@ namespace FreshCode.UseCases
                 _baseRepository.RemoveRange(blocksToRemove);
             }
             await _baseRepository.SaveChangesAsync();
+
+            Post post = await _blogRepository.GetPostById(postId);
+            return PostMapper.ToDTO(post);
         }
     }
 }

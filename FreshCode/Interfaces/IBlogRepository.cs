@@ -8,5 +8,6 @@ namespace FreshCode.Interfaces
         IQueryable<Post> GetAllPosts();
         Task<List<PostBlock>> GetPostBlocks(long postId);
         Task<Post> GetPostById(long id);
+        IQueryable<PostRating> GetPostReactions(long postId);
     }
 }

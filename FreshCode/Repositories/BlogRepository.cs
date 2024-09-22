@@ -33,5 +33,11 @@ namespace FreshCode.Repositories
             return _dbContext.PostBlocks
                 .Where(pb=>pb.PostId == postId).ToListAsync();
         }
+
+        public IQueryable<PostRating> GetPostReactions(long postId)
+        {
+            return _dbContext.PostRatings
+                .Where(pr=>pr.PostId == postId);
+        }
     }
 }
