@@ -40,40 +40,22 @@ namespace FreshCode.UseCases
             return PetMapper.ToDto(pet);
         }
 
-        public async Task<ActionResult<PetDTO>> IncreaseStat(long userId, IncreaseStatRequest statRequest)
+        public async Task<ActionResult<PetDTO>> IncreaseStat(long userId, IncreaseStatRequest request)
         {
             //TODO: обновить среднюю силу питомца
             User user = await _userRepository.GetUserById(userId);
-            Pet pet = await _petsRepository.GetPetById(statRequest.PetDTO.Id);
+            Pet pet = await _petsRepository.GetPetById(request.PetId);
             
             user.StatPoints -= 1;
 
             CheckStatCount(user);
 
-            pet.IncreaseStat(statRequest.Characteristic);
-
-            switch (statRequest.Characteristic)
-            {
-                case CharacteristicType.Health:
-                    statRequest.PetDTO.CurrentHealth = pet.CurrentHealth;
-                    break;
-                case CharacteristicType.Defence:
-                    statRequest.PetDTO.CurrentDefence = pet.CurrentDefence;
-                    break;
-                case CharacteristicType.Strength:
-                    statRequest.PetDTO.CurrentStrength = pet.CurrentStrength;
-                    break;
-                case CharacteristicType.CriticalDamage:
-                    statRequest.PetDTO.CurrentCriticalDamage = pet.CurrentCriticalDamage;
-                    break;
-                case CharacteristicType.CriticalChance:
-                    statRequest.PetDTO.CurrentCriticalChance = pet.CurrentCriticalChance;
-                    break;
-            }
+            pet.IncreaseStat(request.Characteristic);
 
             _baseRepository.Update(pet);
             await _baseRepository.SaveChangesAsync();
-            return statRequest.PetDTO;
+
+            return PetMapper.ToDto(pet);
         }
 
         private void CheckStatCount(User user)

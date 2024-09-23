@@ -8,7 +8,8 @@ namespace FreshCode.Requests
 {
     public class IncreaseStatRequest
     {
-        public PetDTO PetDTO { get; set; } = null!;
         public CharacteristicType Characteristic { get; set; }
+
+        public long PetId { get; set; }
     }
 }
