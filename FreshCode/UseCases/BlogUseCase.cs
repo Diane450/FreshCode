@@ -99,10 +99,13 @@ namespace FreshCode.UseCases
             return new PagedList<CommentDTO>(commentDto, parameters.Page, parameters.PageSize, totalCount);
         }
 
-        public async System.Threading.Tasks.Task DeletePost(long postId)
+        public async System.Threading.Tasks.Task DeletePost(long postId, long userId)
         {
             var post = await _blogRepository.GetPostById(postId);
-
+            if (post.UserId != userId)
+            {
+                throw new Exception("User cannot delete this post");
+            }
             post.DeletedAt = DateTime.UtcNow;
 
             await _baseRepository.SaveChangesAsync();

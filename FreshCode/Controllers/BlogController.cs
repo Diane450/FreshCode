@@ -28,7 +28,9 @@ namespace FreshCode.Controllers
         [HttpDelete("posts/{postId}")]
         public async Task<ActionResult> DeletePost(long postId)
         {
-            await _blogUseCase.DeletePost(postId);
+            long userId = GetUserId(HttpContext);
+
+            await _blogUseCase.DeletePost(postId, userId);
             return Ok();
         }
 
