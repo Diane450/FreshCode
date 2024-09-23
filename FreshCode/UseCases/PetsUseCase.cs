@@ -82,5 +82,15 @@ namespace FreshCode.UseCases
             pet.RemoveArtifact(removeArtifactRequest.ArtifactToRemove);
             return PetMapper.ToDto(pet);
         }
+
+        public async Task<PetDTO> CreatePetAsync(CreatePetRequest request, long userId)
+        {
+            Pet pet = _petsRepository.CreatePet(request, userId);
+
+            await _baseRepository.AddAsync(pet);
+            await _baseRepository.SaveChangesAsync();
+
+            return PetMapper.ToDto(pet);
+        }
     }
 }

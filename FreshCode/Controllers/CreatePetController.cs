@@ -25,23 +25,5 @@ namespace FreshCode.Controllers
         {
             return await _createPetUseCase.GetBodiesAsync();
         }
-
-        [HttpPost]
-        public async Task<ActionResult<PetDTO>> CreatePet([FromBody] CreatePetRequest request)
-        {
-            try
-            {
-                var userId = GetUserId(HttpContext);
-                return await _createPetUseCase.CreatePetAsync(request, userId);
-            }
-            catch (ArgumentException exception)
-            {
-                return BadRequest(exception.Message);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Ошибка: {ex.Message}");
-            }
-        }
     }
 }
