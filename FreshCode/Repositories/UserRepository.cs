@@ -63,9 +63,9 @@ namespace FreshCode.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<UserFoodDTO>> GetUserFood(long userId)
+        public IQueryable<UserFood> GetUserFood(long userId)
         {
-            return await _dbContext.UserFoods
+            return _dbContext.UserFoods
                 .Where(uf => uf.UserId == userId)
                 .Include(uf => uf.Food)
                 .ThenInclude(f => f.FoodBonuses)
@@ -74,9 +74,7 @@ namespace FreshCode.Repositories
                 .Include(uf => uf.Food)
                 .ThenInclude(f => f.FoodBonuses)
                 .ThenInclude(fb => fb.Bonus)
-                .ThenInclude(b => b.Type)
-                .Select(f => UserFoodMapper.ToDTO(f))
-                .ToListAsync();
+                .ThenInclude(b => b.Type);
         }
 
         public async Task<List<ArtifactDTO>> GetUserArtifact(long userId)

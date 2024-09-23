@@ -1,5 +1,6 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.Interfaces;
+using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
 using FreshCode.Repositories;
 using FreshCode.Services;
@@ -39,7 +40,9 @@ namespace FreshCode.UseCases
 
         public async Task<List<UserFoodDTO>> GetUserFood(long userId)
         {
-            return await _userRepository.GetUserFood(userId);
+            var food = _userRepository.GetUserFood(userId).ToList();
+            
+            return UserFoodMapper.ToDTO(food);
         }
 
         public async Task<List<ArtifactDTO>> GetUserArtifact(long userId)

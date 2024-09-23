@@ -15,5 +15,15 @@ namespace FreshCode.Mappers
                 Count = userFood.Count
             };
         }
+
+        public static List<UserFoodDTO> ToDTO(List<UserFood> userFoods)
+        {
+            List<UserFoodDTO> userFoodDTO = new List<UserFoodDTO>();
+            foreach (var userFood in userFoods)
+            {
+                userFoodDTO.Add(ToDTO(userFood));
+            }
+            return userFoodDTO;
+        }
     }
 }

@@ -66,11 +66,13 @@ namespace FreshCode.Controllers
             }
         }
 
-        //[HttpPut]
-        //public async System.Threading.Tasks.Task Feed([FromBody] FeedRequest request)
-        //{
-        ////TODO: Pet_Bonuses
-        //    //await _userUseCase.InventoryDecreaseFoodCountAsync(vk_user_id, request.Food);
-        //}
+        [HttpPut("feed")]
+        public async System.Threading.Tasks.Task Feed([FromBody] FeedRequest request)
+        {
+            //TODO: Pet_Bonuses
+            var userId = GetUserId(HttpContext);
+            
+            await _petsUseCase.Feed(userId, request);
+        }
     }
 }

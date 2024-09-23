@@ -45,7 +45,7 @@ namespace FreshCode.UseCases
             //TODO: обновить среднюю силу питомца
             User user = await _userRepository.GetUserById(userId);
             Pet pet = await _petsRepository.GetPetById(request.PetId);
-            
+
             user.StatPoints -= 1;
 
             CheckStatCount(user);
@@ -91,6 +91,15 @@ namespace FreshCode.UseCases
             await _baseRepository.SaveChangesAsync();
 
             return PetMapper.ToDto(pet);
+        }
+
+        public async System.Threading.Tasks.Task Feed(long userId, FeedRequest request)
+        {
+            UserFood userFood = _userRepository.GetUserFood(userId)
+                .First(uf => uf.FoodId == request.FoodId);
+            userFood.Count -= 1;
+
+
         }
     }
 }

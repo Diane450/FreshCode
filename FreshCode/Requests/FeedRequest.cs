@@ -1,11 +1,14 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.ModelsDTO;
+using System.Diagnostics.Eventing.Reader;
+using System.Net;
 
 namespace FreshCode.Requests
 {
     public class FeedRequest
     {
-        public PetDTO Pet { get; set; } = null!;
-        public FoodDTO Food { get; set; } = null!;
+        public long PetId { get; set; }
+        public long FoodId{ get; set; }
+        public List<BonusDTO>? Bonuses { get; set; }
     }
 }
