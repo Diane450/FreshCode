@@ -13,7 +13,6 @@ namespace FreshCode.UseCases
         IBaseRepository baseRepository
         )
 
-
     {
         private readonly IUserRepository _userRepository = userRepository;
         private readonly IPetsRepository _petsRepository = petsRepository;
@@ -63,9 +62,24 @@ namespace FreshCode.UseCases
             await _baseRepository.SaveChangesAsync();
         }
 
-        internal async System.Threading.Tasks.Task AddUserToClan(long userId)
+        public async System.Threading.Tasks.Task AddUserToClan(long userId, long clanId, AddUserToClanRequest request)
         {
-            throw new NotImplementedException();
+            Clan clan = await _clanRepository.GetClanById(clanId);
+            
+            if (clan.CreatorId != userId)
+            {
+                throw new Exception("User does not have rights to do this action");
+            }
+            
+            UserClan userClan = new()
+            {
+                UserId = request.UserIdToAdd,
+                ClanId = clanId,
+                RoleId = request.RoleId
+            };
+
+            await _baseRepository.AddAsync(userClan);
+            await _baseRepository.SaveChangesAsync();
         }
     }
 }

@@ -250,6 +250,11 @@ public partial class FreshCodeContext : DbContext
 
             entity.Property(e => e.AverageClanPower).HasPrecision(10, 2);
             entity.Property(e => e.Name).HasMaxLength(100);
+
+            entity.HasOne(d => d.Creator).WithMany(p => p.Clans)
+                .HasForeignKey(d => d.CreatorId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Clan_User");
         });
 
         modelBuilder.Entity<ClanBattle>(entity =>

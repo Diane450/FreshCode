@@ -7,31 +7,32 @@ using Microsoft.AspNetCore.Mvc;
 namespace FreshCode.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("clan")]
     public class ClanController(ClanUseCase clanUseCase) : BaseController
     {
         private readonly ClanUseCase _clanUseCase = clanUseCase;
 
-        [HttpPost]
+        [HttpPost("create")]
         public async Task CreateNewClan([FromBody] string clanName)
         {
             var userId = GetUserId(HttpContext);
             await _clanUseCase.CreateNewClan(clanName, userId);
         }
 
-        [HttpDelete]
-        public async Task DeleteClan()
+        [HttpDelete("delete")]
+        
+        public async Task DeleteClan([FromBody] int clanId)
         {
             var userId = GetUserId(HttpContext);
             await _clanUseCase.DeleteClan(userId);
         }
 
 
-        [HttpPost]
-        public async Task AddUserToClan([FromBody] int clanId)
+        [HttpPost("{clanId}/add-user")]
+        public async Task AddUserToClan(long clanId, [FromBody] AddUserToClanRequest request)
         {
             var userId = GetUserId(HttpContext);
-            await _clanUseCase.AddUserToClan(userId); 
+            await _clanUseCase.AddUserToClan(userId, clanId, request); 
         }
     }
 }

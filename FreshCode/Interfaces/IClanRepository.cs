@@ -6,5 +6,7 @@ namespace FreshCode.Interfaces
     public interface IClanRepository
     {
         Task<List<ClanRatingTableDTO>> GetClanRatingTable();
+
+        Task<Clan> GetClanById(long clanId);
     }
 }
