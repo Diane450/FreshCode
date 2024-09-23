@@ -62,7 +62,8 @@ namespace FreshCode.Extensions
                 throw new ArgumentException($"Property '{filterBy}' does not exist on type '{typeof(T)}'.", nameof(filterBy));
             }
 
-            var constantValue = Expression.Constant(long.Parse(filterValue));
+
+            var constantValue = Expression.Constant(long.TryParse(filterValue, out long value)?value:throw new Exception($"Value {filterValue} is not valid on {filterBy}"));
             var propertyAccess = Expression.MakeMemberAccess(parameter, property);
             var equalExpression = Expression.Equal(propertyAccess, constantValue);
 
