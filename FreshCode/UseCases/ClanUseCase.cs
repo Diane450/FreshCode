@@ -57,6 +57,11 @@ namespace FreshCode.UseCases
         public async System.Threading.Tasks.Task DeleteClan(long userId)
         {
             Clan clan = await _userRepository.GetClanByUser(userId);
+            
+            if (clan.CreatorId != userId)
+            {
+                throw new Exception("User does not have rights to do this action");
+            }
 
             _baseRepository.Remove(clan);
             await _baseRepository.SaveChangesAsync();
