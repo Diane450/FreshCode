@@ -9,6 +9,8 @@ namespace FreshCode.Enums
         Strength,
         Defence,
         CriticalDamage,
-        CriticalChance
+        CriticalChance,
+        SleepNeed,
+        FeedNeed
     }
 }

@@ -23,14 +23,14 @@ namespace FreshCode.Extensions
                     break;
             }
         }
-        
+
         private static void EquipArtifact(Pet pet, ArtifactDTO artifactDTO, Artifact? currentArtifact)
         {
             if (currentArtifact is not null)
             {
                 pet.RemoveArtifactBonuses(currentArtifact);
             }
-            pet.SetArtifactBonuses(artifactDTO);
+            //pet.SetBonuses();
         }
 
         public static void RemoveArtifact(this Pet pet, ArtifactDTO artifactDTO)
@@ -47,9 +47,8 @@ namespace FreshCode.Extensions
                     pet.Accessory = null;
                     break;
             }
-
         }
-        
+
         public static void RemoveArtifactBonuses(this Pet pet, Artifact artifact)
         {
             foreach (var artifactbonus in artifact.ArtifactBonuses)
@@ -57,7 +56,7 @@ namespace FreshCode.Extensions
                 var characteristic = artifactbonus.Bonus.Characteristic.Characteristic1;
                 var bonusValue = artifactbonus.Bonus.Value;
                 var bonusType = artifactbonus.Bonus.Type.Type == "flat" ? ModelsDTO.BonusType.Flat : ModelsDTO.BonusType.Percentage;
-                
+
                 switch (characteristic)
                 {
                     case ("Критический урон"):
@@ -79,31 +78,38 @@ namespace FreshCode.Extensions
             }
         }
 
-        public static void SetArtifactBonuses(this Pet pet, ArtifactDTO artifact)
+        private static void SetBonuses(this Pet pet, List<Bonu> bonuses)
         {
-            foreach (var bonus in artifact.Bonuses)
+            foreach (var bonus in bonuses)
             {
-                var characteristic = bonus.Characteristic;
+                CharacteristicType characteristic = Enum.Parse<CharacteristicType>(bonus.Characteristic.Characteristic1, true);
                 var bonusValue = bonus.Value;
-                var bonusType = bonus.Type;
-
+                var bonusType = bonus.Type.Type == "flat" ? ModelsDTO.BonusType.Flat : ModelsDTO.BonusType.Percentage;
                 switch (characteristic)
                 {
-                    case ("Критический урон"):
+                    case (CharacteristicType.CriticalDamage):
                         pet.CurrentCriticalDamage += bonusValue;
                         break;
-                    case ("Защита"):
-                        pet.CurrentDefence = RemoveBonus(pet.CurrentDefence, bonusValue, bonusType);
+                    case (CharacteristicType.Defence):
+                        pet.CurrentDefence = ApplyBonus(pet.CurrentDefence, bonusValue, bonusType);
                         break;
-                    case ("Критический шанс"):
+                    case (CharacteristicType.CriticalChance):
                         pet.CurrentCriticalChance += bonusValue;
                         break;
-                    case ("Здоровье"):
-                        pet.CurrentHealth = RemoveBonus(pet.CurrentHealth, bonusValue, bonusType);
+                    case (CharacteristicType.Health):
+                        pet.CurrentHealth = ApplyBonus(pet.CurrentHealth, bonusValue, bonusType);
                         break;
-                    case ("Сила"):
-                        pet.CurrentStrength = RemoveBonus(pet.CurrentStrength, bonusValue, bonusType);
+                    case (CharacteristicType.Strength):
+                        pet.CurrentStrength = ApplyBonus(pet.CurrentStrength, bonusValue, bonusType);
                         break;
+                    case (CharacteristicType.SleepNeed):
+                        pet.SleepNeed = ApplyBonus(pet.SleepNeed, bonusValue, bonusType);
+                        break;
+                    case (CharacteristicType.FeedNeed):
+                        pet.FeedNeed = ApplyBonus(pet.FeedNeed, bonusValue, bonusType);
+                        break;
+                    default:
+                        throw new Exception($"Invalid CharacteristicType {characteristic}");
                 }
             }
         }
@@ -165,33 +171,38 @@ namespace FreshCode.Extensions
             }
         }
 
-        public static void Feed(this Pet pet, FoodDTO foodDTO)
+        public static void Feed(this Pet pet, List<Bonu> bonuses)
         {
-            foreach (var bonus in foodDTO.Bonuses)
-            {
-                var characteristic = bonus.Characteristic;
-                var bonusValue = bonus.Value;
-                var bonusType = bonus.Type;
-
-                switch (characteristic)
-                {
-                    case ("Критический урон"):
-                        pet.CurrentCriticalDamage += bonusValue;
-                        break;
-                    case ("Защита"):
-                        pet.CurrentDefence = ApplyBonus(pet.CurrentDefence, bonusValue, bonusType);
-                        break;
-                    case ("Критический шанс"):
-                        pet.CurrentCriticalChance += bonusValue;
-                        break;
-                    case ("Здоровье"):
-                        pet.CurrentHealth = ApplyBonus(pet.CurrentHealth, bonusValue, bonusType);
-                        break;
-                    case ("Сила"):
-                        pet.CurrentStrength = ApplyBonus(pet.CurrentStrength, bonusValue, bonusType);
-                        break;
-                }
-            }
+            SetBonuses(pet, bonuses);
         }
+
+        //public static void Feed(this Pet pet, FoodDTO foodDTO)
+        //{
+        //    foreach (var bonus in foodDTO.Bonuses)
+        //    {
+        //        var characteristic = bonus.Characteristic;
+        //        var bonusValue = bonus.Value;
+        //        var bonusType = bonus.Type;
+
+        //        switch (characteristic)
+        //        {
+        //            case ("Критический урон"):
+        //                pet.CurrentCriticalDamage += bonusValue;
+        //                break;
+        //            case ("Защита"):
+        //                pet.CurrentDefence = ApplyBonus(pet.CurrentDefence, bonusValue, bonusType);
+        //                break;
+        //            case ("Критический шанс"):
+        //                pet.CurrentCriticalChance += bonusValue;
+        //                break;
+        //            case ("Здоровье"):
+        //                pet.CurrentHealth = ApplyBonus(pet.CurrentHealth, bonusValue, bonusType);
+        //                break;
+        //            case ("Сила"):
+        //                pet.CurrentStrength = ApplyBonus(pet.CurrentStrength, bonusValue, bonusType);
+        //                break;
+        //        }
+        //    }
+        //}
     }
 }

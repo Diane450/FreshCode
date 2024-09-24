@@ -14,12 +14,14 @@ namespace FreshCode.UseCases
     public class PetsUseCase(IPetsRepository petsRepository,
         IUserRepository userRepository,
         TransactionRepository transactionRepository,
-        IBaseRepository baseRepository)
+        IBaseRepository baseRepository,
+        IFoodRepository foodRepository)
     {
         private readonly IPetsRepository _petsRepository = petsRepository;
         private readonly IUserRepository _userRepository = userRepository;
         private readonly TransactionRepository _transactionRepository = transactionRepository;
         private readonly IBaseRepository _baseRepository = baseRepository;
+        private readonly IFoodRepository _foodRepository = foodRepository;
 
 
         public async Task<PetDTO> GetPetByUserIdAsync(long userId)
@@ -97,9 +99,54 @@ namespace FreshCode.UseCases
         {
             UserFood userFood = _userRepository.GetUserFood(userId)
                 .First(uf => uf.FoodId == request.FoodId);
+
+            if (userFood.Count == 0)
+            {
+                throw new Exception("User does not have this food");
+            }
+
             userFood.Count -= 1;
 
+            if (userFood.Count == 0)
+            {
+                _baseRepository.Remove(userFood);
+            }
+            Food food = await _foodRepository.GetFoodById(request.FoodId);
 
+            Pet pet = await _petsRepository.GetPetById(request.PetId);
+            pet.Feed(food.FoodBonuses.Select(f => f.Bonus).ToList());
+
+            //foreach (var foodBonus in food.FoodBonuses)
+            //{
+            //    switch (foodBonus.Bonus.Characteristic.Characteristic1)
+            //    {
+            //        case ("Критический урон"):
+            //            pet.CurrentCriticalChance += foodBonus.Bonus.Value;
+            //            break;
+            //        case ("Критический шанс"):
+            //            pet.CurrentCriticalChance += foodBonus.Bonus.Value;
+            //            break;
+            //        case ("Защита"):
+            //            pet.CurrentDefence += foodBonus.Bonus.Value;
+            //            break;
+            //        case ("Здоровье"):
+            //            pet.CurrentHealth += foodBonus.Bonus.Value;
+            //            break;
+            //        case ("Сила"):
+            //            pet.CurrentStrength += foodBonus.Bonus.Value;
+            //            break;
+            //        case ("Сон"):
+            //            pet.SleepNeed += foodBonus.Bonus.Value;
+            //            break;
+            //        case ("Питание"):
+            //            pet.FeedNeed += foodBonus.Bonus.Value;
+            //            break;
+            //        default:
+            //            throw new Exception($"Characteristic {foodBonus.Bonus.Characteristic.Characteristic1} does not exist");
+            //    }
+            //}
+            _baseRepository.Update(pet);
+            await _baseRepository.SaveChangesAsync();
         }
     }
 }

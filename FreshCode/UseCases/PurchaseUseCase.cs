@@ -46,7 +46,7 @@ namespace FreshCode.UseCases
             user.Money -= foodToBuy.Price;
             HasPositiveBalance(user);
 
-            var userFoodList = await _userRepository.GetUserFood(user.Id);
+            var userFoodList = _userRepository.GetUserFood(user.Id).ToList();
             var userFood = user.UserFoods.First(uf => uf.Food.Id == foodToBuy.FoodId);
             if (userFood is not null)
             {
