@@ -15,13 +15,15 @@ namespace FreshCode.UseCases
         IUserRepository userRepository,
         TransactionRepository transactionRepository,
         IBaseRepository baseRepository,
-        IFoodRepository foodRepository)
+        IFoodRepository foodRepository,
+        IArtifactRepository artifactRepository)
     {
         private readonly IPetsRepository _petsRepository = petsRepository;
         private readonly IUserRepository _userRepository = userRepository;
         private readonly TransactionRepository _transactionRepository = transactionRepository;
         private readonly IBaseRepository _baseRepository = baseRepository;
         private readonly IFoodRepository _foodRepository = foodRepository;
+        private readonly IArtifactRepository _artifactRepository = artifactRepository;
 
 
         public async Task<PetDTO> GetPetByUserIdAsync(long userId)
@@ -72,7 +74,9 @@ namespace FreshCode.UseCases
         {
             Pet pet = await _petsRepository.GetPetById(setArtifactRequest.PetId);
 
-            pet.AssignArtifact(setArtifactRequest.Artifact);
+            Artifact artifact = await _artifactRepository.GetArtifactById(setArtifactRequest.ArtifactId);
+
+            pet.AssignArtifact(artifact);
 
             await _baseRepository.SaveChangesAsync();
             return PetMapper.ToDto(pet);
@@ -81,7 +85,12 @@ namespace FreshCode.UseCases
         public async Task<PetDTO> RemoveArtifact(RemoveArtifactRequest removeArtifactRequest)
         {
             Pet pet = await _petsRepository.GetPetById(removeArtifactRequest.PetId);
-            pet.RemoveArtifact(removeArtifactRequest.ArtifactToRemove);
+            
+            Artifact artifact = await _artifactRepository.GetArtifactById(removeArtifactRequest.ArtifactToRemoveId);
+
+            pet.RemoveArtifact(artifact);
+
+            await _baseRepository.SaveChangesAsync();
             return PetMapper.ToDto(pet);
         }
 
@@ -116,35 +125,6 @@ namespace FreshCode.UseCases
             Pet pet = await _petsRepository.GetPetById(request.PetId);
             pet.Feed(food.FoodBonuses.Select(f => f.Bonus).ToList());
 
-            //foreach (var foodBonus in food.FoodBonuses)
-            //{
-            //    switch (foodBonus.Bonus.Characteristic.Characteristic1)
-            //    {
-            //        case ("Критический урон"):
-            //            pet.CurrentCriticalChance += foodBonus.Bonus.Value;
-            //            break;
-            //        case ("Критический шанс"):
-            //            pet.CurrentCriticalChance += foodBonus.Bonus.Value;
-            //            break;
-            //        case ("Защита"):
-            //            pet.CurrentDefence += foodBonus.Bonus.Value;
-            //            break;
-            //        case ("Здоровье"):
-            //            pet.CurrentHealth += foodBonus.Bonus.Value;
-            //            break;
-            //        case ("Сила"):
-            //            pet.CurrentStrength += foodBonus.Bonus.Value;
-            //            break;
-            //        case ("Сон"):
-            //            pet.SleepNeed += foodBonus.Bonus.Value;
-            //            break;
-            //        case ("Питание"):
-            //            pet.FeedNeed += foodBonus.Bonus.Value;
-            //            break;
-            //        default:
-            //            throw new Exception($"Characteristic {foodBonus.Bonus.Characteristic.Characteristic1} does not exist");
-            //    }
-            //}
             _baseRepository.Update(pet);
             await _baseRepository.SaveChangesAsync();
         }

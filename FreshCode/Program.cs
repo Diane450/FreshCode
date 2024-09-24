@@ -35,6 +35,7 @@ builder.Services.AddScoped<ClanUseCase>();
 builder.Services.AddScoped<TransactionRepository>();
 builder.Services.AddScoped<ClanUseCase>();
 builder.Services.AddScoped<IClanRepository, ClanRepository>();
+builder.Services.AddScoped<IArtifactRepository, ArtifactRepository>();
 
 builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();

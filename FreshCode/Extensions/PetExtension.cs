@@ -8,72 +8,80 @@ namespace FreshCode.Extensions
     public static class PetExtension
     {
         //TODO: обновить среднюю силу питомца
-        public static void AssignArtifact(this Pet pet, ArtifactDTO artifactDTO)
+        public static void AssignArtifact(this Pet pet, Artifact artifact)
         {
-            switch (artifactDTO.Type)
+            switch (artifact.ArtifactType.Type)
             {
                 case "Шапка":
-                    pet.HatId = artifactDTO.Id;
-                    EquipArtifact(pet, artifactDTO, pet.Hat);
+                    pet.HatId = artifact.Id;
+                    EquipArtifact(pet, artifact, pet.Hat);
                     break;
 
                 case "Аксессуар":
-                    pet.AccessoryId = artifactDTO.Id;
-                    EquipArtifact(pet, artifactDTO, pet.Accessory);
+                    pet.AccessoryId = artifact.Id;
+                    EquipArtifact(pet, artifact, pet.Accessory);
                     break;
             }
         }
 
-        private static void EquipArtifact(Pet pet, ArtifactDTO artifactDTO, Artifact? currentArtifact)
+        private static void EquipArtifact(Pet pet, Artifact newArtifact, Artifact? currentArtifact)
         {
             if (currentArtifact is not null)
             {
-                pet.RemoveArtifactBonuses(currentArtifact);
+                pet.RemoveBonuses(currentArtifact);
             }
-            //pet.SetBonuses();
+            pet.SetBonuses(newArtifact.ArtifactBonuses.Select(ab => ab.Bonus).ToList());
         }
 
-        public static void RemoveArtifact(this Pet pet, ArtifactDTO artifactDTO)
+        public static void RemoveArtifact(this Pet pet, Artifact artifact)
         {
-            switch (artifactDTO.Type)
+            switch (artifact.ArtifactType.Type)
             {
                 case "Шапка":
-                    RemoveArtifactBonuses(pet, pet.Hat);
+                    RemoveBonuses(pet, pet.Hat);
                     pet.Hat = null;
                     break;
 
                 case "Аксессуар":
-                    RemoveArtifactBonuses(pet, pet.Accessory);
+                    RemoveBonuses(pet, pet.Accessory);
                     pet.Accessory = null;
                     break;
             }
         }
 
-        public static void RemoveArtifactBonuses(this Pet pet, Artifact artifact)
+        public static void RemoveBonuses(this Pet pet, Artifact artifact)
         {
             foreach (var artifactbonus in artifact.ArtifactBonuses)
             {
-                var characteristic = artifactbonus.Bonus.Characteristic.Characteristic1;
+                CharacteristicType characteristic = Enum.Parse<CharacteristicType>(artifactbonus.Bonus.Characteristic.Characteristic1, true);
                 var bonusValue = artifactbonus.Bonus.Value;
                 var bonusType = artifactbonus.Bonus.Type.Type == "flat" ? ModelsDTO.BonusType.Flat : ModelsDTO.BonusType.Percentage;
 
                 switch (characteristic)
                 {
-                    case ("Критический урон"):
+                    case (CharacteristicType.CriticalDamage):
                         pet.CurrentCriticalDamage -= bonusValue;
                         break;
-                    case ("Защита"):
-                        pet.CurrentDefence = RemoveBonus(pet.CurrentDefence, bonusValue, bonusType);
-                        break;
-                    case ("Критический шанс"):
+                    case (CharacteristicType.CriticalChance):
                         pet.CurrentCriticalChance -= bonusValue;
                         break;
-                    case ("Здоровье"):
+                    case (CharacteristicType.Defence):
+                        pet.CurrentDefence = RemoveBonus(pet.CurrentDefence, bonusValue, bonusType);
+                        break;
+                    case (CharacteristicType.Health):
                         pet.CurrentHealth = RemoveBonus(pet.CurrentHealth, bonusValue, bonusType);
                         break;
-                    case ("Сила"):
+                    case (CharacteristicType.Strength):
                         pet.CurrentStrength = RemoveBonus(pet.CurrentStrength, bonusValue, bonusType);
                         break;
+                    case (CharacteristicType.SleepNeed):
+                        pet.SleepNeed = RemoveBonus(pet.SleepNeed, bonusValue, bonusType);
+                        break;
+                    case (CharacteristicType.FeedNeed):
+                        pet.FeedNeed = RemoveBonus(pet.FeedNeed, bonusValue, bonusType);
+                        break;
+                    default:
+                        throw new Exception($"Invalid CharacteristicType {characteristic}");
                 }
             }
         }
@@ -175,34 +183,5 @@ namespace FreshCode.Extensions
         {
             SetBonuses(pet, bonuses);
         }
-
-        //public static void Feed(this Pet pet, FoodDTO foodDTO)
-        //{
-        //    foreach (var bonus in foodDTO.Bonuses)
-        //    {
-        //        var characteristic = bonus.Characteristic;
-        //        var bonusValue = bonus.Value;
-        //        var bonusType = bonus.Type;
-
-        //        switch (characteristic)
-        //        {
-        //            case ("Критический урон"):
-        //                pet.CurrentCriticalDamage += bonusValue;
-        //                break;
-        //            case ("Защита"):
-        //                pet.CurrentDefence = ApplyBonus(pet.CurrentDefence, bonusValue, bonusType);
-        //                break;
-        //            case ("Критический шанс"):
-        //                pet.CurrentCriticalChance += bonusValue;
-        //                break;
-        //            case ("Здоровье"):
-        //                pet.CurrentHealth = ApplyBonus(pet.CurrentHealth, bonusValue, bonusType);
-        //                break;
-        //            case ("Сила"):
-        //                pet.CurrentStrength = ApplyBonus(pet.CurrentStrength, bonusValue, bonusType);
-        //                break;
-        //        }
-        //    }
-        //}
     }
 }

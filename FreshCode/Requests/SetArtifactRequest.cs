@@ -4,7 +4,7 @@ namespace FreshCode.Requests
 {
     public class SetArtifactRequest
     {
-        public ArtifactDTO Artifact { get; set; } = null!;
+        public long ArtifactId { get; set; }
         public long PetId { get; set; }
     }
 }
