@@ -6,48 +6,48 @@ using Microsoft.AspNetCore.Mvc;
 namespace FreshCode.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("user")]
 
     public class UserController(UserUseCase userUseCase):BaseController
     {
         private readonly UserUseCase _userUseCase = userUseCase;
         
-        [HttpGet]
+        [HttpGet("game-info")]
         public async Task <UserDTO> GetUserGameInfo()
         {
             var userId = GetUserId(HttpContext);
             return await _userUseCase.GetUserGameInfo(userId);
         }
 
-        [HttpGet]
+        [HttpGet("tasks")]
         public async Task<List<TaskDTO>> GetUserTasks()
         {
             var userId = GetUserId(HttpContext);
             return await _userUseCase.GetUserTasks(userId);
         }
 
-        [HttpGet]
+        [HttpGet("artifact-history")]
         public async Task<List<ArtifactHistoryDTO>> GetArtifactHistory()
         {
             var userId = GetUserId(HttpContext);
             return await _userUseCase.GetArtifactHistory(userId);
         }
 
-        [HttpGet]
+        [HttpGet("food")]
         public async Task<List<UserFoodDTO>> GetUserFood()
         {
             var userId = GetUserId(HttpContext);
             return await _userUseCase.GetUserFood(userId);
         }
 
-        [HttpGet]
+        [HttpGet("artifacts")]
         public async Task<List<ArtifactDTO>> GetUserArtifact()
         {
             var userId = GetUserId(HttpContext);
             return await _userUseCase.GetUserArtifact(userId);
         }
 
-        [HttpGet]
+        [HttpGet("backgrounds")]
         public async Task<List<BackgroundDTO>> GetUserBackgrounds()
         {
             var userId = GetUserId(HttpContext);
