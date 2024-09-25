@@ -23,5 +23,6 @@ namespace FreshCode.Interfaces
         public Task<bool> isArtifactAbsent(long artifactId, long userId);
         public Task<bool> isBackgroundAbsent(long backgroundId, long userId);
         public Task<User> GetUserById(long userId);
+        IQueryable<User> GetUsersByClanId(long clanId);
     }
 }

@@ -3,6 +3,7 @@ using FreshCode.Interfaces;
 using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace FreshCode.Repositories
 {
@@ -202,6 +203,14 @@ namespace FreshCode.Repositories
             {
                 throw new ArgumentException("Пользователь не найден");
             }
+        }
+
+        public IQueryable<User> GetUsersByClanId(long clanId)
+        {
+            return _dbContext.UserClans
+                .Where(uc => uc.ClanId == clanId)
+                .Include(c => c.User)
+                .Select(c=>c.User);
         }
     }
 }

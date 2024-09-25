@@ -40,5 +40,11 @@ namespace FreshCode.Controllers
         {
             return await _clanUseCase.GetAllClans(parameters);
         }
+
+        [HttpGet("{clanId}/users-rating")]
+        public async Task<PagedList<UserRatingTableDTO>> GetClanUserRating(long clanId, [FromQuery] QueryParameters parameters)
+        {
+            return await _clanUseCase.GetClanUserRating(clanId, parameters);
+        }
     }
 }

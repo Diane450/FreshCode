@@ -7,6 +7,7 @@ using FreshCode.Models;
 using FreshCode.ModelsDTO;
 using FreshCode.Repositories;
 using FreshCode.Requests;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace FreshCode.UseCases
@@ -109,6 +110,32 @@ namespace FreshCode.UseCases
                 List<ClanDTO> clansDto = ClanMapper.ToDTO(clans.ToList());
 
                 return new PagedList<ClanDTO>(clansDto, parameters.Page, parameters.PageSize, totalCount);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<PagedList<UserRatingTableDTO>> GetClanUserRating(long clanId, QueryParameters parameters)
+        {
+            try
+            {
+                IQueryable<User> users = _userRepository.GetUsersByClanId(clanId);
+
+                int totalCount = await users.CountAsync();
+
+                users = users.Sort(parameters.SortBy, parameters.SortDescending);
+
+                users = users.Filter(parameters.FilterBy, parameters.FilterValue);
+
+                users = users.Paginate(parameters.Page, parameters.PageSize);
+
+                List<UserRatingTableDTO> clansDto = users
+                    .Select(u => UserMapper.ToRatingTableDTO(u))
+                    .ToList();
+
+                return new PagedList<UserRatingTableDTO>(clansDto, parameters.Page, parameters.PageSize, totalCount);
             }
             catch (Exception ex)
             {
