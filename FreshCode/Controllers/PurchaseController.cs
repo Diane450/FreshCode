@@ -9,7 +9,7 @@ using System;
 namespace FreshCode.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("buy")]
     public class PurchaseController : BaseController
     {
         private readonly PurchaseUseCase _purchaseUseCase;
@@ -19,7 +19,7 @@ namespace FreshCode.Controllers
             _purchaseUseCase = purchaseUseCase;
         }
 
-        [HttpPost]
+        [HttpPost("artifact")]
         public async Task<ActionResult> BuyArtifact([FromBody] BuyArtifactRequest artifactToBuy)
         {
             try
@@ -42,7 +42,7 @@ namespace FreshCode.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("food")]
         public async Task<ActionResult> BuyFood([FromBody] BuyFoodRequest foodToBuy)
         {
             try
@@ -65,7 +65,7 @@ namespace FreshCode.Controllers
             }
         }
 
-        [HttpPost]
+        [HttpPost("background")]
         public async Task<ActionResult> BuyBackground([FromBody] BuyBackgroundRequest backgroundToBuy)
         {
             try
