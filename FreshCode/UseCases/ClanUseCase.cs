@@ -1,8 +1,13 @@
 ﻿
 using FreshCode.DbModels;
+using FreshCode.Extensions;
 using FreshCode.Interfaces;
+using FreshCode.Mappers;
+using FreshCode.Models;
+using FreshCode.ModelsDTO;
 using FreshCode.Repositories;
 using FreshCode.Requests;
+using Microsoft.EntityFrameworkCore;
 
 namespace FreshCode.UseCases
 {
@@ -67,9 +72,9 @@ namespace FreshCode.UseCases
             await _baseRepository.SaveChangesAsync();
         }
 
-        public async System.Threading.Tasks.Task AddUserToClan(long userId, long clanId, AddUserToClanRequest request)
+        public async System.Threading.Tasks.Task AddUserToClan(long userId, AddUserToClanRequest request)
         {
-            Clan clan = await _clanRepository.GetClanById(clanId);
+            Clan clan = await _clanRepository.GetClanById(request.ClanId);
             
             if (clan.CreatorId != userId)
             {
@@ -79,12 +84,36 @@ namespace FreshCode.UseCases
             UserClan userClan = new()
             {
                 UserId = request.UserIdToAdd,
-                ClanId = clanId,
+                ClanId = clan.Id,
                 RoleId = request.RoleId
             };
 
             await _baseRepository.AddAsync(userClan);
             await _baseRepository.SaveChangesAsync();
+        }
+
+        public async Task<PagedList<ClanDTO>> GetAllClans(QueryParameters parameters)
+        {
+            try
+            {
+                IQueryable<Clan> clans = _clanRepository.GetAllClans();
+
+                clans = clans.Sort(parameters.SortBy, parameters.SortDescending);
+
+                clans = clans.Filter(parameters.FilterBy, parameters.FilterValue);
+
+                int totalCount = await clans.CountAsync();
+
+                clans = clans.Paginate(parameters.Page, parameters.PageSize);
+
+                List<ClanDTO> clansDto = ClanMapper.ToDTO(clans.ToList());
+
+                return new PagedList<ClanDTO>(clansDto, parameters.Page, parameters.PageSize, totalCount);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

@@ -8,5 +8,7 @@ namespace FreshCode.Interfaces
         Task<List<ClanRatingTableDTO>> GetClanRatingTable();
 
         Task<Clan> GetClanById(long clanId);
+
+        IQueryable<Clan> GetAllClans();
     }
 }

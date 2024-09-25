@@ -1,4 +1,6 @@
-﻿using FreshCode.Requests;
+﻿using FreshCode.Models;
+using FreshCode.ModelsDTO;
+using FreshCode.Requests;
 using FreshCode.Services;
 using FreshCode.UseCases;
 using Microsoft.AspNetCore.Http;
@@ -20,19 +22,23 @@ namespace FreshCode.Controllers
         }
 
         [HttpDelete("delete")]
-        
         public async Task DeleteClan([FromBody] int clanId)
         {
             var userId = GetUserId(HttpContext);
             await _clanUseCase.DeleteClan(userId);
         }
 
-
-        [HttpPost("{clanId}/add-user")]
-        public async Task AddUserToClan(long clanId, [FromBody] AddUserToClanRequest request)
+        [HttpPost("add-user")]
+        public async Task AddUserToClan([FromBody] AddUserToClanRequest request)
         {
             var userId = GetUserId(HttpContext);
-            await _clanUseCase.AddUserToClan(userId, clanId, request); 
+            await _clanUseCase.AddUserToClan(userId, request); 
+        }
+
+        [HttpGet]
+        public async Task<PagedList<ClanDTO>> GetAllClans([FromQuery]QueryParameters parameters)
+        {
+            return await _clanUseCase.GetAllClans(parameters);
         }
     }
 }

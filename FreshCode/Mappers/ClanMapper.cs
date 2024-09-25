@@ -13,5 +13,27 @@ namespace FreshCode.Mappers
                 WonBattlesCount = clan.WonBattlesCount
             };
         }
+
+        public static ClanDTO ToDTO(Clan clan)
+        {
+            return new ClanDTO
+            {
+                Id = clan.Id,
+                Name = clan.Name,
+                WonBattlesCount = clan.WonBattlesCount,
+                MemberCount = clan.UserClans.Count
+            };
+        }
+
+        public static List<ClanDTO> ToDTO(List<Clan> clans)
+        {
+            List<ClanDTO> clanDTOs = new List<ClanDTO>();
+
+            foreach (var clan in clans)
+            {
+                clanDTOs.Add(ToDTO(clan));
+            }
+            return clanDTOs;
+        }
     }
 }
