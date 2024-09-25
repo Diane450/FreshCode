@@ -46,6 +46,10 @@ builder.Services.AddScoped<PurchaseUseCase>();
 builder.Services.AddScoped<BlogUseCase>();
 builder.Services.AddScoped<IBlogRepository, BlogRepository>();
 
+builder.Services.AddScoped<BannerUseCase>();
+builder.Services.AddScoped<IBanerRepository, BanerRepository>();
+
+
 builder.Services.AddScoped<VkLaunchParamsService>();
 
 builder.Services.Configure<VkApiSettings>(builder.Configuration.GetSection("VkApi"));
