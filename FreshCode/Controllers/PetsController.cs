@@ -69,11 +69,22 @@ namespace FreshCode.Controllers
         [HttpPut("feed")]
         public async System.Threading.Tasks.Task Feed([FromBody] FeedRequest request)
         {
-            //TODO: Pet_Bonuses
+            //TODO: Pet_Bonuses add timer
             var userId = GetUserId(HttpContext);
             
             await _petsUseCase.Feed(userId, request);
         }
 
+        [HttpPut("set-artifact")]
+        public async Task<ActionResult<PetDTO>> SetArtifact([FromBody] SetArtifactRequest setArtifactRequest)
+        {
+            return Ok(await _petsUseCase.SetArtifact(setArtifactRequest));
+        }
+
+        [HttpPut("remove-artifact")]
+        public async Task<ActionResult<PetDTO>> RemoveArtifact([FromBody] RemoveArtifactRequest removeArtifactRequest)
+        {
+            return Ok(await _petsUseCase.RemoveArtifact(removeArtifactRequest));
+        }
     }
 }
