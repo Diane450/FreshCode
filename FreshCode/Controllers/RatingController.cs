@@ -6,24 +6,24 @@ using Microsoft.AspNetCore.Mvc;
 namespace FreshCode.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("rating")]
     public class RatingController(UserUseCase userUseCase) : Controller
     {
         private UserUseCase _userUseCase = userUseCase;
 
-        [HttpGet]
+        [HttpGet("all-users")]
         public async Task<List<UserRatingTableDTO>> GetAllUsersRatingTable()
         {
             return await _userUseCase.GetAllUsersRatingTable();
         }
 
-        [HttpGet]
+        [HttpGet("clans")]
         public async Task<List<ClanRatingTableDTO>> GetClanRatingTable()
         {
             return await _userUseCase.GetClanRatingTable();
         }
 
-        [HttpGet]
+        [HttpGet("friends")]
         public async Task<List<UserRatingTableDTO>> GetFriendsRatingTable()
         {
             string vk_user_id = await VkLaunchParamsService.GetParamValueAsync(Request.Headers, "vk_user_id");
