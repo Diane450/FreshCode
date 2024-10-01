@@ -15,5 +15,12 @@ namespace FreshCode.Controllers
         {
             return await _bannerUseCase.GetBannerById(bannerId);
         }
+
+        [HttpGet("drop-artifact")]
+        public async Task<long> GetArtifacts([FromBody]long bannerId)
+        {
+            long userId = GetUserId(HttpContext);
+            return await _bannerUseCase.GetArtifact(userId, bannerId);
+        }
     }
 }

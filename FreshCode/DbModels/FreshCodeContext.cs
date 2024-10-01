@@ -29,6 +29,8 @@ public partial class FreshCodeContext : DbContext
 
     public virtual DbSet<BannerItem> BannerItems { get; set; }
 
+    public virtual DbSet<BannerType> BannerTypes { get; set; }
+
     public virtual DbSet<Body> Bodies { get; set; }
 
     public virtual DbSet<Bonu> Bonus { get; set; }
@@ -149,6 +151,11 @@ public partial class FreshCodeContext : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("ArtifactHistory_Artifact");
 
+            entity.HasOne(d => d.Banner).WithMany(p => p.ArtifactHistories)
+                .HasForeignKey(d => d.BannerId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("ArtifactHistory_Banner");
+
             entity.HasOne(d => d.User).WithMany(p => p.ArtifactHistories)
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
@@ -177,6 +184,11 @@ public partial class FreshCodeContext : DbContext
             entity.HasKey(e => e.Id).HasName("Banner_pkey");
 
             entity.ToTable("Banner");
+
+            entity.HasOne(d => d.BannerType).WithMany(p => p.Banners)
+                .HasForeignKey(d => d.BannerTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Banner_BannerType");
         });
 
         modelBuilder.Entity<BannerItem>(entity =>
@@ -197,6 +209,15 @@ public partial class FreshCodeContext : DbContext
                 .HasForeignKey(d => d.BannerId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Banner_Item_Banner");
+        });
+
+        modelBuilder.Entity<BannerType>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("BannerType_pkey");
+
+            entity.ToTable("BannerType");
+
+            entity.Property(e => e.Type).HasColumnType("character varying");
         });
 
         modelBuilder.Entity<Body>(entity =>

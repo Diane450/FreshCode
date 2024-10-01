@@ -4,6 +4,7 @@ using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
 using FreshCode.Repositories;
 using FreshCode.Services;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 
 namespace FreshCode.UseCases
@@ -33,15 +34,16 @@ namespace FreshCode.UseCases
             return await _userRepository.GetUserTasks(userId);
         }
 
-        public async Task<List<ArtifactHistoryDTO>> GetArtifactHistory(long userId)
+        public async Task<List<ArtifactHistoryDTO>> GetArtifactHistory(long userId, long bannerId)
         {
-            return await _userRepository.GetArtifactHistory(userId);
+            return _userRepository.GetArtifactHistory(userId, bannerId)
+                .Select(ah => ArtifactHistoryMapper.ToDTO(ah)).ToList();
         }
 
         public async Task<List<UserFoodDTO>> GetUserFood(long userId)
         {
             var food = _userRepository.GetUserFood(userId).ToList();
-            
+
             return UserFoodMapper.ToDTO(food);
         }
 

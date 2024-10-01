@@ -26,11 +26,11 @@ namespace FreshCode.Controllers
             return await _userUseCase.GetUserTasks(userId);
         }
 
-        [HttpGet("artifact-history")]
-        public async Task<List<ArtifactHistoryDTO>> GetArtifactHistory()
+        [HttpGet("artifact-history/banner/{bannerId}")]
+        public async Task<List<ArtifactHistoryDTO>> GetArtifactHistory(long bannerId)
         {
             var userId = GetUserId(HttpContext);
-            return await _userUseCase.GetArtifactHistory(userId);
+            return await _userUseCase.GetArtifactHistory(userId, bannerId);
         }
 
         [HttpGet("food")]

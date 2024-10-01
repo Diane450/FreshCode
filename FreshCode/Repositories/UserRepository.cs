@@ -44,24 +44,14 @@ namespace FreshCode.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<ArtifactHistoryDTO>> GetArtifactHistory(long userId)
+        public IQueryable<ArtifactHistory> GetArtifactHistory(long userId, long bannerId)
         {
-            return await _dbContext.ArtifactHistories
-                .Where(ah => ah.UserId == userId)
+            return _dbContext.ArtifactHistories
+                .Where(ah => ah.UserId == userId && ah.BannerId == bannerId)
                 .Include(ah => ah.Artifact)
                 .ThenInclude(a => a.ArtifactType)
                 .Include(ah => ah.Artifact)
-                .ThenInclude(a => a.Rarity)
-                .Include(ah => ah.Artifact)
-                .ThenInclude(a => a.ArtifactBonuses)
-                .ThenInclude(ab => ab.Bonus)
-                .ThenInclude(b => b.Characteristic)
-                .Include(ah => ah.Artifact)
-                .ThenInclude(a => a.ArtifactBonuses)
-                .ThenInclude(ab => ab.Bonus)
-                .ThenInclude(b => b.Type)
-                .Select(artifact => ArtifactHistoryMapper.ToDTO(artifact))
-                .ToListAsync();
+                .ThenInclude(a => a.Rarity);
         }
 
         public IQueryable<UserFood> GetUserFood(long userId)

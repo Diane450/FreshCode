@@ -6,6 +6,6 @@
 
         public ArtifactDTO Artifact { get; set; } = null!;
 
-        public int GotAt { get; set; }
+        public DateTime? GotAt { get; set; }
     }
 }

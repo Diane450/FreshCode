@@ -11,9 +11,13 @@ public partial class ArtifactHistory
 
     public long ArtifactId { get; set; }
 
-    public int GotAt { get; set; }
+    public DateTime GotAt { get; set; }
+
+    public long BannerId { get; set; }
 
     public virtual Artifact Artifact { get; set; } = null!;
+
+    public virtual Banner Banner { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
 }

@@ -11,5 +11,11 @@ public partial class Banner
 
     public DateTime ExpiresAt { get; set; }
 
+    public long BannerTypeId { get; set; }
+
+    public virtual ICollection<ArtifactHistory> ArtifactHistories { get; set; } = new List<ArtifactHistory>();
+
     public virtual ICollection<BannerItem> BannerItems { get; set; } = new List<BannerItem>();
+
+    public virtual BannerType BannerType { get; set; } = null!;
 }

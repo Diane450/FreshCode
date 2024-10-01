@@ -8,7 +8,7 @@ namespace FreshCode.Interfaces
     {
         Task <UserDTO> GetUserGameInfo(long userId);
         Task<List<TaskDTO>> GetUserTasks(long userId);
-        Task<List<ArtifactHistoryDTO>> GetArtifactHistory(long userId);
+        IQueryable <ArtifactHistory> GetArtifactHistory(long userId, long bannerId);
         IQueryable<UserFood> GetUserFood(long userId);
         Task<List<ArtifactDTO>> GetUserArtifact(long userId);
         Task<List<BackgroundDTO>> GetUserBackgrounds(long userId);

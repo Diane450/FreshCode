@@ -26,5 +26,10 @@ namespace FreshCode.Repositories
             }
             return artifact;
         }
+
+        public async Task<Artifact> GetArtifacts()
+        {
+            return null;
+        }
     }
 }

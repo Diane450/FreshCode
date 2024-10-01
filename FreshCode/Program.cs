@@ -48,6 +48,7 @@ builder.Services.AddScoped<IBlogRepository, BlogRepository>();
 
 builder.Services.AddScoped<BannerUseCase>();
 builder.Services.AddScoped<IBanerRepository, BanerRepository>();
+builder.Services.AddScoped<ArtifactDropService>();
 
 
 builder.Services.AddScoped<VkLaunchParamsService>();

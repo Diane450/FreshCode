@@ -11,26 +11,18 @@ namespace FreshCode.Repositories
         {
             _dbContext = dbContext;
         }
+
+        public IQueryable<BannerItem> GetArtifactsByBanner(long bannerId)
+        {
+            return _dbContext.BannerItems
+                .Where(bi => bi.BannerId == bannerId);
+        }
+
         public async Task<Banner> GetBannerById(long bannerId)
         {
             var banner = await _dbContext.Banners
                 .Where(b => b.Id == bannerId)
                 .Include(b => b.BannerItems)
-                .ThenInclude(bi => bi.Artifact)
-                .ThenInclude(a => a.Rarity)
-                .Include(b => b.BannerItems)
-                .ThenInclude(bi => bi.Artifact)
-                .ThenInclude(bi => bi.ArtifactType)
-                .Include(b => b.BannerItems)
-                .ThenInclude(bi => bi.Artifact)
-                .ThenInclude(bi => bi.ArtifactBonuses)
-                .ThenInclude(bi => bi.Bonus)
-                .ThenInclude(bi => bi.Type)
-                .Include(b => b.BannerItems)
-                .ThenInclude(bi => bi.Artifact)
-                .ThenInclude(bi => bi.ArtifactBonuses)
-                .ThenInclude(bi => bi.Bonus)
-                .ThenInclude(bi => bi.Characteristic)
                 .FirstOrDefaultAsync();
             if (banner == null)
             {
