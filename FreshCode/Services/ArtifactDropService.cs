@@ -6,15 +6,15 @@ namespace FreshCode.Services
 {
     public class ArtifactDropService
     {
-        public int Rarity { get; set; }
+        private int Rarity { get; set; }
 
-        public int CountSinceLastRare5 { get; set; }
+        private int CountSinceLastRare5 { get; set; }
 
-        public int CountSinceLastRare4 { get; set; }
+        private int CountSinceLastRare4 { get; set; }
 
-        public bool Last5RareWasBanner { get; set; }
+        private bool Last5RareWasBanner { get; set; }
 
-        public bool Last4RareWasBanner { get; set; }
+        private bool Last4RareWasBanner { get; set; }
 
         private BannerItem GetArtifactEventBanner(Random random, IQueryable<BannerItem> bannerItems, Banner banner)
         {
@@ -24,8 +24,8 @@ namespace FreshCode.Services
                 if (!Last5RareWasBanner || random.Next(0, 2) == 1)
                 {
                     //выбираем рандом артефакт 5* из баннерного списка артефактов
-                    bannerItems = bannerItems.Where(b => b.BannerId == banner.Id);
-                    var items = bannerItems.Where(bi => bi.Artifact.RarityId == 2).ToList();
+                    var filtereditems = bannerItems.Where(b => b.BannerId == banner.Id);
+                    var items = filtereditems.Where(bi => bi.Artifact.RarityId == 2).ToList();
                     selectedItem = items[random.Next(items.Count())];
                 }
                 else
