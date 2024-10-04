@@ -55,7 +55,7 @@ namespace FreshCode.Extensions
             {
                 CharacteristicType characteristic = Enum.Parse<CharacteristicType>(artifactbonus.Bonus.Characteristic.Characteristic1, true);
                 var bonusValue = artifactbonus.Bonus.Value;
-                var bonusType = artifactbonus.Bonus.Type.Type == "flat" ? ModelsDTO.BonusType.Flat : ModelsDTO.BonusType.Percentage;
+                var bonusType = artifactbonus.Bonus.Type.Type == "flat" ? Enums.BonusType.Flat : Enums.BonusType.Percentage;
 
                 switch (characteristic)
                 {
@@ -92,7 +92,7 @@ namespace FreshCode.Extensions
             {
                 CharacteristicType characteristic = Enum.Parse<CharacteristicType>(bonus.Characteristic.Characteristic1, true);
                 var bonusValue = bonus.Value;
-                var bonusType = bonus.Type.Type == "flat" ? ModelsDTO.BonusType.Flat : ModelsDTO.BonusType.Percentage;
+                var bonusType = bonus.Type.Type == "flat" ? Enums.BonusType.Flat : Enums.BonusType.Percentage;
                 switch (characteristic)
                 {
                     case (CharacteristicType.CriticalDamage):
@@ -122,9 +122,9 @@ namespace FreshCode.Extensions
             }
         }
 
-        private static int RemoveBonus(int stat, int value, ModelsDTO.BonusType type)
+        private static int RemoveBonus(int stat, int value, Enums.BonusType type)
         {
-            if (type == ModelsDTO.BonusType.Flat)
+            if (type == Enums.BonusType.Flat)
             {
                 stat -= value;
             }
@@ -135,9 +135,9 @@ namespace FreshCode.Extensions
             return stat;
         }
 
-        private static int ApplyBonus(int stat, int value, ModelsDTO.BonusType type)
+        private static int ApplyBonus(int stat, int value, Enums.BonusType type)
         {
-            if (type == ModelsDTO.BonusType.Flat)
+            if (type == Enums.BonusType.Flat)
             {
                 stat += value;
             }
