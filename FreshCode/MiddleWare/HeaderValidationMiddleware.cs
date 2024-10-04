@@ -54,8 +54,6 @@ namespace FreshCode.MiddleWare
             }
             return Convert.ToInt64(_httpContext.Request.Cookies["userId"]);
         }
-
-
         private Task SetUserIdCookie(long innerId)
         {
             var cookieOptions = new CookieOptions

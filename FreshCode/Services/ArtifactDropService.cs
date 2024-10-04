@@ -60,6 +60,7 @@ namespace FreshCode.Services
 
         public BannerItem GetArtifact(Banner banner, List<ArtifactHistory> history, IQueryable<BannerItem> artifacts)
         {
+            var test = artifacts.ToList();
             Random random = new Random();
             history = history.OrderByDescending(h => h.Id).ToList();
 

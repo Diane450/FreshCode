@@ -2,6 +2,7 @@
 using FreshCode.Interfaces;
 using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
+using FreshCode.Responses;
 using FreshCode.Services;
 using System;
 
@@ -33,7 +34,7 @@ namespace FreshCode.UseCases
             return BannerMapper.ToDTO(banner);
         }
 
-        public async Task<long> GetArtifact(long userId, long bannerId)
+        public async Task<DropArtifactResponse> GetArtifact(long userId, long bannerId)
         {
             User user = await _userRepository.GetUserById(userId);
 
@@ -41,13 +42,17 @@ namespace FreshCode.UseCases
 
             List<ArtifactHistory> history = _userRepository.GetArtifactHistory(userId, bannerId).ToList();
 
-            IQueryable<BannerItem> bannerItems = _banerRepository.GetArtifactsByBanner(bannerId);
+            IQueryable<BannerItem> bannerItems = _banerRepository.GetAllBannerItems();
 
             var bannerItem = _artifactDropService.GetArtifact(banner, history, bannerItems);
-
+            
+            var response = new DropArtifactResponse();
+            
             if (history.Where(h => h.ArtifactId == bannerItem.ArtifactId).Count() >= 1)
             {//TODO: сколько бабок за повторюшку давать
                 user.Money += 100;
+                response.Money = 100;
+                response.IsArtifactOwnedPreviously = true;
             }
             else
             {
@@ -57,6 +62,7 @@ namespace FreshCode.UseCases
                     ArtifactId = bannerItem.ArtifactId,
                 });
             }
+            response.ArtifactId = bannerItem.ArtifactId;
 
             ArtifactHistory artifactHistory = new ArtifactHistory()
             {
@@ -65,9 +71,9 @@ namespace FreshCode.UseCases
                 BannerId = bannerId,
                 GotAt = DateTime.UtcNow
             };
-            await _baseRepository.AddAsync(artifactHistory);
-            await _baseRepository.SaveChangesAsync();
-            return bannerItem.ArtifactId;
+            //await _baseRepository.AddAsync(artifactHistory);
+            //await _baseRepository.SaveChangesAsync();
+            return response;
         }
     }
 }

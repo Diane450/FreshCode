@@ -12,6 +12,13 @@ namespace FreshCode.Repositories
             _dbContext = dbContext;
         }
 
+        public IQueryable<BannerItem> GetAllBannerItems()
+        {
+            return _dbContext.BannerItems
+                .Include(bi => bi.Artifact)
+                .ThenInclude(a => a.Rarity);
+        }
+
         public IQueryable<BannerItem> GetArtifactsByBanner(long bannerId)
         {
             return _dbContext.BannerItems

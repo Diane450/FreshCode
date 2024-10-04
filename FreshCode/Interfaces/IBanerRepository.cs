@@ -7,5 +7,7 @@ namespace FreshCode.Interfaces
         Task<Banner> GetBannerById(long bannerId);
 
         IQueryable<BannerItem> GetArtifactsByBanner(long bannerId);
+        
+        IQueryable<BannerItem> GetAllBannerItems();
     }
 }
