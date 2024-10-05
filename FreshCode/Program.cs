@@ -8,7 +8,6 @@ using FreshCode.Settings;
 using FreshCode.UseCases;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
-using System.Buffers.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,12 +32,13 @@ builder.Services.AddScoped<IEyesRepository, EyesRepository>();
 builder.Services.AddScoped<IBodyRepository, BodyRepository>();
 builder.Services.AddScoped<ClanUseCase>();
 builder.Services.AddScoped<TransactionRepository>();
-builder.Services.AddScoped<ClanUseCase>();
+
 builder.Services.AddScoped<IClanRepository, ClanRepository>();
 builder.Services.AddScoped<IArtifactRepository, ArtifactRepository>();
 
 builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+
 builder.Services.AddScoped<IFoodRepository, FoodRepository>();
 
 builder.Services.AddScoped<PurchaseUseCase>();

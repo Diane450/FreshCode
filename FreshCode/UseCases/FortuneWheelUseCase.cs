@@ -25,6 +25,7 @@ namespace FreshCode.UseCases
 
                 FortuneWheelDropResponse response = _bonusDropService.GetRandomBonus(bonuses);
                 
+                //активируем бонусы
             }
             else
             {

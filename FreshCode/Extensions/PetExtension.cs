@@ -1,12 +1,13 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.Enums;
-using FreshCode.ModelsDTO;
-using System.Security.Cryptography;
+using FreshCode.Services;
 
 namespace FreshCode.Extensions
 {
     public static class PetExtension
     {
+        public static PetBonusManagerService _petBonusManager;
+
         //TODO: обновить среднюю силу питомца
         public static void AssignArtifact(this Pet pet, Artifact artifact)
         {
