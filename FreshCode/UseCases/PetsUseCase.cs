@@ -18,7 +18,8 @@ namespace FreshCode.UseCases
         IBaseRepository baseRepository,
         IFoodRepository foodRepository,
         IArtifactRepository artifactRepository,
-        IPetBonusManagerService petBonusManager)
+        IArtifactService artifactService,
+        IPetBonusManagerService bonusRepository)
     {
         private readonly IPetsRepository _petsRepository = petsRepository;
         private readonly IUserRepository _userRepository = userRepository;
@@ -26,7 +27,8 @@ namespace FreshCode.UseCases
         private readonly IBaseRepository _baseRepository = baseRepository;
         private readonly IFoodRepository _foodRepository = foodRepository;
         private readonly IArtifactRepository _artifactRepository = artifactRepository;
-        private readonly IPetBonusManagerService _petBonusManager = petBonusManager;
+        private readonly IArtifactService _artifactService = artifactService;
+        private readonly IPetBonusManagerService _bonusRepository = bonusRepository;
 
 
         public async Task<PetDTO> GetPetByUserIdAsync(long userId)
@@ -79,7 +81,7 @@ namespace FreshCode.UseCases
 
             Artifact artifact = await _artifactRepository.GetArtifactById(setArtifactRequest.ArtifactId);
 
-            pet.AssignArtifact(artifact);
+            _artifactService.AssignArtifact(pet, artifact);
 
             await _baseRepository.SaveChangesAsync();
             return PetMapper.ToDto(pet);
@@ -91,7 +93,7 @@ namespace FreshCode.UseCases
             
             Artifact artifact = await _artifactRepository.GetArtifactById(removeArtifactRequest.ArtifactToRemoveId);
 
-            pet.RemoveArtifact(artifact);
+            _artifactService.RemoveArtifact(pet, artifact);
 
             await _baseRepository.SaveChangesAsync();
             return PetMapper.ToDto(pet);
@@ -126,7 +128,7 @@ namespace FreshCode.UseCases
             Food food = await _foodRepository.GetFoodById(request.FoodId);
 
             Pet pet = await _petsRepository.GetPetById(request.PetId);
-            pet.Feed(food.FoodBonuses.Select(f => f.Bonus).ToList());
+            _bonusRepository.SetBonuses(pet, food.FoodBonuses.Select(f => f.Bonus).ToList());
 
             _baseRepository.Update(pet);
             await _baseRepository.SaveChangesAsync();

@@ -1,4 +1,5 @@
 ﻿using FreshCode.DbModels;
+using FreshCode.Enums;
 using FreshCode.Responses;
 
 namespace FreshCode.Services
@@ -14,8 +15,10 @@ namespace FreshCode.Services
 
             return new FortuneWheelDropResponse
             {
-                Characteristic = 
-            }
+                Characteristic = (CharacteristicType)Enum.Parse(typeof(CharacteristicType), bonu.Characteristic.Characteristic1, true),
+                Value = bonu.Value,
+                BonusType = (Enums.BonusType)Enum.Parse(typeof(CharacteristicType), bonu.Characteristic.Characteristic1, true)
+            };
         }
     }
 }

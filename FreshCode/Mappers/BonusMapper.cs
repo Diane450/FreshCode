@@ -1,6 +1,6 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.ModelsDTO;
-using BonusType = FreshCode.ModelsDTO.BonusType;
+using BonusType = FreshCode.Enums.BonusType;
 
 namespace FreshCode.Mappers
 {

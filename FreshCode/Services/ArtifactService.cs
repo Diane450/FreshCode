@@ -1,5 +1,4 @@
 ﻿using FreshCode.DbModels;
-using FreshCode.Extensions;
 using FreshCode.Interfaces;
 
 namespace FreshCode.Services
@@ -8,6 +7,7 @@ namespace FreshCode.Services
     {
         private readonly IPetBonusManagerService _petBonusManagerService = petBonusManagerService;
 
+        //TODO: обновить среднюю силу питомца
         public void AssignArtifact(Pet pet, Artifact artifact)
         {
             switch (artifact.ArtifactType.Type)

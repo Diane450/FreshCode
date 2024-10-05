@@ -7,7 +7,5 @@ namespace FreshCode.Interfaces
         public void AssignArtifact(Pet pet, Artifact artifact);
 
         public void RemoveArtifact(Pet pet, Artifact artifact);
-
-
     }
 }

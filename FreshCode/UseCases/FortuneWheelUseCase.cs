@@ -1,4 +1,5 @@
 ﻿using FreshCode.DbModels;
+using FreshCode.Interfaces;
 using FreshCode.Responses;
 using FreshCode.Services;
 
@@ -8,20 +9,25 @@ namespace FreshCode.UseCases
     {
         private readonly IFortuneRepository _fortuneRepository;
         private readonly FortuneWheelBonusDropService _bonusDropService;
+        private readonly IBonusRepository _bonusRepository;
 
-        public FortuneWheelUseCase(IFortuneRepository fortuneRepository, FortuneWheelBonusDropService bonusDropService)
+
+        public FortuneWheelUseCase(IFortuneRepository fortuneRepository,
+            FortuneWheelBonusDropService bonusDropService,
+            IBonusRepository _bonusRepository
+            )
         {
             _fortuneRepository = fortuneRepository;
             _bonusDropService = bonusDropService;
         }
         public async void SpinFortuneWheel(long userId)
         {
-            DateTime userLastWheelRollTime = await _fortuneRepository.GetUserLastWheelRollTimeAsync();
+            DateTime? userLastWheelRollTime = await _fortuneRepository.GetUserLastWheelRollTime();
 
-            if ((DateTime.Now - userLastWheelRollTime).TotalHours >= 24)
+            if (userLastWheelRollTime is null || (DateTime.Now - userLastWheelRollTime.Value).TotalHours >= 24)
             {
                 //крутим колесо
-                IQueryable<Bonu> bonuses = await _bonusRepository.GetAllBonusesAsync();
+                IQueryable<Bonu> bonuses = _bonusRepository.GetAllBonusesAsync();
 
                 FortuneWheelDropResponse response = _bonusDropService.GetRandomBonus(bonuses);
                 
