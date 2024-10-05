@@ -7,6 +7,7 @@ using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
 using FreshCode.Repositories;
 using FreshCode.Requests;
+using FreshCode.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FreshCode.UseCases
@@ -16,7 +17,8 @@ namespace FreshCode.UseCases
         TransactionRepository transactionRepository,
         IBaseRepository baseRepository,
         IFoodRepository foodRepository,
-        IArtifactRepository artifactRepository)
+        IArtifactRepository artifactRepository,
+        IPetBonusManagerService petBonusManager)
     {
         private readonly IPetsRepository _petsRepository = petsRepository;
         private readonly IUserRepository _userRepository = userRepository;
@@ -24,6 +26,7 @@ namespace FreshCode.UseCases
         private readonly IBaseRepository _baseRepository = baseRepository;
         private readonly IFoodRepository _foodRepository = foodRepository;
         private readonly IArtifactRepository _artifactRepository = artifactRepository;
+        private readonly IPetBonusManagerService _petBonusManager = petBonusManager;
 
 
         public async Task<PetDTO> GetPetByUserIdAsync(long userId)

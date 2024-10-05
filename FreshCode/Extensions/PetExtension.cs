@@ -1,56 +1,55 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.Enums;
+using FreshCode.Interfaces;
 using FreshCode.Services;
 
 namespace FreshCode.Extensions
 {
     public static class PetExtension
     {
-        public static PetBonusManagerService _petBonusManager;
-
         //TODO: обновить среднюю силу питомца
-        public static void AssignArtifact(this Pet pet, Artifact artifact)
-        {
-            switch (artifact.ArtifactType.Type)
-            {
-                case "Шапка":
-                    pet.HatId = artifact.Id;
-                    EquipArtifact(pet, artifact, pet.Hat);
-                    break;
+        //public static void AssignArtifact(this Pet pet, Artifact artifact)
+        //{
+        //    switch (artifact.ArtifactType.Type)
+        //    {
+        //        case "Шапка":
+        //            pet.HatId = artifact.Id;
+        //            EquipArtifact(pet, artifact, pet.Hat);
+        //            break;
 
-                case "Аксессуар":
-                    pet.AccessoryId = artifact.Id;
-                    EquipArtifact(pet, artifact, pet.Accessory);
-                    break;
-            }
-        }
+        //        case "Аксессуар":
+        //            pet.AccessoryId = artifact.Id;
+        //            EquipArtifact(pet, artifact, pet.Accessory);
+        //            break;
+        //    }
+        //}
 
         private static void EquipArtifact(Pet pet, Artifact newArtifact, Artifact? currentArtifact)
         {
             if (currentArtifact is not null)
             {
-                pet.RemoveBonuses(currentArtifact);
+                pet.RemoveBonuses(currentArtifact.ArtifactBonuses.Select(ab => ab.Bonus).ToList());
             }
             pet.SetBonuses(newArtifact.ArtifactBonuses.Select(ab => ab.Bonus).ToList());
         }
 
-        public static void RemoveArtifact(this Pet pet, Artifact artifact)
-        {
-            switch (artifact.ArtifactType.Type)
-            {
-                case "Шапка":
-                    RemoveBonuses(pet, pet.Hat);
-                    pet.Hat = null;
-                    break;
+        //public static void RemoveArtifact(this Pet pet, Artifact artifact)
+        //{
+        //    switch (artifact.ArtifactType.Type)
+        //    {
+        //        case "Шапка":
+        //            RemoveBonuses(pet, pet.Hat.ArtifactBonuses.Select(ab => ab.Bonus).ToList());
+        //            pet.Hat = null;
+        //            break;
 
-                case "Аксессуар":
-                    RemoveBonuses(pet, pet.Accessory);
-                    pet.Accessory = null;
-                    break;
-            }
-        }
+        //        case "Аксессуар":
+        //            RemoveBonuses(pet, pet.Accessory.ArtifactBonuses.Select(ab => ab.Bonus).ToList());
+        //            pet.Accessory = null;
+        //            break;
+        //    }
+        //}
 
-        public static void RemoveBonuses(this Pet pet, Artifact artifact)
+        public static void RemoveBonuses(this Pet pet, List<Bonu> bonuses)
         {
             foreach (var artifactbonus in artifact.ArtifactBonuses)
             {
