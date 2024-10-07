@@ -7,7 +7,7 @@ public partial class UserBonuse
 {
     public long Id { get; set; }
 
-    public long UserId { get; set; }
+    public long PetId { get; set; }
 
     public long BonusId { get; set; }
 
@@ -17,5 +17,5 @@ public partial class UserBonuse
 
     public virtual Bonu Bonus { get; set; } = null!;
 
-    public virtual User User { get; set; } = null!;
+    public virtual Pet Pet { get; set; } = null!;
 }

@@ -35,6 +35,8 @@ public partial class FreshCodeContext : DbContext
 
     public virtual DbSet<Bonu> Bonus { get; set; }
 
+    public virtual DbSet<BonusFormat> BonusFormats { get; set; }
+
     public virtual DbSet<BonusType> BonusTypes { get; set; }
 
     public virtual DbSet<Characteristic> Characteristics { get; set; }
@@ -246,12 +248,23 @@ public partial class FreshCodeContext : DbContext
                 .HasConstraintName("Bonus_BonusType");
         });
 
-        modelBuilder.Entity<BonusType>(entity =>
+        modelBuilder.Entity<BonusFormat>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("BonusType_pkey");
 
+            entity.ToTable("BonusFormat");
+
+            entity.Property(e => e.Id).HasDefaultValueSql("nextval('\"BonusType_Id_seq\"'::regclass)");
+            entity.Property(e => e.Type).HasColumnType("character varying");
+        });
+
+        modelBuilder.Entity<BonusType>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("BonusType_pkey1");
+
             entity.ToTable("BonusType");
 
+            entity.Property(e => e.Id).HasDefaultValueSql("nextval('\"BonusType_Id_seq1\"'::regclass)");
             entity.Property(e => e.Type).HasColumnType("character varying");
         });
 
@@ -262,6 +275,11 @@ public partial class FreshCodeContext : DbContext
             entity.Property(e => e.Characteristic1)
                 .HasMaxLength(100)
                 .HasColumnName("Characteristic");
+            entity.Property(e => e.CharacteristicType).HasColumnName("Characteristic_Type");
+
+            entity.HasOne(d => d.CharacteristicTypeNavigation).WithMany(p => p.Characteristics)
+                .HasForeignKey(d => d.CharacteristicType)
+                .HasConstraintName("FK_Characteristics_Type");
         });
 
         modelBuilder.Entity<Clan>(entity =>
@@ -643,17 +661,17 @@ public partial class FreshCodeContext : DbContext
             entity.Property(e => e.Id).HasDefaultValueSql("nextval('\"FortuneWheelResults_Id_seq\"'::regclass)");
             entity.Property(e => e.BonusId).HasColumnName("Bonus_Id");
             entity.Property(e => e.CreatedAt).HasColumnName("Created_at");
-            entity.Property(e => e.UserId).HasColumnName("User_Id");
+            entity.Property(e => e.PetId).HasColumnName("Pet_Id");
 
             entity.HasOne(d => d.Bonus).WithMany(p => p.UserBonuses)
                 .HasForeignKey(d => d.BonusId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FortuneWheelResults_Bonus");
 
-            entity.HasOne(d => d.User).WithMany(p => p.UserBonuses)
-                .HasForeignKey(d => d.UserId)
+            entity.HasOne(d => d.Pet).WithMany(p => p.UserBonuses)
+                .HasForeignKey(d => d.PetId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FortuneWheelResults_User");
+                .HasConstraintName("FortuneWheelResults_Pet");
         });
 
         modelBuilder.Entity<UserClan>(entity =>

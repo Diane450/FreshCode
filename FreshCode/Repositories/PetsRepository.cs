@@ -106,5 +106,15 @@ namespace FreshCode.Repositories
             }
             return level;
         }
+
+        public IQueryable<UserBonuse> GetPetBonuses(long petId)
+        {
+            return _dbContext.UserBonuses
+                .Where(ub => ub.PetId == petId && ub.ExpiresAt < DateTime.UtcNow)
+                .Include(b => b.Bonus)
+                .ThenInclude(b => b.Characteristic)
+                .Include(b => b.Bonus)
+                .ThenInclude(b => b.Type);
+        }
     }
 }

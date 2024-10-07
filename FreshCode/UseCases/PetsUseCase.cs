@@ -141,5 +141,34 @@ namespace FreshCode.UseCases
             var artifactsDto = ArtifactMapper.ToDTO(artifacts);
             return artifactsDto;
         }
+
+        public async Task<PetDTO> GetPetStats(long petId)
+        {
+            Pet pet = await _petsRepository.GetPetById(petId);
+            var list = _petsRepository.GetPetBonuses(petId).ToList();
+
+            foreach (var bonus in list)
+            {
+                switch (bonus.Bonus.Id)
+                {
+                    case 1:
+                        pet.CurrentCriticalDamage += bonus.Bonus.Value;
+                        break;
+                    case 2:
+                        pet.CurrentCriticalChance += bonus.Bonus.Value;
+                        break;
+                    case 3:
+                        pet.CurrentDefence += bonus.Bonus.Value;
+                        break;
+                    case 6:
+                        pet.CurrentHealth += bonus.Bonus.Value;
+                        break;
+                    case 7:
+                        pet.CurrentStrength += bonus.Bonus.Value;
+                        break;
+                }
+            }
+            return PetMapper.ToDto(pet);
+        }
     }
 }

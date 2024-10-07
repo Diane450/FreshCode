@@ -42,6 +42,7 @@ namespace FreshCode.Services
             }
 
         }
+        
         private int ApplyBonus(int stat, int value, Enums.BonusType type)
         {
             if (type == Enums.BonusType.Flat)
@@ -54,7 +55,6 @@ namespace FreshCode.Services
             }
             return stat;
         }
-
 
         public void RemoveBonuses(Pet pet, List<Bonu> bonuses)
         {
@@ -93,6 +93,7 @@ namespace FreshCode.Services
             }
 
         }
+        
         private int RemoveBonus(int stat, int value, Enums.BonusType type)
         {
             if (type == Enums.BonusType.Flat)

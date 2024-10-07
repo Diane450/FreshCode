@@ -47,8 +47,6 @@ public partial class User
 
     public virtual ICollection<UserBattle> UserBattleWinners { get; set; } = new List<UserBattle>();
 
-    public virtual ICollection<UserBonuse> UserBonuses { get; set; } = new List<UserBonuse>();
-
     public virtual ICollection<UserClan> UserClans { get; set; } = new List<UserClan>();
 
     public virtual ICollection<UserFood> UserFoods { get; set; } = new List<UserFood>();

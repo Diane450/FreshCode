@@ -44,7 +44,7 @@ namespace FreshCode.UseCases
 
                 UserBonuse userBonuse = new UserBonuse()
                 {
-                    UserId = userId,
+                    PetId = pet.Id,
                     BonusId = response.BonusId,
                     CreatedAt = response.CreatedAt,
                     ExpiresAt = response.ExpiresAt,

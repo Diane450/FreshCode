@@ -19,7 +19,7 @@ public partial class Bonu
 
     public virtual ICollection<FoodBonuse> FoodBonuses { get; set; } = new List<FoodBonuse>();
 
-    public virtual BonusType Type { get; set; } = null!;
+    public virtual BonusFormat Type { get; set; } = null!;
 
     public virtual ICollection<UserBonuse> UserBonuses { get; set; } = new List<UserBonuse>();
 }

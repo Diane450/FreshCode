@@ -30,6 +30,11 @@ namespace FreshCode.Controllers
             return await _petsUseCase.GetPetArtifacts(petId);
         }
 
+        [HttpGet("total-stats")]
+        public async Task<PetDTO> GetPetStats([FromBody] long petId)
+        {
+            return await _petsUseCase.GetPetStats(petId);
+        }
 
         [HttpPut("levelup")]
         public async Task<PetDTO> LevelUp(long petId)

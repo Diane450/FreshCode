@@ -14,8 +14,6 @@ namespace FreshCode.Mappers
                 UserId = pet.UserId,
                 Body = BodyMapper.ToDTO(pet.Body),
                 Eyes = EyeMapper.ToDTO(pet.Eyes),
-                Hat = ArtifactMapper.ToDTO(pet.Hat),
-                Accessory = ArtifactMapper.ToDTO(pet.Accessory),
                 SleepNeed = pet.SleepNeed,
                 FeedNeed = pet.FeedNeed,
                 FightNeed = pet.FightNeed,
