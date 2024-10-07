@@ -36,15 +36,12 @@ namespace FreshCode.UseCases
 
             if (userLastWheelRollTime is null || (DateTime.UtcNow - userLastWheelRollTime.Value).TotalHours >= 24)
             {
-                //крутим колесо
                 IQueryable<Bonu> bonuses = _bonusRepository.GetAllBonusesAsync();
 
                 FortuneWheelDropResponse response = _bonusDropService.GetRandomBonus(bonuses);
 
-                //активируем бонусы
                 _bonusService.SetBonuses(pet, bonuses.ToList());
 
-                //записать в историю
                 UserBonuse userBonuse = new UserBonuse()
                 {
                     UserId = userId,

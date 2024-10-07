@@ -12,7 +12,6 @@ namespace FreshCode.Services
 
             var bonusList = bonuses.ToList();
             Bonu bonu = bonusList[random.Next(bonusList.Count)];
-
             return new FortuneWheelDropResponse
             {
                 BonusId = bonu.Id,
