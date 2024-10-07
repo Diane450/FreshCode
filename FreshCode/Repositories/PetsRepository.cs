@@ -15,34 +15,10 @@ namespace FreshCode.Repositories
         {
             try
             {
-                return await _dbContext.Pets.Where(p=>p.UserId==userId)
-                    .Include(p=>p.Level)
+                return await _dbContext.Pets.Where(p => p.UserId == userId)
+                    .Include(p => p.Level)
                     .Include(p => p.Accessory)
-                    .ThenInclude(a => a.Rarity)
-                    .Include(p => p.Accessory)
-                    .ThenInclude(a => a.ArtifactType)
-                    .Include(p => p.Accessory)
-                    .ThenInclude(a => a.ArtifactBonuses)
-                    .ThenInclude(ab => ab.Bonus)
-                    .ThenInclude(b => b.Characteristic)
-                    .Include(p => p.Accessory)
-                    .ThenInclude(a => a.ArtifactBonuses)
-                    .ThenInclude(ab => ab.Bonus)
-                    .ThenInclude(b => b.Type)
-
                     .Include(p => p.Hat)
-                    .ThenInclude(a => a.Rarity)
-                    .Include(p => p.Hat)
-                    .ThenInclude(a => a.ArtifactType)
-                    .Include(p => p.Hat)
-                    .ThenInclude(a => a.ArtifactBonuses)
-                    .ThenInclude(ab => ab.Bonus)
-                    .ThenInclude(b => b.Characteristic)
-                    .Include(p => p.Hat)
-                    .ThenInclude(a => a.ArtifactBonuses)
-                    .ThenInclude(ab => ab.Bonus)
-                    .ThenInclude(b => b.Type)
-
                     .Include(p => p.Body)
                     .Include(p => p.Eyes)
                     .FirstAsync();
