@@ -133,5 +133,13 @@ namespace FreshCode.UseCases
             _baseRepository.Update(pet);
             await _baseRepository.SaveChangesAsync();
         }
+
+        public async Task<List<ArtifactDTO>> GetPetArtifacts(long petId)
+        {
+            var artifacts = await _artifactRepository.GetPetArtifacts(petId);
+            
+            var artifactsDto = ArtifactMapper.ToDTO(artifacts);
+            return artifactsDto;
+        }
     }
 }

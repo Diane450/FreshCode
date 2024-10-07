@@ -24,6 +24,13 @@ namespace FreshCode.Controllers
             return await _petsUseCase.GetPetByUserIdAsync(userId);
         }
 
+        [HttpGet("artifacts")]
+        public async Task<List<ArtifactDTO>> GetPetArtifacts([FromBody] long petId)
+        {
+            return await _petsUseCase.GetPetArtifacts(petId);
+        }
+
+
         [HttpPut("levelup")]
         public async Task<PetDTO> LevelUp(long petId)
         {

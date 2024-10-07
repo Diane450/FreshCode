@@ -11,8 +11,8 @@ namespace FreshCode.Repositories
         public async Task<Artifact> GetArtifactById(long artifactId)
         {
             var artifact = await _dbContext.Artifacts
-                .Include(a=>a.Rarity)
-                .Include(a=>a.ArtifactType)
+                .Include(a => a.Rarity)
+                .Include(a => a.ArtifactType)
                 .Include(a => a.ArtifactBonuses)
                 .ThenInclude(ab => ab.Bonus)
                 .ThenInclude(b => b.Characteristic)
@@ -28,9 +28,38 @@ namespace FreshCode.Repositories
             return artifact;
         }
 
-        public async Task<Artifact> GetArtifacts()
+        public async Task<List<Artifact?>> GetPetArtifacts(long petId)
         {
-            return null;
+            return _dbContext.Pets
+                .Where(p => p.Id == petId)
+                .Include(p => p.Accessory)
+                .ThenInclude(a => a.ArtifactType)
+                .Include(p => p.Accessory)
+                .ThenInclude(a => a.Rarity)
+                .Include(a => a.Accessory)
+                .ThenInclude(a => a.ArtifactBonuses)
+                .ThenInclude(ab => ab.Bonus)
+                .ThenInclude(b => b.Characteristic)
+                .ThenInclude(ab => ab.Bonus)
+                .ThenInclude(b => b.Type)
+                .Include(a => a.Hat)
+                .ThenInclude(a => a.ArtifactType)
+
+                .Include(p => p.Hat)
+                .ThenInclude(a => a.ArtifactType)
+                .Include(p => p.Hat)
+                .ThenInclude(a => a.Rarity)
+                .Include(a => a.Hat)
+                .ThenInclude(a => a.ArtifactBonuses)
+                .ThenInclude(ab => ab.Bonus)
+                .ThenInclude(b => b.Characteristic)
+                .ThenInclude(ab => ab.Bonus)
+                .ThenInclude(b => b.Type)
+                .Include(a => a.Hat)
+                .ThenInclude(a => a.ArtifactType)
+                .AsEnumerable()
+                .SelectMany(p => new[] { p.Accessory, p.Hat }) // Извлекаем оба артефакта
+                .ToList();
         }
     }
 }

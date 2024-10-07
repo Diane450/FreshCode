@@ -1,5 +1,6 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.ModelsDTO;
+using System.Net;
 
 namespace FreshCode.Mappers
 {
@@ -23,18 +24,14 @@ namespace FreshCode.Mappers
             };
         }
 
-        public static ArtifactSummaryDTO? ToArtifactSummaryDTO(Artifact? artifact)
+        public static List<ArtifactDTO> ToDTO(List<Artifact> artifacts)
         {
-            if (artifact is null)
+            var list = new List<ArtifactDTO>();
+            foreach (var artifact in artifacts)
             {
-                return null;
+                list.Add(ToDTO(artifact));
             }
-            return new ArtifactSummaryDTO
-            {
-                Id = artifact.Id,
-                X = artifact.X,
-                Y = artifact.Y,
-            };
+            return list;
         }
     }
 }
