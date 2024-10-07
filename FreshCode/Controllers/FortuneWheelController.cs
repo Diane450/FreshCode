@@ -15,7 +15,7 @@ namespace FreshCode.Controllers
         public void GetValue()
         {
             long userId = GetUserId(HttpContext);
-            return _fortuneWheelUseCase.SpinFortuneWheel(userId);
+            _fortuneWheelUseCase.SpinFortuneWheel(userId);
         }
     }
 }

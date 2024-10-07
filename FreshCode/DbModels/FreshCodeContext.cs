@@ -232,7 +232,6 @@ public partial class FreshCodeContext : DbContext
             entity.HasKey(e => e.Id).HasName("Bonus_pkey");
 
             entity.Property(e => e.CharacteristicId).HasColumnName("Characteristic_Id");
-            entity.Property(e => e.TypeId).HasColumnName("Type_Id");
 
             entity.HasOne(d => d.Characteristic).WithMany(p => p.Bonus)
                 .HasForeignKey(d => d.CharacteristicId)
@@ -242,7 +241,7 @@ public partial class FreshCodeContext : DbContext
             entity.HasOne(d => d.Type).WithMany(p => p.Bonus)
                 .HasForeignKey(d => d.TypeId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("Bonus_Type");
+                .HasConstraintName("Bonus_BonusType");
         });
 
         modelBuilder.Entity<BonusType>(entity =>
@@ -251,7 +250,7 @@ public partial class FreshCodeContext : DbContext
 
             entity.ToTable("BonusType");
 
-            entity.Property(e => e.Type).HasMaxLength(45);
+            entity.Property(e => e.Type).HasColumnType("character varying");
         });
 
         modelBuilder.Entity<Characteristic>(entity =>

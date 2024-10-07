@@ -11,7 +11,9 @@ public partial class FoodBonuse
 
     public long BonusId { get; set; }
 
-    public int? Lasts { get; set; }
+    public bool IsTemporary { get; set; }
+
+    public int? Duration { get; set; }
 
     public virtual Bonu Bonus { get; set; } = null!;
 

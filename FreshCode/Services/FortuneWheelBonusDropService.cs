@@ -15,9 +15,12 @@ namespace FreshCode.Services
 
             return new FortuneWheelDropResponse
             {
+                BonusId = bonu.Id,
                 Characteristic = (CharacteristicType)Enum.Parse(typeof(CharacteristicType), bonu.Characteristic.Characteristic1, true),
                 Value = bonu.Value,
-                BonusType = (Enums.BonusType)Enum.Parse(typeof(CharacteristicType), bonu.Characteristic.Characteristic1, true)
+                BonusType = (Enums.BonusType)Enum.Parse(typeof(CharacteristicType), bonu.Characteristic.Characteristic1, true),
+                CreatedAt = DateTime.UtcNow,
+                ExpiresAt = DateTime.UtcNow.AddMinutes(5),
             };
         }
     }

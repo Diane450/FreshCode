@@ -2,6 +2,6 @@
 {
     public interface IFortuneRepository
     {
-        Task<DateTime> GetUserLastWheelRollTime();
+        Task<DateTime> GetUserLastWheelRollTime(long userId);
     }
 }

@@ -11,9 +11,9 @@ public partial class FortuneWheelResult
 
     public long BonusId { get; set; }
 
-    public DateOnly CreatedAt { get; set; }
+    public DateTime CreatedAt { get; set; }
 
-    public DateOnly ExpiresAt { get; set; }
+    public DateTime ExpiresAt { get; set; }
 
     public virtual Bonu Bonus { get; set; } = null!;
 
