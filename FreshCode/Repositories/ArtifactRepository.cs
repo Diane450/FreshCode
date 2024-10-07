@@ -11,6 +11,7 @@ namespace FreshCode.Repositories
         public async Task<Artifact> GetArtifactById(long artifactId)
         {
             var artifact = await _dbContext.Artifacts
+                .Include(a=>a.Rarity)
                 .Include(a=>a.ArtifactType)
                 .Include(a => a.ArtifactBonuses)
                 .ThenInclude(ab => ab.Bonus)
