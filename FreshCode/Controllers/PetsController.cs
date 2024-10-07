@@ -3,6 +3,7 @@ using FreshCode.Enums;
 using FreshCode.Exceptions;
 using FreshCode.ModelsDTO;
 using FreshCode.Requests;
+using FreshCode.Responses;
 using FreshCode.Services;
 using FreshCode.UseCases;
 using Microsoft.AspNetCore.Mvc;
@@ -31,7 +32,7 @@ namespace FreshCode.Controllers
         }
 
         [HttpGet("total-stats")]
-        public async Task<PetDTO> GetPetStats([FromBody] long petId)
+        public async Task<PetStatResponse> GetPetStats([FromBody] long petId)
         {
             return await _petsUseCase.GetPetStats(petId);
         }

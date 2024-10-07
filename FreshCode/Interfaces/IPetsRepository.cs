@@ -1,6 +1,7 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.ModelsDTO;
 using FreshCode.Requests;
+using FreshCode.Responses;
 
 namespace FreshCode.Interfaces
 {
@@ -11,5 +12,6 @@ namespace FreshCode.Interfaces
         Pet CreatePet(CreatePetRequest request, long userId);
         Task<Level> GelLevelValues(long levelId);
         IQueryable<UserBonuse> GetPetBonuses(long petId);
+        Task<PetStatResponse> GetPetStats(long petId);
     }
 }

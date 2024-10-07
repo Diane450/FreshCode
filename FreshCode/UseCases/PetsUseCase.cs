@@ -7,6 +7,7 @@ using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
 using FreshCode.Repositories;
 using FreshCode.Requests;
+using FreshCode.Responses;
 using FreshCode.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -142,9 +143,9 @@ namespace FreshCode.UseCases
             return artifactsDto;
         }
 
-        public async Task<PetDTO> GetPetStats(long petId)
+        public async Task<PetStatResponse> GetPetStats(long petId)
         {
-            Pet pet = await _petsRepository.GetPetById(petId);
+            PetStatResponse petStatResponse = await _petsRepository.GetPetStats(petId);
             var list = _petsRepository.GetPetBonuses(petId).ToList();
 
             foreach (var bonus in list)
@@ -152,23 +153,23 @@ namespace FreshCode.UseCases
                 switch (bonus.Bonus.Id)
                 {
                     case 1:
-                        pet.CurrentCriticalDamage += bonus.Bonus.Value;
+                        petStatResponse.CriticalDamage += bonus.Bonus.Value;
                         break;
                     case 2:
-                        pet.CurrentCriticalChance += bonus.Bonus.Value;
+                        petStatResponse.CriticalChance += bonus.Bonus.Value;
                         break;
                     case 3:
-                        pet.CurrentDefence += bonus.Bonus.Value;
+                        petStatResponse.Defence += bonus.Bonus.Value;
                         break;
                     case 6:
-                        pet.CurrentHealth += bonus.Bonus.Value;
+                        petStatResponse.Health += bonus.Bonus.Value;
                         break;
                     case 7:
-                        pet.CurrentStrength += bonus.Bonus.Value;
+                        petStatResponse.Strength += bonus.Bonus.Value;
                         break;
                 }
             }
-            return PetMapper.ToDto(pet);
+            return petStatResponse;
         }
     }
 }

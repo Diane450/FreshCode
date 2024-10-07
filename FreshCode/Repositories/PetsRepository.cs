@@ -3,7 +3,9 @@ using FreshCode.Interfaces;
 using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
 using FreshCode.Requests;
+using FreshCode.Responses;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Bson;
 
 namespace FreshCode.Repositories
 {
@@ -115,6 +117,20 @@ namespace FreshCode.Repositories
                 .ThenInclude(b => b.Characteristic)
                 .Include(b => b.Bonus)
                 .ThenInclude(b => b.Type);
+        }
+
+        public async Task<PetStatResponse> GetPetStats(long petId)
+        {
+            return await _dbContext.Pets
+                .Where(p => p.Id == petId)
+                .Select(p => new PetStatResponse
+                {
+                    CriticalChance = p.CurrentCriticalChance,
+                    CriticalDamage = p.CurrentCriticalDamage,
+                    Health = p.CurrentHealth,
+                    Strength = p.CurrentStrength,
+                    Defence = p.CurrentDefence,
+                }).FirstAsync();
         }
     }
 }
