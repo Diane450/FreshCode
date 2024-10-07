@@ -1,5 +1,6 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.ModelsDTO;
+using FreshCode.Responses;
 using FreshCode.UseCases;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,10 +13,17 @@ namespace FreshCode.Controllers
         private readonly FortuneWheelUseCase _fortuneWheelUseCase = fortuneWheelUseCase;
 
         [HttpGet("get-value")]
-        public void GetValue()
+        public async Task<ActionResult<FortuneWheelDropResponse>> GetValue()
         {
-            long userId = GetUserId(HttpContext);
-            _fortuneWheelUseCase.SpinFortuneWheel(userId);
+            try
+            {
+                long userId = GetUserId(HttpContext);
+                return await _fortuneWheelUseCase.SpinFortuneWheel(userId);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace FreshCode.DbModels;
 
-public partial class FortuneWheelResult
+public partial class UserBonuse
 {
     public long Id { get; set; }
 

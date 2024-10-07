@@ -19,7 +19,7 @@ public partial class Bonu
 
     public virtual ICollection<FoodBonuse> FoodBonuses { get; set; } = new List<FoodBonuse>();
 
-    public virtual ICollection<FortuneWheelResult> FortuneWheelResults { get; set; } = new List<FortuneWheelResult>();
-
     public virtual BonusType Type { get; set; } = null!;
+
+    public virtual ICollection<UserBonuse> UserBonuses { get; set; } = new List<UserBonuse>();
 }

@@ -51,8 +51,6 @@ public partial class FreshCodeContext : DbContext
 
     public virtual DbSet<FoodBonuse> FoodBonuses { get; set; }
 
-    public virtual DbSet<FortuneWheelResult> FortuneWheelResults { get; set; }
-
     public virtual DbSet<Level> Levels { get; set; }
 
     public virtual DbSet<Pet> Pets { get; set; }
@@ -83,9 +81,13 @@ public partial class FreshCodeContext : DbContext
 
     public virtual DbSet<UserBattle> UserBattles { get; set; }
 
+    public virtual DbSet<UserBonuse> UserBonuses { get; set; }
+
     public virtual DbSet<UserClan> UserClans { get; set; }
 
     public virtual DbSet<UserFood> UserFoods { get; set; }
+
+    public virtual DbSet<UserFortuneWheelSpin> UserFortuneWheelSpins { get; set; }
 
     public virtual DbSet<UserTask> UserTasks { get; set; }
 
@@ -348,25 +350,6 @@ public partial class FreshCodeContext : DbContext
                 .HasForeignKey(d => d.FoodId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Food_Bonuses_Food");
-        });
-
-        modelBuilder.Entity<FortuneWheelResult>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("FortuneWheelResults_pkey");
-
-            entity.Property(e => e.BonusId).HasColumnName("Bonus_Id");
-            entity.Property(e => e.CreatedAt).HasColumnName("Created_at");
-            entity.Property(e => e.UserId).HasColumnName("User_Id");
-
-            entity.HasOne(d => d.Bonus).WithMany(p => p.FortuneWheelResults)
-                .HasForeignKey(d => d.BonusId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FortuneWheelResults_Bonus");
-
-            entity.HasOne(d => d.User).WithMany(p => p.FortuneWheelResults)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FortuneWheelResults_User");
         });
 
         modelBuilder.Entity<Level>(entity =>
@@ -651,6 +634,28 @@ public partial class FreshCodeContext : DbContext
                 .HasConstraintName("UserBattles_Winner");
         });
 
+        modelBuilder.Entity<UserBonuse>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("FortuneWheelResults_pkey");
+
+            entity.ToTable("User_Bonuses");
+
+            entity.Property(e => e.Id).HasDefaultValueSql("nextval('\"FortuneWheelResults_Id_seq\"'::regclass)");
+            entity.Property(e => e.BonusId).HasColumnName("Bonus_Id");
+            entity.Property(e => e.CreatedAt).HasColumnName("Created_at");
+            entity.Property(e => e.UserId).HasColumnName("User_Id");
+
+            entity.HasOne(d => d.Bonus).WithMany(p => p.UserBonuses)
+                .HasForeignKey(d => d.BonusId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FortuneWheelResults_Bonus");
+
+            entity.HasOne(d => d.User).WithMany(p => p.UserBonuses)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FortuneWheelResults_User");
+        });
+
         modelBuilder.Entity<UserClan>(entity =>
         {
             entity.HasKey(e => e.Id).HasName(" User_Clan_pkey");
@@ -694,6 +699,21 @@ public partial class FreshCodeContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("User_Food_User");
+        });
+
+        modelBuilder.Entity<UserFortuneWheelSpin>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("User_FortuneWheelSpins_pkey");
+
+            entity.ToTable("User_FortuneWheelSpins");
+
+            entity.Property(e => e.CreatedAt).HasColumnName("Created_at");
+            entity.Property(e => e.UserId).HasColumnName("User_Id");
+
+            entity.HasOne(d => d.User).WithMany(p => p.UserFortuneWheelSpins)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_User_FortuneWheelSpins_User");
         });
 
         modelBuilder.Entity<UserTask>(entity =>

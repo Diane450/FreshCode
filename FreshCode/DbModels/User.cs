@@ -27,8 +27,6 @@ public partial class User
 
     public virtual ICollection<Clan> Clans { get; set; } = new List<Clan>();
 
-    public virtual ICollection<FortuneWheelResult> FortuneWheelResults { get; set; } = new List<FortuneWheelResult>();
-
     public virtual ICollection<Pet> Pets { get; set; } = new List<Pet>();
 
     public virtual ICollection<PostComment> PostComments { get; set; } = new List<PostComment>();
@@ -49,9 +47,13 @@ public partial class User
 
     public virtual ICollection<UserBattle> UserBattleWinners { get; set; } = new List<UserBattle>();
 
+    public virtual ICollection<UserBonuse> UserBonuses { get; set; } = new List<UserBonuse>();
+
     public virtual ICollection<UserClan> UserClans { get; set; } = new List<UserClan>();
 
     public virtual ICollection<UserFood> UserFoods { get; set; } = new List<UserFood>();
+
+    public virtual ICollection<UserFortuneWheelSpin> UserFortuneWheelSpins { get; set; } = new List<UserFortuneWheelSpin>();
 
     public virtual ICollection<UserTask> UserTasks { get; set; } = new List<UserTask>();
 }

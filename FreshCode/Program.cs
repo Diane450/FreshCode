@@ -49,6 +49,15 @@ builder.Services.AddScoped<IBlogRepository, BlogRepository>();
 builder.Services.AddScoped<BannerUseCase>();
 builder.Services.AddScoped<IBanerRepository, BanerRepository>();
 builder.Services.AddScoped<ArtifactDropService>();
+builder.Services.AddScoped<FortuneWheelBonusDropService>();
+builder.Services.AddScoped<IArtifactService, ArtifactService>();
+builder.Services.AddScoped<IFortuneRepository, FortuneWheelRepository>();
+builder.Services.AddScoped<IBonusRepository, BonusRepository>();
+builder.Services.AddScoped<FortuneWheelUseCase>();
+builder.Services.AddScoped<IPetBonusManagerService, PetBonusManagerService>();
+
+
+
 
 
 builder.Services.AddScoped<VkLaunchParamsService>();
