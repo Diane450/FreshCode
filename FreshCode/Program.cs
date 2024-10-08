@@ -1,5 +1,6 @@
 using FreshCode.DbModels;
 using FreshCode.Fabrics;
+using FreshCode.Hubs;
 using FreshCode.Interfaces;
 using FreshCode.MiddleWare;
 using FreshCode.Repositories;
@@ -17,6 +18,7 @@ builder.Services.AddControllers();
 
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<FreshCodeContext>(options => options.UseNpgsql(connectionString));
+builder.Services.AddSignalR();
 
 builder.Services.AddScoped<PetsUseCase>();
 builder.Services.AddScoped<IPetsRepository, PetsRepository>();
@@ -56,9 +58,7 @@ builder.Services.AddScoped<IBonusRepository, BonusRepository>();
 builder.Services.AddScoped<FortuneWheelUseCase>();
 builder.Services.AddScoped<IPetBonusManagerService, PetBonusManagerService>();
 
-
-
-
+builder.Services.AddHostedService<SleepDepletionService>();
 
 builder.Services.AddScoped<VkLaunchParamsService>();
 
@@ -109,6 +109,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.MapHub<SleepNotificationHub>("sleep-notifications");
 
 app.UseAuthorization();
 
