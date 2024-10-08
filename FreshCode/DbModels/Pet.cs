@@ -55,6 +55,8 @@ public partial class Pet
 
     public virtual Level Level { get; set; } = null!;
 
+    public virtual ICollection<PetSleepLog> PetSleepLogs { get; set; } = new List<PetSleepLog>();
+
     public virtual User User { get; set; } = null!;
 
     public virtual ICollection<UserBonuse> UserBonuses { get; set; } = new List<UserBonuse>();

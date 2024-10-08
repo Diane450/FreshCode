@@ -57,6 +57,10 @@ public partial class FreshCodeContext : DbContext
 
     public virtual DbSet<Pet> Pets { get; set; }
 
+    public virtual DbSet<PetFeedLog> PetFeedLogs { get; set; }
+
+    public virtual DbSet<PetSleepLog> PetSleepLogs { get; set; }
+
     public virtual DbSet<Post> Posts { get; set; }
 
     public virtual DbSet<PostBlock> PostBlocks { get; set; }
@@ -422,6 +426,37 @@ public partial class FreshCodeContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("Pets_User_Id");
+        });
+
+        modelBuilder.Entity<PetFeedLog>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PetFeedLog_pkey");
+
+            entity.ToTable("PetFeedLog");
+
+            entity.Property(e => e.CreatedAt).HasColumnName("Created_at");
+            entity.Property(e => e.FoodId).HasColumnName("Food_Id");
+            entity.Property(e => e.PetId).HasColumnName("Pet_Id");
+
+            entity.HasOne(d => d.Food).WithMany(p => p.PetFeedLogs)
+                .HasForeignKey(d => d.FoodId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_PetFeedLog_Food");
+        });
+
+        modelBuilder.Entity<PetSleepLog>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PetSleepLog_pkey");
+
+            entity.ToTable("PetSleepLog");
+
+            entity.Property(e => e.CreatedAt).HasColumnName("Created_at");
+            entity.Property(e => e.PetId).HasColumnName("Pet_Id");
+
+            entity.HasOne(d => d.Pet).WithMany(p => p.PetSleepLogs)
+                .HasForeignKey(d => d.PetId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_PetSleepLog_Pet");
         });
 
         modelBuilder.Entity<Post>(entity =>

@@ -17,5 +17,7 @@ public partial class Food
 
     public virtual ICollection<FoodBonuse> FoodBonuses { get; set; } = new List<FoodBonuse>();
 
+    public virtual ICollection<PetFeedLog> PetFeedLogs { get; set; } = new List<PetFeedLog>();
+
     public virtual ICollection<UserFood> UserFoods { get; set; } = new List<UserFood>();
 }

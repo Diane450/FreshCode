@@ -1,11 +1,8 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.Interfaces;
-using FreshCode.Mappers;
-using FreshCode.ModelsDTO;
 using FreshCode.Requests;
 using FreshCode.Responses;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json.Bson;
 
 namespace FreshCode.Repositories
 {
