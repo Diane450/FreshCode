@@ -45,6 +45,8 @@ public partial class Pet
 
     public int MaxPoints { get; set; }
 
+    public DateTime CreatedAt { get; set; }
+
     public virtual Artifact? Accessory { get; set; }
 
     public virtual Body Body { get; set; } = null!;

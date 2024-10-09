@@ -9,12 +9,10 @@ namespace FreshCode.Services
     public class SleepDepletionService : BackgroundService
     {
         private readonly IServiceProvider _serviceProvider;
-        //private readonly IHubContext<SleepNotificationHub> _hubContext;
 
         public SleepDepletionService(IServiceProvider serviceProvider)
         {
             _serviceProvider = serviceProvider;
-
         }
 
         protected override async System.Threading.Tasks.Task ExecuteAsync(CancellationToken stoppingToken)
@@ -31,7 +29,6 @@ namespace FreshCode.Services
             using (var scope = _serviceProvider.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<FreshCodeContext>();
-                var hubContext = scope.ServiceProvider.GetRequiredService<IHubContext<SleepNotificationHub>>();
 
                 var pets = await dbContext.Pets
                     .Include(p => p.PetSleepLogs)
@@ -42,36 +39,25 @@ namespace FreshCode.Services
                     var sleepLog = pet.PetSleepLogs
                         .OrderByDescending(p => p.Id)
                         .FirstOrDefault();
+                    TimeSpan timeDifference;
                     if (sleepLog == null)
                     {
-                        //чекаем когда питомец был создан и используем эту дату 
+                        timeDifference = DateTime.UtcNow - pet.CreatedAt;
                     }
                     else
                     {
-                        TimeSpan timeDifference = DateTime.UtcNow - sleepLog.WokeUpAt;
-                        double seconds = timeDifference.TotalSeconds;
-
-                        if (pet.SleepNeed == 0)
-                        {
-                            // Отправляем уведомление на фронтенд
-                            await hubContext.Clients.User(pet.UserId.ToString()).SendAsync("SleepDepleted", pet.Id);
-                        }
-
-                        var newSleepValue = Convert.ToInt32(Math.Floor(100 - seconds / ((24 * 60 * 60) * 100)));
-
-                        if (newSleepValue == 0)
-                        {
-                            pet.SleepNeed = newSleepValue;
-                            // Отправляем уведомление на фронтенд
-                            await hubContext.Clients.User(pet.UserId.ToString()).SendAsync("SleepDepleted", pet.Id);
-                        }
-                        else if (newSleepValue != pet.SleepNeed)
-                        {
-                            pet.SleepNeed = newSleepValue;
-                            await hubContext.Clients.User(pet.UserId.ToString()).SendAsync("SleepUpdated", pet.Id);
-                        }
+                        timeDifference = DateTime.UtcNow - sleepLog.WokeUpAt;
                     }
-                    await dbContext.SaveChangesAsync(cancellationToken);
+
+                    double seconds = timeDifference.TotalSeconds;
+
+                    var newSleepValue = Convert.ToInt32(Math.Floor(100 - seconds / ((24 * 60 * 60) * 100)));
+
+                    if (newSleepValue != pet.SleepNeed)
+                    {
+                        pet.SleepNeed = newSleepValue;
+                        await dbContext.SaveChangesAsync(cancellationToken);
+                    }
                 }
             }
         }
