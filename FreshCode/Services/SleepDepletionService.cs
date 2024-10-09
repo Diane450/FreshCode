@@ -1,7 +1,4 @@
-﻿
-using FreshCode.DbModels;
-using FreshCode.Hubs;
-using Microsoft.AspNetCore.SignalR;
+﻿using FreshCode.DbModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace FreshCode.Services
