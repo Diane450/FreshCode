@@ -12,11 +12,15 @@ namespace FreshCode.Controllers
 {
     [ApiController]
     [Route("pet")]
-    public class PetsController(PetsUseCase petsUseCase, UserUseCase userUseCase) : BaseController
+    public class PetsController(PetsUseCase petsUseCase,
+        UserUseCase userUseCase,
+        TaskUseCase taskUseCase) : BaseController
     {
         private readonly PetsUseCase _petsUseCase = petsUseCase;
         
         private readonly UserUseCase _userUseCase = userUseCase;
+
+        private readonly TaskUseCase _taskUseCase = taskUseCase;
 
         [HttpGet]
         public async Task<PetDTO> GetPetAsync()
@@ -84,7 +88,6 @@ namespace FreshCode.Controllers
         {
             //TODO: Pet_Bonuses add timer
             var userId = GetUserId(HttpContext);
-            
             await _petsUseCase.Feed(userId, request);
         }
 

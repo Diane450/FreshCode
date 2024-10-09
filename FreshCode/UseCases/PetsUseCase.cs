@@ -129,9 +129,22 @@ namespace FreshCode.UseCases
             Food food = await _foodRepository.GetFoodById(request.FoodId);
 
             Pet pet = await _petsRepository.GetPetById(request.PetId);
-            _bonusRepository.SetBonuses(pet, food.FoodBonuses.Select(f => f.Bonus).ToList());
 
-            _baseRepository.Update(pet);
+            var bonuses = food.FoodBonuses.Select(f => f.Bonus).ToList();
+
+            foreach (var bonus in bonuses)
+            {
+                UserBonuse userBonuse = new()
+                {
+                    PetId = pet.Id,
+                    BonusId = bonus.Id,
+                    CreatedAt = DateTime.UtcNow,
+                    ExpiresAt = DateTime.UtcNow.AddMinutes(5),
+                };
+                await _baseRepository.AddAsync(userBonuse);
+            }
+            //TODO: изменить что задание выполнено. сделать отдельный сервис
+
             await _baseRepository.SaveChangesAsync();
         }
 
