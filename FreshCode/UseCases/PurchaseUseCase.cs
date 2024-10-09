@@ -23,7 +23,7 @@ namespace FreshCode.UseCases
 
             if (await _userRepository.isArtifactAbsent(artifactToBuy.ArtifactId, user.Id))
             {
-                throw new InvalidOperationException("User already owns this item.");
+                throw new InvalidOperationException("Пользователь уже имеет данный артефакт");
             }
 
             user.Money -= artifactToBuy.Price;
@@ -43,14 +43,14 @@ namespace FreshCode.UseCases
         {
             User user = await _userRepository.GetUserById(userId);
 
-            user.Money -= foodToBuy.Price;
+            user.Money -= foodToBuy.Price * foodToBuy.Count;
             HasPositiveBalance(user);
 
             var userFoodList = _userRepository.GetUserFood(user.Id).ToList();
             var userFood = user.UserFoods.First(uf => uf.Food.Id == foodToBuy.FoodId);
             if (userFood is not null)
             {
-                userFood.Count += 1;
+                userFood.Count += foodToBuy.Count;
             }
             else
             {
@@ -58,7 +58,7 @@ namespace FreshCode.UseCases
                 {
                     UserId = user.Id,
                     FoodId = foodToBuy.FoodId,
-                    Count = 1
+                    Count = foodToBuy.Count
                 });
             }
             await _baseRepository.SaveChangesAsync();
@@ -70,7 +70,7 @@ namespace FreshCode.UseCases
 
             if (await _userRepository.isBackgroundAbsent(backgroundToBuy.BackgroundId, user.Id))
             {
-                throw new InvalidOperationException("User already owns this item.");
+                throw new InvalidOperationException("Пользователь уже имеет данный фон");
             }
 
             user.Money -= backgroundToBuy.Price;
