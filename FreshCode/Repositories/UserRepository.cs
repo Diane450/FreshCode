@@ -169,7 +169,7 @@ namespace FreshCode.Repositories
                 .Where(a => a.Id == artifactId && a.UserId == userId)
                 .CountAsync();
 
-            return count == 0;
+            return count != 0;
         }
 
         public async Task<bool> isBackgroundAbsent(long backgroundId, long userId)
@@ -178,7 +178,7 @@ namespace FreshCode.Repositories
                 .Where(a => a.Id == backgroundId && a.UserId == userId)
                 .CountAsync();
 
-            return count == 0;
+            return count != 0;
         }
 
         public async Task<User> GetUserById(long userId)

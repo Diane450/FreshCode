@@ -18,7 +18,7 @@ namespace FreshCode.UseCases
                 _userRepository = userRepository;
                 _baseRepository = baseRepository;
             }
-        public async System.Threading.Tasks.Task BuyArtifact(BuyArtifactRequest artifactToBuy, long userId)
+        public async Task<BuyArtifactResponse> BuyArtifact(BuyArtifactRequest artifactToBuy, long userId)
         {
             User user = await _userRepository.GetUserById(userId);
 
@@ -38,9 +38,13 @@ namespace FreshCode.UseCases
             });
 
             await _baseRepository.SaveChangesAsync();
+            return new BuyArtifactResponse
+            {
+                Money = user.Money
+            };
         }
 
-        public async System.Threading.Tasks.Task BuyFood(BuyFoodRequest foodToBuy, long userId)
+        public async Task<BuyFoodResponse> BuyFood(BuyFoodRequest foodToBuy, long userId)
         {
             User user = await _userRepository.GetUserById(userId);
 
@@ -48,10 +52,13 @@ namespace FreshCode.UseCases
             HasPositiveBalance(user);
 
             var userFoodList = _userRepository.GetUserFood(user.Id).ToList();
-            var userFood = user.UserFoods.First(uf => uf.Food.Id == foodToBuy.FoodId);
+            var userFood = user.UserFoods.FirstOrDefault(uf => uf.Food.Id == foodToBuy.FoodId);
+
+            int foodCount;
             if (userFood is not null)
             {
                 userFood.Count += foodToBuy.Count;
+                foodCount = userFood.Count;
             }
             else
             {
@@ -61,8 +68,16 @@ namespace FreshCode.UseCases
                     FoodId = foodToBuy.FoodId,
                     Count = foodToBuy.Count
                 });
+                foodCount = foodToBuy.Count;
             }
             await _baseRepository.SaveChangesAsync();
+
+            return new BuyFoodResponse
+            {
+                Money = user.Money,
+                FoodCount = foodCount,
+                FoodId = foodToBuy.FoodId
+            };
         }
 
         public async System.Threading.Tasks.Task BuyBackground(BuyBackgroundRequest backgroundToBuy, long userId)

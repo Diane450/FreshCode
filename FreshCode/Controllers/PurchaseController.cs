@@ -1,11 +1,8 @@
 ﻿using FreshCode.Exceptions;
-using FreshCode.ModelsDTO;
 using FreshCode.Requests;
 using FreshCode.Responses;
-using FreshCode.Services;
 using FreshCode.UseCases;
 using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace FreshCode.Controllers
 {
@@ -21,13 +18,12 @@ namespace FreshCode.Controllers
         }
 
         [HttpPost("artifact")]
-        public async Task<ActionResult> BuyArtifact([FromBody] BuyArtifactRequest artifactToBuy)
+        public async Task<ActionResult<BuyArtifactResponse>> BuyArtifact([FromBody] BuyArtifactRequest artifactToBuy)
         {
             try
             {
                 var userId = GetUserId(HttpContext);
-                await _purchaseUseCase.BuyArtifact(artifactToBuy, userId);
-                return Ok();
+                return await _purchaseUseCase.BuyArtifact(artifactToBuy, userId);
             }
             catch (ArgumentException exception)
             {
@@ -44,13 +40,12 @@ namespace FreshCode.Controllers
         }
 
         [HttpPost("food")]
-        public async Task<ActionResult> BuyFood([FromBody] BuyFoodRequest foodToBuy)
+        public async Task<ActionResult<BuyFoodResponse>> BuyFood([FromBody] BuyFoodRequest foodToBuy)
         {
             try
             {
                 var userId = GetUserId(HttpContext);
-                await _purchaseUseCase.BuyFood(foodToBuy, userId);
-                return Ok();
+                return await _purchaseUseCase.BuyFood(foodToBuy, userId);
             }
             catch (ArgumentException exception)
             {
