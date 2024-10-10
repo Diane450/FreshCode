@@ -66,6 +66,7 @@ builder.Services.AddScoped<IPetBonusManagerService, PetBonusManagerService>();
 builder.Services.AddScoped<TaskUseCase>();
 builder.Services.AddScoped<ITaskRepository, TaskRepository>();
 
+builder.Services.AddHostedService<TaskSchedulerService>();
 
 
 builder.Services.AddScoped<VkLaunchParamsService>();

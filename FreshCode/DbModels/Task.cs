@@ -17,5 +17,9 @@ public partial class Task
 
     public int PrimogemsReward { get; set; }
 
+    public bool? IsDaily { get; set; }
+
+    public bool? IsWeekly { get; set; }
+
     public virtual ICollection<UserTask> UserTasks { get; set; } = new List<UserTask>();
 }
