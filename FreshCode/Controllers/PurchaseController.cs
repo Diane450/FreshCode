@@ -1,6 +1,7 @@
 ﻿using FreshCode.Exceptions;
 using FreshCode.ModelsDTO;
 using FreshCode.Requests;
+using FreshCode.Responses;
 using FreshCode.Services;
 using FreshCode.UseCases;
 using Microsoft.AspNetCore.Mvc;
@@ -86,6 +87,13 @@ namespace FreshCode.Controllers
             {
                 return StatusCode(500, $"Ошибка: {ex.Message}");
             }
+        }
+
+        [HttpPost("wishes")]
+        public async Task<BuyWishesResponse> BuyWishes([FromBody]int wishCount)
+        {
+            var userId = GetUserId(HttpContext);
+            return await _purchaseUseCase.BuyWishes(userId, wishCount);
         }
     }
 }

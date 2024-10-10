@@ -3,6 +3,7 @@ using FreshCode.Exceptions;
 using FreshCode.Interfaces;
 using FreshCode.ModelsDTO;
 using FreshCode.Requests;
+using FreshCode.Responses;
 
 namespace FreshCode.UseCases
 {
@@ -91,6 +92,24 @@ namespace FreshCode.UseCases
             {
                 throw new InvalidOperationException("User does not have enough funds");
             }
+        }
+
+        public async Task<BuyWishesResponse> BuyWishes(long userId, int wishCount)
+        {
+            User user = await _userRepository.GetUserById(userId);
+
+            user.PrimogemsCount -= wishCount * 90;
+
+            HasPositiveBalance(user);
+
+            user.FatesCount += wishCount;
+            await _baseRepository.SaveChangesAsync();
+
+            return new BuyWishesResponse
+            {
+                PrimogemsCount = user.PrimogemsCount,
+                WishesCount = user.FatesCount
+            };
         }
     }
 }
