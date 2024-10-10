@@ -11,7 +11,11 @@ public partial class UserTask
 
     public long UserId { get; set; }
 
-    public bool IsCompleted { get; set; }
+    public DateTime CreatedAt { get; set; }
+
+    public DateTime? CompletedAt { get; set; }
+
+    public bool IsRewardReceived { get; set; }
 
     public virtual Task Task { get; set; } = null!;
 

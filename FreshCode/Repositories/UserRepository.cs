@@ -4,6 +4,7 @@ using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
 using Microsoft.EntityFrameworkCore;
 using System.Linq;
+using Task = FreshCode.DbModels.Task;
 
 namespace FreshCode.Repositories
 {
@@ -35,13 +36,11 @@ namespace FreshCode.Repositories
                 .FirstAsync();
         }
 
-        public async Task<List<TaskDTO>> GetUserTasks(long userId)
+        public IQueryable<UserTask> GetUserTasks(long userId)
         {
-            return await _dbContext.UserTasks
-                .Where(ut => ut.UserId == userId)
-                .Include(ut => ut.Task)
-                .Select(task => TaskMapper.ToDTO(task))
-                .ToListAsync();
+            return _dbContext.UserTasks
+                .Where(ut => ut.UserId == userId && ut.CreatedAt.Date == DateTime.UtcNow.Date)
+                .Include(ut => ut.Task);
         }
 
         public IQueryable<ArtifactHistory> GetArtifactHistory(long userId, long bannerId)

@@ -31,7 +31,9 @@ namespace FreshCode.UseCases
 
         public async Task<List<TaskDTO>> GetUserTasks(long userId)
         {
-            return await _userRepository.GetUserTasks(userId);
+            var tasks = _userRepository.GetUserTasks(userId);
+            var tasksDTO = tasks.Select(t => TaskMapper.ToDTO(t)).ToList();
+            return tasksDTO;
         }
 
         public async Task<List<ArtifactHistoryDTO>> GetArtifactHistory(long userId, long bannerId)
