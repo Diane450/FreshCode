@@ -1,25 +1,18 @@
 ﻿using FreshCode.DbModels;
+using FreshCode.Interfaces;
 using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace FreshCode.UseCases
 {
-    public class TaskUseCase(FreshCodeContext dbContext)
+    public class TaskUseCase(ITaskRepository taskRepository)
     {
-        private readonly FreshCodeContext _dbContext = dbContext;
+        private readonly ITaskRepository _taskRepository = taskRepository;
 
         public async Task<bool?> IsFeedingTaskComplete(long userId)
         {
-            var userTask = await _dbContext.UserTasks
-                .FirstOrDefaultAsync(ut => ut.UserId == userId && ut.TaskId == 1);
-
-            if(userTask is null)
-                return null;
-
-            bool isFeedingTaskCompleted = userTask.IsCompleted;
-
-            return !isFeedingTaskCompleted;
+            return null;
         }
     }
 }

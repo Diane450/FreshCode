@@ -16,5 +16,7 @@
 
         public bool IsCompleted { get; set; }
 
+        public bool IsRewardReceived { get; set; }
+
     }
 }
