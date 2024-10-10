@@ -22,7 +22,7 @@ namespace FreshCode.Services
                 var nextDailyTaskTime = GetNextDailyTaskTime();
                 var delay = nextDailyTaskTime - DateTime.Now;
                 _logger.LogInformation($"Ожидание до следующего выполнения ежедневных заданий: {delay.TotalHours} часов.");
-                //await System.Threading.Tasks.Task.Delay(delay, stoppingToken);
+                await System.Threading.Tasks.Task.Delay(delay, stoppingToken);
 
                 using (var scope = _scopeFactory.CreateScope())
                 {
@@ -36,7 +36,6 @@ namespace FreshCode.Services
                     {
                         await AddWeeklyTasks(context);
                     }
-
                     await context.SaveChangesAsync();
                 }
             }
