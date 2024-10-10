@@ -1,7 +1,9 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.ModelsDTO;
+using FreshCode.Responses;
 using FreshCode.UseCases;
 using Microsoft.AspNetCore.Mvc;
+using Task = System.Threading.Tasks.Task;
 
 namespace FreshCode.Controllers
 {
@@ -16,11 +18,11 @@ namespace FreshCode.Controllers
             _taskUseCase = taskUseCase;
         }
 
-        [HttpGet("feed-task")]
-        public async Task<bool?> IsFeedingTaskComplete()
+        [HttpGet("reward")]
+        public async Task<TaskRewardResponse> GetTaskReward([FromBody] long taskId)
         {
             var userId = GetUserId(HttpContext);
-            return await _taskUseCase.IsFeedingTaskComplete(userId);
+            return await _taskUseCase.GetReward(taskId, userId);
         }
     }
 }
