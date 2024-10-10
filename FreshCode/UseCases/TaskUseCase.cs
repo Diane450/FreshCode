@@ -23,9 +23,14 @@ namespace FreshCode.UseCases
         {
             UserTask task = _userRepository.GetUserTasks(userId)
                 .Where(ut => ut.TaskId == taskId && ut.CreatedAt.Date == DateTime.UtcNow.Date)
-                .First();
+                .FirstOrDefault();
 
-            if (!task.IsRewardReceived)
+            if (task == null)
+            {
+                throw new Exception("У пользователя нет задания");
+            }
+
+            if (task.IsRewardReceived)
                 throw new Exception("Пользователь уже получил награду.");
 
             if (task.CompletedAt == null)
@@ -39,6 +44,7 @@ namespace FreshCode.UseCases
             user.Money += task.Task.MoneyReward;
             pet.Points += task.Task.PointsReward;
 
+            task.IsRewardReceived = true;
             await _baseRepository.SaveChangesAsync();
 
             return new TaskRewardResponse

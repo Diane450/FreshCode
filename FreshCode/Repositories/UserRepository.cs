@@ -40,8 +40,7 @@ namespace FreshCode.Repositories
         {
             return _dbContext.UserTasks
                 .Where(ut => ut.UserId == userId)
-                .Include(ut => ut.Task)
-                .AsNoTracking();
+                .Include(ut => ut.Task);
         }
 
         public IQueryable<ArtifactHistory> GetArtifactHistory(long userId, long bannerId)
