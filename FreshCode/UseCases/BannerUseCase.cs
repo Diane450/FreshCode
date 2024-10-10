@@ -2,6 +2,8 @@
 using FreshCode.Interfaces;
 using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
+using FreshCode.Repositories;
+using FreshCode.Requests;
 using FreshCode.Responses;
 using FreshCode.Services;
 using System;
@@ -15,18 +17,21 @@ namespace FreshCode.UseCases
         private readonly IArtifactRepository _artifactRepository;
         private readonly IBaseRepository _baseRepository;
         private readonly ArtifactDropService _artifactDropService;
+        private readonly TransactionRepository _transactionRepository;
 
         public BannerUseCase(IBanerRepository banerRepository,
             IUserRepository userRepository,
             IArtifactRepository artifactRepository,
             IBaseRepository baseRepository,
-            ArtifactDropService artifactDropService)
+            ArtifactDropService artifactDropService,
+            TransactionRepository transactionRepository)
         {
             _banerRepository = banerRepository;
             _userRepository = userRepository;
             _artifactRepository = artifactRepository;
             _baseRepository = baseRepository;
             _artifactDropService = artifactDropService;
+            _transactionRepository = transactionRepository;
         }
         public async Task<BanerDTO> GetBannerById(long bannerId)
         {
@@ -34,46 +39,128 @@ namespace FreshCode.UseCases
             return BannerMapper.ToDTO(banner);
         }
 
-        public async Task<DropArtifactResponse> GetArtifact(long userId, long bannerId)
+        public async Task<DropArtifactResponse> GetArtifact(long userId, WishRequest wishRequest)
         {
             User user = await _userRepository.GetUserById(userId);
 
-            Banner banner = await _banerRepository.GetBannerById(bannerId);
+            HasEnoughFates(user, wishRequest.WishAmount);
 
-            List<ArtifactHistory> history = _userRepository.GetArtifactHistory(userId, bannerId).ToList();
-
+            Banner banner = await _banerRepository.GetBannerById(wishRequest.BannerId);
+            List<ArtifactHistory> history = _userRepository.GetArtifactHistory(userId, wishRequest.BannerId).ToList();
             IQueryable<BannerItem> bannerItems = _banerRepository.GetAllBannerItems();
 
-            var bannerItem = _artifactDropService.GetArtifact(banner, history, bannerItems);
-            
-            var response = new DropArtifactResponse();
-            
-            if (history.Where(h => h.ArtifactId == bannerItem.ArtifactId).Count() >= 1)
-            {//TODO: сколько бабок за повторюшку давать
-                user.Money += 100;
-                response.Money = 100;
-                response.IsArtifactOwnedPreviously = true;
-            }
-            else
+            var result = new DropArtifactResponse
             {
-                user.UserArtifacts.Add(new UserArtifact
-                {
-                    UserId = userId,
-                    ArtifactId = bannerItem.ArtifactId,
-                });
-            }
-            response.ArtifactId = bannerItem.ArtifactId;
+                artifacts = new List<ArtifactResponse>()
+            };
 
-            ArtifactHistory artifactHistory = new ArtifactHistory()
+            using var transaction = _transactionRepository.BeginTransaction();
+
+            try
+            {
+                for (int i = 0; i < wishRequest.WishAmount; i++)
+                {
+                    var bannerItem = await GetBannerItemWithArtifact(banner, history, bannerItems);
+                    var artifactResponse = CreateArtifactResponse(bannerItem);
+                    result.artifacts.Add(artifactResponse);
+
+                    if (!await IsUserHadArtifact(userId, bannerItem.ArtifactId))
+                    {
+                        AddNewUserArtifact(user, bannerItem);
+                        artifactResponse.IsArtifactOwnedPreviously = false;
+                    }
+                    else
+                    {
+                        HandleDuplicateArtifact(user, result, artifactResponse);
+                    }
+
+                    await RecordArtifactHistory(userId, wishRequest.BannerId, bannerItem.ArtifactId, history);
+                    await _baseRepository.SaveChangesAsync();
+                }
+                DeductFates(user, wishRequest.WishAmount, result);
+
+                await _baseRepository.SaveChangesAsync();
+                transaction.Commit();
+            }
+            catch (Exception)
+            {
+                transaction.Rollback();
+                throw new Exception("Не удалось совершить крутку баннера");
+            }
+            result.TotalMoney = user.Money;
+            return result;
+        }
+
+        private void HasEnoughFates(User user, int wishAmount)
+        {
+            if (user.FatesCount < wishAmount)
+            {
+                throw new InvalidOperationException("Недостаточно круток");
+            }
+
+        }
+        
+        private async Task<BannerItem> GetBannerItemWithArtifact(Banner banner, List<ArtifactHistory> history, IQueryable<BannerItem> bannerItems)
+        {
+            var bannerItem = _artifactDropService.GetArtifact(banner, history, bannerItems);
+            bannerItem.Artifact = await _artifactRepository.GetArtifactById(bannerItem.ArtifactId);
+            return bannerItem;
+        }
+
+        private ArtifactResponse CreateArtifactResponse(BannerItem bannerItem)
+        {
+            return new ArtifactResponse
             {
                 ArtifactId = bannerItem.ArtifactId,
+                IsArtifactOwnedPreviously = false,
+                X = bannerItem.Artifact.X,
+                Y = bannerItem.Artifact.Y,
+                Rarity = bannerItem.Artifact.Rarity.Rarity1
+            };
+        }
+
+        private void AddNewUserArtifact(User user, BannerItem bannerItem)
+        {
+            user.UserArtifacts.Add(new UserArtifact
+            {
+                UserId = user.Id,
+                ArtifactId = bannerItem.ArtifactId
+            });
+        }
+
+        private void HandleDuplicateArtifact(User user, DropArtifactResponse result, ArtifactResponse artifactResponse)
+        {
+            const int duplicateMoneyReward = 100;
+
+            artifactResponse.Money = duplicateMoneyReward;
+            artifactResponse.IsArtifactOwnedPreviously = true;
+
+            user.Money += duplicateMoneyReward;
+        }
+
+        private async System.Threading.Tasks.Task RecordArtifactHistory(long userId, long bannerId, long artifactId, List<ArtifactHistory> history)
+        {
+            var artifactHistory = new ArtifactHistory
+            {
+                ArtifactId = artifactId,
                 UserId = userId,
                 BannerId = bannerId,
                 GotAt = DateTime.UtcNow
             };
-            //await _baseRepository.AddAsync(artifactHistory);
-            //await _baseRepository.SaveChangesAsync();
-            return response;
+
+            await _baseRepository.AddAsync(artifactHistory);
+            history.Add(artifactHistory);
+        }
+
+        private void DeductFates(User user, int wishAmount, DropArtifactResponse result)
+        {
+            user.FatesCount -= wishAmount;
+            result.TotalFates = user.FatesCount;
+        }
+
+        private async Task<bool> IsUserHadArtifact(long userId, long artifactId)
+        {
+            return await _userRepository.isArtifactAbsent(artifactId, userId);
         }
     }
 }

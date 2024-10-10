@@ -1,4 +1,5 @@
 ﻿using FreshCode.ModelsDTO;
+using FreshCode.Requests;
 using FreshCode.Responses;
 using FreshCode.UseCases;
 using Microsoft.AspNetCore.Mvc;
@@ -18,10 +19,10 @@ namespace FreshCode.Controllers
         }
 
         [HttpGet("drop-artifact")]
-        public async Task<DropArtifactResponse> GetArtifacts([FromBody]long bannerId)
+        public async Task<DropArtifactResponse> GetArtifacts([FromBody] WishRequest wishRequest)
         {
             long userId = GetUserId(HttpContext);
-            return await _bannerUseCase.GetArtifact(userId, bannerId);
+            return await _bannerUseCase.GetArtifact(userId, wishRequest);
         }
     }
 }

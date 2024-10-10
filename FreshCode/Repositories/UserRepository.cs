@@ -166,7 +166,7 @@ namespace FreshCode.Repositories
         public async Task<bool> isArtifactAbsent(long artifactId, long userId)
         {
             var count = await _dbContext.UserArtifacts
-                .Where(a => a.Id == artifactId && a.UserId == userId)
+                .Where(a => a.ArtifactId == artifactId && a.UserId == userId)
                 .CountAsync();
 
             return count != 0;

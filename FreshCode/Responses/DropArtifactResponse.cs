@@ -2,10 +2,10 @@
 {
     public class DropArtifactResponse
     {
-        public long ArtifactId { get; set; }
+        public List<ArtifactResponse> artifacts { get; set; }
 
-        public bool IsArtifactOwnedPreviously { get; set; }
+        public int TotalMoney { get; set; }
 
-        public int? Money { get; set; }
+        public int TotalFates { get; set; }
     }
 }
