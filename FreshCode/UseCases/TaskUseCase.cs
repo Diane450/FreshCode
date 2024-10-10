@@ -14,11 +14,6 @@ namespace FreshCode.UseCases
         private readonly IPetsRepository _petRepository = petRepository;
         private readonly IBaseRepository _baseRepository = baseRepository;
 
-        public async Task<bool?> IsFeedingTaskComplete(long userId)
-        {
-            return null;
-        }
-
         public async Task<TaskRewardResponse> GetReward(long taskId, long userId)
         {
             UserTask task = _userRepository.GetUserTasks(userId)
