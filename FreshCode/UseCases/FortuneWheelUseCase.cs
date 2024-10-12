@@ -38,27 +38,46 @@ namespace FreshCode.UseCases
             {
                 IQueryable<Bonu> bonuses = _bonusRepository.GetAllBonusesAsync();
 
-                FortuneWheelDropResponse response = _bonusDropService.GetRandomBonus(bonuses);
+                Bonu response = _bonusDropService.GetRandomBonus(bonuses);
 
-                _bonusService.SetBonuses(pet, bonuses.ToList());
-
-                UserBonuse userBonuse = new UserBonuse()
+                FortuneWheelDropResponse fortuneWheelResponse = new()
                 {
-                    PetId = pet.Id,
-                    BonusId = response.BonusId,
-                    CreatedAt = response.CreatedAt,
-                    ExpiresAt = response.ExpiresAt,
-                };
-                UserFortuneWheelSpin spin = new() 
-                {
-                    UserId = userId,
-                    CreatedAt = response.CreatedAt
+                    CreatedAt = DateTime.UtcNow,
+                    ExpiresAt = DateTime.UtcNow.AddSeconds(response.Duration),
+                    BonusFormat = response.Type.Type,
+                    Characteristic = response.Characteristic.Characteristic1,
+                    Value = response.Value,
                 };
 
-                await _baseRepository.AddAsync(userBonuse);
-                await _baseRepository.AddAsync(spin);
-                await _baseRepository.SaveChangesAsync();
-                return response;
+                if (response.Characteristic.Characteristic1 == "SleepNeed" || response.Characteristic.Characteristic1 == "FeedNeed")
+                {
+                    var list = new List<Bonu>()
+                    {
+                        response
+                    };
+                    _bonusService.SetBonuses(pet, list);
+                }
+                else
+                {
+                    UserBonuse userBonuse = new UserBonuse()
+                    {
+                        PetId = pet.Id,
+                        BonusId = response.Id,
+                        CreatedAt = DateTime.UtcNow,
+                        ExpiresAt = DateTime.UtcNow.AddSeconds(response.Duration),
+                        BonusTypeId = 1
+                    };
+                    UserFortuneWheelSpin spin = new()
+                    {
+                        UserId = userId,
+                        CreatedAt = userBonuse.CreatedAt
+                    };
+
+                    await _baseRepository.AddAsync(userBonuse);
+                    await _baseRepository.AddAsync(spin);
+                    await _baseRepository.SaveChangesAsync();
+                }
+                return fortuneWheelResponse;
             }
             else
             {

@@ -13,5 +13,6 @@ namespace FreshCode.Interfaces
         Task<Level> GelLevelValues(long levelId);
         IQueryable<UserBonuse> GetPetBonuses(long petId);
         Task<PetStatResponse> GetPetStats(long petId);
+        IQueryable<PetFeedLog> GetFeedPetLogLast5Minute(long petId);
     }
 }

@@ -695,18 +695,24 @@ public partial class FreshCodeContext : DbContext
 
             entity.Property(e => e.Id).HasDefaultValueSql("nextval('\"FortuneWheelResults_Id_seq\"'::regclass)");
             entity.Property(e => e.BonusId).HasColumnName("Bonus_Id");
+            entity.Property(e => e.BonusTypeId).HasColumnName("BonusType_Id");
             entity.Property(e => e.CreatedAt).HasColumnName("Created_at");
             entity.Property(e => e.PetId).HasColumnName("Pet_Id");
 
             entity.HasOne(d => d.Bonus).WithMany(p => p.UserBonuses)
                 .HasForeignKey(d => d.BonusId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FortuneWheelResults_Bonus");
+                .HasConstraintName("UserBonus_Bonus");
+
+            entity.HasOne(d => d.BonusType).WithMany(p => p.UserBonuses)
+                .HasForeignKey(d => d.BonusTypeId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("UserBonus_BonusType");
 
             entity.HasOne(d => d.Pet).WithMany(p => p.UserBonuses)
                 .HasForeignKey(d => d.PetId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FortuneWheelResults_Pet");
+                .HasConstraintName("UserBonus_Pet");
         });
 
         modelBuilder.Entity<UserClan>(entity =>

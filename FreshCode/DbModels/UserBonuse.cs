@@ -15,7 +15,11 @@ public partial class UserBonuse
 
     public DateTime ExpiresAt { get; set; }
 
+    public long BonusTypeId { get; set; }
+
     public virtual Bonu Bonus { get; set; } = null!;
+
+    public virtual BonusType BonusType { get; set; } = null!;
 
     public virtual Pet Pet { get; set; } = null!;
 }

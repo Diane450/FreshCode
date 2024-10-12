@@ -109,7 +109,8 @@ namespace FreshCode.Repositories
         public IQueryable<UserBonuse> GetPetBonuses(long petId)
         {
             return _dbContext.UserBonuses
-                .Where(ub => ub.PetId == petId && ub.ExpiresAt < DateTime.UtcNow)
+                .Where(ub => ub.PetId == petId
+                && ub.ExpiresAt > DateTime.UtcNow)
                 .Include(b => b.Bonus)
                 .ThenInclude(b => b.Characteristic)
                 .Include(b => b.Bonus)
@@ -127,7 +128,16 @@ namespace FreshCode.Repositories
                     Health = p.CurrentHealth,
                     Strength = p.CurrentStrength,
                     Defence = p.CurrentDefence,
+                    SleepNeed = p.SleepNeed,
+                    FeedNeed = p.FeedNeed,
                 }).FirstAsync();
         }
+
+        public IQueryable<PetFeedLog> GetFeedPetLogLast5Minute(long petId)
+        {
+            return _dbContext.PetFeedLogs
+                .Where(pfl => pfl.PetId == petId && pfl.CreatedAt > DateTime.UtcNow.AddMinutes(-5));
+        }
+
     }
 }

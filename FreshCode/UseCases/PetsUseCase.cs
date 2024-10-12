@@ -91,7 +91,7 @@ namespace FreshCode.UseCases
         public async Task<PetDTO> RemoveArtifact(RemoveArtifactRequest removeArtifactRequest)
         {
             Pet pet = await _petsRepository.GetPetById(removeArtifactRequest.PetId);
-            
+
             Artifact artifact = await _artifactRepository.GetArtifactById(removeArtifactRequest.ArtifactToRemoveId);
 
             _artifactService.RemoveArtifact(pet, artifact);
@@ -112,10 +112,19 @@ namespace FreshCode.UseCases
 
         public async System.Threading.Tasks.Task Feed(long userId, FeedRequest request)
         {
-            UserFood userFood = _userRepository.GetUserFood(userId)
-                .First(uf => uf.FoodId == request.FoodId);
+            //проверка, баффов и дебаффов еды
+            //ограничение, если наелся. не более 3 елиниц еды за 5 минут 
+            IQueryable<PetFeedLog> log = _petsRepository.GetFeedPetLogLast5Minute(request.PetId);
 
-            if (userFood.Count == 0)
+            if (log.Count() >= 3)
+            {
+                throw new Exception("Питомец уже наелся!");
+            }
+
+            UserFood userFood = _userRepository.GetUserFood(userId)
+                .FirstOrDefault(uf => uf.FoodId == request.FoodId);
+
+            if (userFood is null || userFood.Count == 0)
             {
                 throw new Exception("User does not have this food");
             }
@@ -129,47 +138,94 @@ namespace FreshCode.UseCases
             Food food = await _foodRepository.GetFoodById(request.FoodId);
 
             Pet pet = await _petsRepository.GetPetById(request.PetId);
-            _bonusRepository.SetBonuses(pet, food.FoodBonuses.Select(f => f.Bonus).ToList());
+
+            var currentStats = await GetPetStats(request.PetId);
+
+            var currentBonuses = _petsRepository.GetPetBonuses(request.PetId)
+                .Where(ub => ub.BonusTypeId == 2).ToList();
+
+            var foodBonuses = food.FoodBonuses.ToList();
+
+            for (int i = 0; i < foodBonuses.Count; i++)
+            {
+                if (foodBonuses[i].IsTemporary)
+                {
+                    if (foodBonuses[i].Bonus.Value > 0)
+                    {
+                        var bonus = currentBonuses.FirstOrDefault(c => c.Bonus.CharacteristicId == foodBonuses[i].Bonus.CharacteristicId);
+
+                        if (bonus is null)
+                        {
+                            UserBonuse userBonuse = new UserBonuse
+                            {
+                                PetId = pet.Id,
+                                BonusId = foodBonuses[i].BonusId,
+                                CreatedAt = DateTime.UtcNow,
+                                ExpiresAt = DateTime.UtcNow.AddSeconds(foodBonuses[i].Bonus.Duration),
+                                BonusTypeId = 2
+                            };
+                            await _baseRepository.AddAsync(userBonuse);
+                        }
+                        else
+                        {
+                            bonus.BonusId = foodBonuses[i].BonusId;
+                            bonus.CreatedAt = DateTime.UtcNow;
+                            bonus.ExpiresAt = DateTime.UtcNow.AddSeconds(foodBonuses[i].Bonus.Duration);
+                        }
+                    }
+                    else
+                    {
+                        UserBonuse userBonuse = new UserBonuse
+                        {
+                            PetId = pet.Id,
+                            BonusId = foodBonuses[i].Id,
+                            CreatedAt = DateTime.UtcNow,
+                            ExpiresAt = DateTime.UtcNow.AddSeconds(foodBonuses[i].Bonus.Duration),
+                        };
+                        await _baseRepository.AddAsync(userBonuse);
+                    }
+                }
+                else
+                {
+                    var list = new List<Bonu>
+                    {
+                        foodBonuses[i].Bonus
+                    };
+                    _bonusRepository.SetBonuses(pet, list);
+                }
+            }
+
+            PetFeedLog petFeedLog = new()
+            {
+                FoodId = request.FoodId,
+                PetId = request.PetId,
+                CreatedAt = DateTime.UtcNow
+            };
+            await _baseRepository.AddAsync(petFeedLog);
 
             _baseRepository.Update(pet);
             await _baseRepository.SaveChangesAsync();
         }
 
+
+        public async Task<PetStatResponse> GetPetStats(long petId)
+        {
+            var bonuses = _petsRepository.GetPetBonuses(petId).ToList();
+
+            var petResponse = await _petsRepository.GetPetStats(petId);
+
+            petResponse = _bonusRepository.GetBonuses(petResponse, bonuses.Select(b => b.Bonus).ToList());
+
+            return petResponse;
+        }
+
         public async Task<List<ArtifactDTO>> GetPetArtifacts(long petId)
         {
             var artifacts = await _artifactRepository.GetPetArtifacts(petId);
-            
+
             var artifactsDto = ArtifactMapper.ToDTO(artifacts);
             return artifactsDto;
         }
 
-        public async Task<PetStatResponse> GetPetStats(long petId)
-        {
-            PetStatResponse petStatResponse = await _petsRepository.GetPetStats(petId);
-            var list = _petsRepository.GetPetBonuses(petId).ToList();
-
-            foreach (var bonus in list)
-            {
-                switch (bonus.Bonus.Id)
-                {
-                    case 1:
-                        petStatResponse.CriticalDamage += bonus.Bonus.Value;
-                        break;
-                    case 2:
-                        petStatResponse.CriticalChance += bonus.Bonus.Value;
-                        break;
-                    case 3:
-                        petStatResponse.Defence += bonus.Bonus.Value;
-                        break;
-                    case 6:
-                        petStatResponse.Health += bonus.Bonus.Value;
-                        break;
-                    case 7:
-                        petStatResponse.Strength += bonus.Bonus.Value;
-                        break;
-                }
-            }
-            return petStatResponse;
-        }
     }
 }

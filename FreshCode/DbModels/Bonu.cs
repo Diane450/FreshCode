@@ -13,6 +13,8 @@ public partial class Bonu
 
     public long TypeId { get; set; }
 
+    public double Duration { get; set; }
+
     public virtual ICollection<ArtifactBonuse> ArtifactBonuses { get; set; } = new List<ArtifactBonuse>();
 
     public virtual Characteristic Characteristic { get; set; } = null!;

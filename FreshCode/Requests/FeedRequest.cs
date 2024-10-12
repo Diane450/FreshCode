@@ -9,6 +9,5 @@ namespace FreshCode.Requests
     {
         public long PetId { get; set; }
         public long FoodId{ get; set; }
-        public List<BonusDTO>? Bonuses { get; set; }
     }
 }
