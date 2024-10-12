@@ -178,9 +178,10 @@ namespace FreshCode.UseCases
                         UserBonuse userBonuse = new UserBonuse
                         {
                             PetId = pet.Id,
-                            BonusId = foodBonuses[i].Id,
+                            BonusId = foodBonuses[i].BonusId,
                             CreatedAt = DateTime.UtcNow,
                             ExpiresAt = DateTime.UtcNow.AddSeconds(foodBonuses[i].Bonus.Duration),
+                            BonusTypeId = 2
                         };
                         await _baseRepository.AddAsync(userBonuse);
                     }

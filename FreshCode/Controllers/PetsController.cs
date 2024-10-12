@@ -82,7 +82,6 @@ namespace FreshCode.Controllers
         [HttpPut("feed")]
         public async System.Threading.Tasks.Task Feed([FromBody] FeedRequest request)
         {
-            //TODO: Pet_Bonuses add timer
             var userId = GetUserId(HttpContext);
             
             await _petsUseCase.Feed(userId, request);
