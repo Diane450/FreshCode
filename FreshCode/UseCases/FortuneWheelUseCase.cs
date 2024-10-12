@@ -93,7 +93,7 @@ namespace FreshCode.UseCases
                             CreatedAt = userBonuse.CreatedAt
                         };
                         await _baseRepository.AddAsync(userBonuse);
-                        //await _baseRepository.AddAsync(spin);
+                        await _baseRepository.AddAsync(spin);
                         await _baseRepository.SaveChangesAsync();
                     }
                 }
