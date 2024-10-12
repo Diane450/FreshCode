@@ -33,6 +33,7 @@ namespace FreshCode.Repositories
             try
             {
                 return await _dbContext.Pets.Where(p => p.Id == petId)
+                    .Include(p => p.PetSleepLogs)
                     .Include(p => p.Level)
                     .Include(p => p.Accessory)
                     .ThenInclude(a => a.Rarity)

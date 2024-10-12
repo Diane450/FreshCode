@@ -98,5 +98,11 @@ namespace FreshCode.Controllers
         {
             return Ok(await _petsUseCase.RemoveArtifact(removeArtifactRequest));
         }
+
+        [HttpPost("sleep")]
+        public async System.Threading.Tasks.Task Sleep([FromBody] long petId)
+        {
+            await _petsUseCase.Sleep(petId);
+        }
     }
 }

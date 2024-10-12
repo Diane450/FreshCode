@@ -18,7 +18,7 @@ namespace FreshCode.Services
             {
                 await UpdateSleepLevels(stoppingToken);
                 await System.Threading.Tasks.Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
-            }
+               }
         }
 
         private async System.Threading.Tasks.Task UpdateSleepLevels(CancellationToken cancellationToken)

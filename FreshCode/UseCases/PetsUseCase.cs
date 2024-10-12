@@ -216,10 +216,37 @@ namespace FreshCode.UseCases
         public async Task<List<ArtifactDTO>> GetPetArtifacts(long petId)
         {
             var artifacts = await _artifactRepository.GetPetArtifacts(petId);
-
             var artifactsDto = ArtifactMapper.ToDTO(artifacts);
             return artifactsDto;
         }
 
+        public async System.Threading.Tasks.Task Sleep(long petId)
+        {
+            Pet pet = await _petsRepository.GetPetById(petId);
+
+            var sleepLog = pet.PetSleepLogs
+                .OrderByDescending(p => p.Id)
+                .FirstOrDefault();
+            TimeSpan timeDifference;
+            if (sleepLog == null)
+            {
+                timeDifference = DateTime.UtcNow - pet.CreatedAt;
+            }
+            else
+            {
+                timeDifference = DateTime.UtcNow - sleepLog.WokeUpAt;
+            }
+            double seconds = timeDifference.TotalSeconds;
+
+            PetSleepLog log = new PetSleepLog()
+            {
+                PetId = petId,
+                CreatedAt = DateTime.UtcNow,
+                WokeUpAt = DateTime.UtcNow.AddSeconds(seconds),
+            };
+            pet.IsSleeping = true;
+            await _baseRepository.AddAsync(log);
+            await _baseRepository.SaveChangesAsync();
+        }
     }
 }
