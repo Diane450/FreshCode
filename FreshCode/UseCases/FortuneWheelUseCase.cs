@@ -56,26 +56,46 @@ namespace FreshCode.UseCases
                         response
                     };
                     _bonusService.SetBonuses(pet, list);
-                }
-                else
-                {
-                    UserBonuse userBonuse = new UserBonuse()
+                    if (response.CharacteristicId == 4)
                     {
-                        PetId = pet.Id,
-                        BonusId = response.Id,
-                        CreatedAt = DateTime.UtcNow,
-                        ExpiresAt = DateTime.UtcNow.AddSeconds(response.Duration),
-                        BonusTypeId = 1
-                    };
-                    UserFortuneWheelSpin spin = new()
+                        PetSleepLog petSleepLog = new()
+                        {
+                            PetId = pet.Id,
+                            CreatedAt = DateTime.UtcNow,
+                            WokeUpAt = DateTime.UtcNow
+                        };
+                        await _baseRepository.AddAsync(petSleepLog);
+                        await _baseRepository.SaveChangesAsync();
+                    }
+                    else if (response.CharacteristicId == 5)
                     {
-                        UserId = userId,
-                        CreatedAt = userBonuse.CreatedAt
-                    };
-
-                    await _baseRepository.AddAsync(userBonuse);
-                    await _baseRepository.AddAsync(spin);
-                    await _baseRepository.SaveChangesAsync();
+                        PetFeedLog petFeedLog = new()
+                        {
+                            PetId = pet.Id,
+                            CreatedAt = DateTime.UtcNow,
+                        };
+                        await _baseRepository.AddAsync(petFeedLog);
+                        await _baseRepository.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        UserBonuse userBonuse = new UserBonuse()
+                        {
+                            PetId = pet.Id,
+                            BonusId = response.Id,
+                            CreatedAt = DateTime.UtcNow,
+                            ExpiresAt = DateTime.UtcNow.AddSeconds(response.Duration),
+                            BonusTypeId = 1
+                        };
+                        UserFortuneWheelSpin spin = new()
+                        {
+                            UserId = userId,
+                            CreatedAt = userBonuse.CreatedAt
+                        };
+                        await _baseRepository.AddAsync(userBonuse);
+                        //await _baseRepository.AddAsync(spin);
+                        await _baseRepository.SaveChangesAsync();
+                    }
                 }
                 return fortuneWheelResponse;
             }
@@ -83,6 +103,7 @@ namespace FreshCode.UseCases
             {
                 throw new ArgumentException("User cannot spin the wheel of fortune yet");
             }
+
         }
     }
 }

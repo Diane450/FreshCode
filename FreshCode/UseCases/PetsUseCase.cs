@@ -192,12 +192,22 @@ namespace FreshCode.UseCases
                         foodBonuses[i].Bonus
                     };
                     _bonusRepository.SetBonuses(pet, list);
+
+                    if (foodBonuses[i].Bonus.CharacteristicId == 4)
+                    {
+                        PetSleepLog petSleepLog = new()
+                        {
+                            PetId = request.PetId,
+                            CreatedAt = DateTime.UtcNow,
+                            WokeUpAt = DateTime.UtcNow
+                        };
+                        await _baseRepository.AddAsync(petSleepLog);
+                    }
                 }
             }
 
             PetFeedLog petFeedLog = new()
             {
-                FoodId = request.FoodId,
                 PetId = request.PetId,
                 CreatedAt = DateTime.UtcNow
             };

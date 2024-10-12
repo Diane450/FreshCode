@@ -9,9 +9,5 @@ public partial class PetFeedLog
 
     public long PetId { get; set; }
 
-    public long FoodId { get; set; }
-
     public DateTime CreatedAt { get; set; }
-
-    public virtual Food Food { get; set; } = null!;
 }
