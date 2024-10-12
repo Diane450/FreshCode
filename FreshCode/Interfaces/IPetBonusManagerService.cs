@@ -7,6 +7,8 @@ namespace FreshCode.Interfaces
     {
         void SetBonuses(Pet pet, List<Bonu> bonuses);
 
+        System.Threading.Tasks.Task SetBonus(Pet pet, Bonu bonus);
+
         PetStatResponse GetBonuses(PetStatResponse petResponse, List<Bonu> bonuses);
 
         void RemoveBonuses(Pet pet, List<Bonu> bonuses);

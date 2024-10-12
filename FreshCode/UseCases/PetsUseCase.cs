@@ -112,8 +112,6 @@ namespace FreshCode.UseCases
 
         public async System.Threading.Tasks.Task Feed(long userId, FeedRequest request)
         {
-            //проверка, баффов и дебаффов еды
-            //ограничение, если наелся. не более 3 елиниц еды за 5 минут 
             IQueryable<PetFeedLog> log = _petsRepository.GetFeedPetLogLast5Minute(request.PetId);
 
             if (log.Count() >= 3)
@@ -188,22 +186,7 @@ namespace FreshCode.UseCases
                 }
                 else
                 {
-                    var list = new List<Bonu>
-                    {
-                        foodBonuses[i].Bonus
-                    };
-                    _bonusRepository.SetBonuses(pet, list);
-
-                    if (foodBonuses[i].Bonus.CharacteristicId == 4)
-                    {
-                        PetSleepLog petSleepLog = new()
-                        {
-                            PetId = request.PetId,
-                            CreatedAt = DateTime.UtcNow,
-                            WokeUpAt = DateTime.UtcNow
-                        };
-                        await _baseRepository.AddAsync(petSleepLog);
-                    }
+                    await _bonusRepository.SetBonus(pet, foodBonuses[i].Bonus);
                 }
             }
 

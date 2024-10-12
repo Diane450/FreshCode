@@ -7,6 +7,11 @@ namespace FreshCode.Services
 {
     public class PetBonusManagerService : IPetBonusManagerService
     {
+        private readonly IPetLoggerService _petLoggerService;
+        public PetBonusManagerService(IPetLoggerService petLoggerService)
+        {
+            _petLoggerService = petLoggerService;
+        }
         public void SetBonuses(Pet pet, List<Bonu> bonuses)
         {
             foreach (var bonus in bonuses)
@@ -147,6 +152,43 @@ namespace FreshCode.Services
                 }
             }
             return petResponse;
+        }
+
+        public async System.Threading.Tasks.Task SetBonus(Pet pet, Bonu bonus)
+        {
+            CharacteristicType characteristic = Enum.Parse<CharacteristicType>(bonus.Characteristic.Characteristic1, true);
+            var bonusValue = bonus.Value;
+            var bonusType = bonus.Type.Type == "flat" ? Enums.BonusType.Flat : Enums.BonusType.Percentage;
+            switch (characteristic)
+            {
+                case (CharacteristicType.CriticalDamage):
+                    pet.CurrentCriticalDamage += bonusValue;
+                    break;
+                case (CharacteristicType.Defence):
+                    pet.CurrentDefence = ApplyBonus(pet.CurrentDefence, bonusValue, bonusType);
+                    break;
+                case (CharacteristicType.CriticalChance):
+                    pet.CurrentCriticalChance += bonusValue;
+                    break;
+                case (CharacteristicType.Health):
+                    pet.CurrentHealth = ApplyBonus(pet.CurrentHealth, bonusValue, bonusType);
+                    break;
+                case (CharacteristicType.Strength):
+                    pet.CurrentStrength = ApplyBonus(pet.CurrentStrength, bonusValue, bonusType);
+                    break;
+                case (CharacteristicType.SleepNeed):
+                    var newSleepValue = ApplyBonus(pet.SleepNeed, bonusValue, bonusType);
+                    pet.SleepNeed = newSleepValue <= 100 ? newSleepValue : 100;
+                    await _petLoggerService.CreateSleepLog(pet);
+                    break;
+                case (CharacteristicType.FeedNeed):
+                    var newFeedValue = ApplyBonus(pet.FeedNeed, bonusValue, bonusType);
+                    pet.FeedNeed = newFeedValue <= 100 ? newFeedValue : 100;
+                    await _petLoggerService.CreateFeedLog(pet);
+                    break;
+                default:
+                    throw new Exception($"Invalid CharacteristicType {characteristic}");
+            }
         }
     }
 }

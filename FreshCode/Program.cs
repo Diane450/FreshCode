@@ -57,6 +57,7 @@ builder.Services.AddScoped<IFortuneRepository, FortuneWheelRepository>();
 builder.Services.AddScoped<IBonusRepository, BonusRepository>();
 builder.Services.AddScoped<FortuneWheelUseCase>();
 builder.Services.AddScoped<IPetBonusManagerService, PetBonusManagerService>();
+builder.Services.AddScoped<IPetLoggerService, PetLoggerService>();
 
 builder.Services.AddHostedService<SleepDepletionService>();
 
