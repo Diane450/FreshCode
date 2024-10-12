@@ -10,4 +10,6 @@ public partial class PetFeedLog
     public long PetId { get; set; }
 
     public DateTime CreatedAt { get; set; }
+
+    public virtual Pet Pet { get; set; } = null!;
 }

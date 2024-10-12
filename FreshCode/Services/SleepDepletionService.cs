@@ -48,7 +48,7 @@ namespace FreshCode.Services
 
                     double seconds = timeDifference.TotalSeconds;
 
-                    var newSleepValue = Convert.ToInt32(Math.Floor(100 - seconds / ((24 * 60 * 60) * 100)));
+                    var newSleepValue = Convert.ToInt32(Math.Floor(100 - seconds / ((8 * 60 * 60) * 100)));
 
                     if (newSleepValue != pet.SleepNeed)
                     {

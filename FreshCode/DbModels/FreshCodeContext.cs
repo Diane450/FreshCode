@@ -436,6 +436,11 @@ public partial class FreshCodeContext : DbContext
 
             entity.Property(e => e.CreatedAt).HasColumnName("Created_at");
             entity.Property(e => e.PetId).HasColumnName("Pet_Id");
+
+            entity.HasOne(d => d.Pet).WithMany(p => p.PetFeedLogs)
+                .HasForeignKey(d => d.PetId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("PetFeedLog_Pet");
         });
 
         modelBuilder.Entity<PetSleepLog>(entity =>

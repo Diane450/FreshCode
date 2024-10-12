@@ -60,6 +60,7 @@ builder.Services.AddScoped<IPetBonusManagerService, PetBonusManagerService>();
 builder.Services.AddScoped<IPetLoggerService, PetLoggerService>();
 
 builder.Services.AddHostedService<SleepDepletionService>();
+builder.Services.AddHostedService<PetDecreasedSatietyService>();
 
 builder.Services.AddScoped<VkLaunchParamsService>();
 
