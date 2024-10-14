@@ -17,16 +17,19 @@ namespace FreshCode.UseCases
             _battleRepository = battleRepository;
             _petRepository = petsRepository;
         }
-        public async Task<PetDTO> FindOppenont(long userId)
+        public async Task<PetDTO> FindOpponent(long userId)
         {
             Pet pet = await _petRepository.GetPetByUserId(userId);
-            IQueryable<Pet> opponents = _battleRepository.GetPetOpponents(pet.LevelId);
+            IQueryable<long> opponents = _battleRepository.GetPetOpponents(pet);
             Random random = new Random();
 
             int index = random.Next(0, opponents.Count() + 1);
             var opponentsList = await opponents.ToListAsync();
-            var selectedOpponent = opponentsList[index];
-            return PetMapper.ToDto(selectedOpponent);
+            var selectedOpponentId = opponentsList[index];
+
+            Pet opponent = await _petRepository.GetPetById(selectedOpponentId);
+
+            return PetMapper.ToDto(opponent);
         }
     }
 }

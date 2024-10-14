@@ -4,6 +4,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FreshCode.Controllers
 {
+    [ApiController]
+    [Route("battle")]
+
     public class BattleController (BattleUseCase battleUseCase) : BaseController
     {
         private readonly BattleUseCase _battleUseCase = battleUseCase;
@@ -12,7 +15,7 @@ namespace FreshCode.Controllers
         public async Task<PetDTO> FindOpponent()
         {
             var userId = GetUserId(HttpContext);
-            return await _battleUseCase.FindOppenont(userId);
+            return await _battleUseCase.FindOpponent(userId);
         }
     }
 }

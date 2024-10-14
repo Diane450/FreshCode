@@ -59,6 +59,10 @@ builder.Services.AddScoped<FortuneWheelUseCase>();
 builder.Services.AddScoped<IPetBonusManagerService, PetBonusManagerService>();
 builder.Services.AddScoped<IPetLoggerService, PetLoggerService>();
 
+builder.Services.AddScoped<BattleUseCase>();
+builder.Services.AddScoped<IBattleRepository, BattleRepository>();
+
+
 builder.Services.AddHostedService<SleepDepletionService>();
 builder.Services.AddHostedService<PetDecreasedSatietyService>();
 builder.Services.AddHostedService<PetWakeupService>();

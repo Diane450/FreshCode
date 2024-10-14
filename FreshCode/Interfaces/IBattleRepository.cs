@@ -4,6 +4,6 @@ namespace FreshCode.Interfaces
 {
     public interface IBattleRepository
     {
-        public IQueryable<Pet> GetPetOpponents(long levelValue);
+        public IQueryable<long> GetPetOpponents(Pet pet);
     }
 }

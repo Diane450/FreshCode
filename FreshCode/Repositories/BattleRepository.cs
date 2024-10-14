@@ -7,10 +7,14 @@ namespace FreshCode.Repositories
     {
         private readonly FreshCodeContext _dbContext = dbContext;
 
-        public IQueryable<Pet> GetPetOpponents(long levelValue)
+        public IQueryable<long> GetPetOpponents(Pet pet)
         {
             return _dbContext.Pets
-                .Where(p => p.LevelId <= levelValue + 1 && p.LevelId >= levelValue - 1);
+                .Where(p => p.LevelId <= pet.Level.LevelValue + 1
+                && p.LevelId >= pet.Level.LevelValue - 1
+                && p.Id != pet.Id
+                && !p.IsSleeping)
+                .Select(p=>p.Id);
         }
     }
 }
