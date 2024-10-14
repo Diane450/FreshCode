@@ -41,9 +41,9 @@ namespace FreshCode.Services
 
                     var difference = (DateTime.UtcNow - lastSleepLog!.CreatedAt).TotalSeconds;
 
-                    int addPercents = (int)Math.Ceiling((difference * 100) / 18000);
+                    int addPercents = (int)Math.Floor((difference * 100) / 18000);
 
-                    pet.SleepNeed = pet.SleepNeed + addPercents > 100 ? 100 : pet.SleepNeed + addPercents;
+                    pet.SleepNeed = lastSleepLog.InitialSleepNeed + addPercents > 100 ? 100 : lastSleepLog.InitialSleepNeed + addPercents;
 
                     if (lastSleepLog.WokeUpAt <= DateTime.UtcNow || pet.SleepNeed == 100)
                     {
