@@ -18,7 +18,7 @@ namespace FreshCode.Services
             {
                 await UpdateSleepLevels(stoppingToken);
                 await System.Threading.Tasks.Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
-               }
+            }
         }
 
         private async System.Threading.Tasks.Task UpdateSleepLevels(CancellationToken cancellationToken)
@@ -28,7 +28,7 @@ namespace FreshCode.Services
                 var dbContext = scope.ServiceProvider.GetRequiredService<FreshCodeContext>();
 
                 var pets = await dbContext.Pets
-                    .Where(p=>!p.IsSleeping)
+                    .Where(p => !p.IsSleeping)
                     .Include(p => p.PetSleepLogs)
                     .ToListAsync(cancellationToken);
 
@@ -49,11 +49,11 @@ namespace FreshCode.Services
 
                     double seconds = timeDifference.TotalSeconds;
 
-                    var newSleepValue = Convert.ToInt32(Math.Floor(100 - seconds / ((8 * 60 * 60) * 100)));
+                    int newSleepValue = 100 - (int)Math.Ceiling((seconds * 100) / 18000);
 
                     if (newSleepValue != pet.SleepNeed)
                     {
-                        pet.SleepNeed = newSleepValue;
+                        pet.SleepNeed = newSleepValue < 0 ? 0 : newSleepValue;
                         await dbContext.SaveChangesAsync(cancellationToken);
                     }
                 }

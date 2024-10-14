@@ -30,7 +30,6 @@ namespace FreshCode.Services
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<FreshCodeContext>();
 
-                // Получаем всех питомцев с логами кормления
                 var pets = await dbContext.Pets
                             .Include(p => p.PetFeedLogs)
                             .ToListAsync(cancellationToken);
