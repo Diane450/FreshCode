@@ -61,7 +61,7 @@ builder.Services.AddScoped<IPetLoggerService, PetLoggerService>();
 
 builder.Services.AddScoped<BattleUseCase>();
 builder.Services.AddScoped<IBattleRepository, BattleRepository>();
-
+builder.Services.AddScoped<BattleService>();
 
 builder.Services.AddHostedService<SleepDepletionService>();
 builder.Services.AddHostedService<PetDecreasedSatietyService>();
@@ -116,7 +116,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.MapHub<BattleHub>("battle");
+app.MapHub<BattleHub>("battle-hub");
 
 app.UseAuthorization();
 

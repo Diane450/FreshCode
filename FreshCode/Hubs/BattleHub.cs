@@ -11,6 +11,10 @@ namespace FreshCode.Hubs
         {
             _battleService = battleService;
         }
+        public override async Task OnConnectedAsync()
+        {
+            await Clients.Client(Context.ConnectionId).SendAsync("OnConnected", "User has connected to BattleHub");
+        }
 
         // Сообщение для начала боя
         // Метод для обработки атаки

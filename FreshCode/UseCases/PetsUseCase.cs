@@ -116,7 +116,7 @@ namespace FreshCode.UseCases
                 throw new Exception("Питомец уже наелся!");
             }
 
-            UserFood userFood = _userRepository.GetUserFood(userId)
+            UserFood? userFood = _userRepository.GetUserFood(userId)
                 .FirstOrDefault(uf => uf.FoodId == request.FoodId);
 
             if (userFood is null || userFood.Count == 0)

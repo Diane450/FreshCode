@@ -29,6 +29,9 @@ namespace FreshCode.UseCases
         public async Task<PetDTO> FindOpponent(long userId)
         {
             Pet pet = await _petRepository.GetPetByUserId(userId);
+            
+            //проверить, если пользователь находится уже в очереди...
+            
             IQueryable<long> opponents = _battleRepository.GetPetOpponents(pet);
 
             if (opponents.Count() <= 0)
@@ -38,7 +41,7 @@ namespace FreshCode.UseCases
 
             Random random = new Random();
 
-            int index = random.Next(0, opponents.Count() + 1);
+            int index = random.Next(0, opponents.Count());
             var opponentsList = await opponents.ToListAsync();
             var selectedOpponentId = opponentsList[index];
 
@@ -67,8 +70,8 @@ namespace FreshCode.UseCases
             {
                 var battle = CreateBattle(userId, opponent.Id);
 
-                //await _battleHub.Clients.User(pet.Id.ToString()).SendAsync("BattleStarted", opponent.UserId);
-                //await _battleHub.Clients.User(opponent.UserId.ToString()).SendAsync("BattleStarted", player.UserId);
+                await _battleHub.Clients.User(userId.ToString()).SendAsync("BattleStarted", opponent.UserId);
+                await _battleHub.Clients.User(opponent.UserId.ToString()).SendAsync("BattleStarted", userId);
             }
         }
 
