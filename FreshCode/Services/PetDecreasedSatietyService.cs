@@ -15,12 +15,12 @@ namespace FreshCode.Services
             _serviceProvider = serviceProvider;
         }
 
-        protected override async System.Threading.Tasks.Task ExecuteAsync(CancellationToken stoppingToken)
+        protected override async System.Threading.Tasks.Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            while (!stoppingToken.IsCancellationRequested)
+            while (!cancellationToken.IsCancellationRequested)
             {
-                await UpdateSatietyLevels(stoppingToken);
-                await System.Threading.Tasks.Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+                await UpdateSatietyLevels(cancellationToken);
+                await System.Threading.Tasks.Task.Delay(TimeSpan.FromMinutes(1), cancellationToken);
             }
         }
 

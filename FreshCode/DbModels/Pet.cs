@@ -47,7 +47,7 @@ public partial class Pet
 
     public DateTime CreatedAt { get; set; }
 
-    public bool? IsSleeping { get; set; }
+    public bool IsSleeping { get; set; }
 
     public virtual Artifact? Accessory { get; set; }
 

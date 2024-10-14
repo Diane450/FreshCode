@@ -28,6 +28,7 @@ namespace FreshCode.Services
                 var dbContext = scope.ServiceProvider.GetRequiredService<FreshCodeContext>();
 
                 var pets = await dbContext.Pets
+                    .Where(p=>!p.IsSleeping)
                     .Include(p => p.PetSleepLogs)
                     .ToListAsync(cancellationToken);
 

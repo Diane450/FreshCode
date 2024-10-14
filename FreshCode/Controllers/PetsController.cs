@@ -1,10 +1,7 @@
-using FreshCode.DbModels;
-using FreshCode.Enums;
 using FreshCode.Exceptions;
 using FreshCode.ModelsDTO;
 using FreshCode.Requests;
 using FreshCode.Responses;
-using FreshCode.Services;
 using FreshCode.UseCases;
 using Microsoft.AspNetCore.Mvc;
 
