@@ -220,33 +220,29 @@ namespace FreshCode.UseCases
             return artifactsDto;
         }
 
-        public async System.Threading.Tasks.Task Sleep(long petId)
+        public async Task<DateTime> Sleep(long petId)
         {
             Pet pet = await _petsRepository.GetPetById(petId);
 
-            var sleepLog = pet.PetSleepLogs
-                .OrderByDescending(p => p.Id)
-                .FirstOrDefault();
-            TimeSpan timeDifference;
-            if (sleepLog == null)
+            int fullSleepSeconds = 5 * 60 * 60;
+            int difference = 100 - pet.SleepNeed;
+            int secondsToSleep = (fullSleepSeconds * difference) / 100;
+            if (secondsToSleep <= 0)
             {
-                timeDifference = DateTime.UtcNow - pet.CreatedAt;
+                throw new Exception("Ваш питомец уже полностью отдохнул и не нуждается в дополнительном сне");
             }
-            else
-            {
-                timeDifference = DateTime.UtcNow - sleepLog.WokeUpAt;
-            }
-            double seconds = timeDifference.TotalSeconds;
 
-            PetSleepLog log = new PetSleepLog()
+            PetSleepLog petSleepLog = new PetSleepLog()
             {
                 PetId = petId,
                 CreatedAt = DateTime.UtcNow,
-                WokeUpAt = DateTime.UtcNow.AddSeconds(seconds),
+                WokeUpAt = DateTime.UtcNow.AddSeconds(secondsToSleep),
             };
+
             pet.IsSleeping = true;
-            await _baseRepository.AddAsync(log);
+            await _baseRepository.AddAsync(petSleepLog);
             await _baseRepository.SaveChangesAsync();
+            return petSleepLog.WokeUpAt;
         }
     }
 }
