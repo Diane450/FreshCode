@@ -36,16 +36,16 @@ namespace FreshCode.Services
 
                 foreach (var pet in pets)
                 {
-                    // Получаем последний лог кормления
+
                     var feedLog = pet.PetFeedLogs
                                     .OrderByDescending(p => p.CreatedAt)
                                     .FirstOrDefault();
 
-                    // Определяем время, прошедшее с момента последнего кормления
+
                     TimeSpan timeDifference;
                     if (feedLog == null)
                     {
-                        // Если питомца никогда не кормили, считаем от даты создания
+
                         timeDifference = DateTime.UtcNow - pet.CreatedAt;
                     }
                     else
@@ -56,11 +56,11 @@ namespace FreshCode.Services
 
                     double seconds = timeDifference.TotalSeconds;
 
+                    int feedNeedDecrease = 100 - (int)Math.Ceiling((seconds * 100) / 18000);
                     // Потребность в еде уменьшается в зависимости от времени, прошедшего с последнего кормления
-                    var feedNeedDecrease = seconds / (5 * 60 * 60); // Процент уменьшения каждые 5 часов
 
                     // Новое значение потребности в еде
-                    var newFeedValue = Math.Max(0, pet.FeedNeed - feedNeedDecrease); // Убедимся, что значение не меньше 0
+                    var newFeedValue = Math.Max(0, feedNeedDecrease); // Убедимся, что значение не меньше 0
 
                     // Если значение изменилось, обновляем БД
                     if (newFeedValue != pet.FeedNeed)
