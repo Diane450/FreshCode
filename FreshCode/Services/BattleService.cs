@@ -26,7 +26,7 @@ namespace FreshCode.Services
         }
 
         // Метод расчёта урона
-        public decimal CalculateDamage(PetStatResponse attacker, PetStatResponse defender)
+        public int CalculateDamage(PetStatResponse attacker, PetStatResponse defender)
         {
             bool isCriticalHit = (decimal)new Random().NextDouble() <= attacker.CriticalChance;
 
@@ -50,36 +50,29 @@ namespace FreshCode.Services
             {
                 baseDamage = (int)(baseDamage * attacker.CriticalDamage);
             }
-            return baseDamage;
+            return Convert.ToInt32(baseDamage);
         }
 
         // Обработка удара
         public async System.Threading.Tasks.Task HandleAttack(string battleId, string attackerId, string defenderId)
         {
-            // Ищем бой и питомцев
-            var battle = _battleRepository.GetBattleById(battleId);
-
             PetStatResponse attackerStats = await _petsUseCase.GetPetStats(Convert.ToInt64(attackerId));
             PetStatResponse defenderStats = await _petsUseCase.GetPetStats(Convert.ToInt64(defenderId));
 
-            //Pet attackerPet = await _petRepository.GetPetByUserId(Convert.ToInt64(attackerId));
-            //Pet defenderPet = await _petRepository.GetPetByUserId(Convert.ToInt64(defenderId));
-
-            //var attackerId = battle.Player1Id == attackerId ? battle.Player1Pet : battle.Player2Pet;
-            //var defender = battle.Player1Id == defenderId ? battle.Player1Pet : battle.Player2Pet;
+            Pet attackerPet = await _petRepository.GetPetByUserId(Convert.ToInt64(attackerId));
+            Pet defenderPet = await _petRepository.GetPetByUserId(Convert.ToInt64(defenderId));
 
             // Рассчитываем урон
             var damage = CalculateDamage(attackerStats, defenderStats);
-            defender.CurrentHealth = Math.Max(defender.CurrentHealth - damage, 0); // Обновляем здоровье
+            defenderPet.CurrentHealth = Math.Max(defenderPet.CurrentHealth - damage, 0); // Обновляем здоровье
 
             // Уведомляем обоих игроков о результате удара
-            await _hubContext.Clients.User(attackerId).SendAsync("ReceiveAttackResult", damage, defender.CurrentHealth);
-            await _hubContext.Clients.User(defenderId).SendAsync("ReceiveAttackResult", damage, defender.CurrentHealth);
+            await _hubContext.Clients.User(attackerId).SendAsync("ReceiveAttackResult", damage, defenderPet.CurrentHealth);
+            await _hubContext.Clients.User(defenderId).SendAsync("ReceiveAttackResult", damage, defenderPet.CurrentHealth);
 
             // Проверяем конец боя
-            if (defender.CurrentHealth <= 0)
+            if (defenderPet.CurrentHealth <= 0)
             {
-                battle.Status = "Completed";
                 await _hubContext.Clients.Group(battleId).SendAsync("BattleEnded", attackerId); // Уведомляем о завершении боя
             }
         }

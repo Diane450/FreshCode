@@ -11,15 +11,17 @@ public partial class UserBattle
 
     public long SecondPlayerId { get; set; }
 
-    public long WinnerId { get; set; }
+    public long? WinnerId { get; set; }
 
-    public int MoneyReward { get; set; }
+    public int? MoneyReward { get; set; }
 
-    public int PointsReward { get; set; }
+    public int? PointsReward { get; set; }
 
-    public int StatPointsReward { get; set; }
+    public int? StatPointsReward { get; set; }
 
     public DateTime CreatedAt { get; set; }
+
+    public DateTime? FinishedAt { get; set; }
 
     public virtual ICollection<BattleQueue> BattleQueues { get; set; } = new List<BattleQueue>();
 
@@ -27,5 +29,5 @@ public partial class UserBattle
 
     public virtual User SecondPlayer { get; set; } = null!;
 
-    public virtual User Winner { get; set; } = null!;
+    public virtual User? Winner { get; set; }
 }

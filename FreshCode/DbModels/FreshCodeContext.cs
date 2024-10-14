@@ -692,6 +692,7 @@ public partial class FreshCodeContext : DbContext
             entity.HasKey(e => e.Id).HasName("UserBattles_pkey");
 
             entity.Property(e => e.CreatedAt).HasColumnName("Created_at");
+            entity.Property(e => e.FinishedAt).HasColumnName("Finished_at");
             entity.Property(e => e.FirstPlayerId).HasColumnName("FirstPlayer_Id");
             entity.Property(e => e.SecondPlayerId).HasColumnName("SecondPlayer_Id");
             entity.Property(e => e.WinnerId).HasColumnName("Winner_Id");
@@ -708,7 +709,6 @@ public partial class FreshCodeContext : DbContext
 
             entity.HasOne(d => d.Winner).WithMany(p => p.UserBattleWinners)
                 .HasForeignKey(d => d.WinnerId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("UserBattles_Winner");
         });
 
