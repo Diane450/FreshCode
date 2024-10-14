@@ -11,11 +11,11 @@ namespace FreshCode.Controllers
     {
         private readonly BattleUseCase _battleUseCase = battleUseCase;
 
-        [HttpGet("find-opponent")]
-        public async Task<PetDTO> FindOpponent()
+        [HttpGet("join-battle-queue")]
+        public async Task<PetDTO> JoinQueue()
         {
             var userId = GetUserId(HttpContext);
-            return await _battleUseCase.FindOpponent(userId);
+            return await _battleUseCase.JoinBattleQueue(userId);
         }
     }
 }

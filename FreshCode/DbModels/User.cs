@@ -25,6 +25,8 @@ public partial class User
 
     public virtual Background Background { get; set; } = null!;
 
+    public virtual ICollection<BattleQueue> BattleQueues { get; set; } = new List<BattleQueue>();
+
     public virtual ICollection<Clan> Clans { get; set; } = new List<Clan>();
 
     public virtual ICollection<Pet> Pets { get; set; } = new List<Pet>();

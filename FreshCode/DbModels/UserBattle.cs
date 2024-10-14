@@ -19,6 +19,10 @@ public partial class UserBattle
 
     public int StatPointsReward { get; set; }
 
+    public DateTime CreatedAt { get; set; }
+
+    public virtual ICollection<BattleQueue> BattleQueues { get; set; } = new List<BattleQueue>();
+
     public virtual User FirstPlayer { get; set; } = null!;
 
     public virtual User SecondPlayer { get; set; } = null!;
