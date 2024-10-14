@@ -112,7 +112,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.MapHub<SleepNotificationHub>("sleep-notifications");
+app.MapHub<BattleHub>("battle");
 
 app.UseAuthorization();
 
