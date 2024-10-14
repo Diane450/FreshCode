@@ -1,5 +1,4 @@
 ﻿using FreshCode.DbModels;
-using FreshCode.Enums;
 using FreshCode.Exceptions;
 using FreshCode.Extensions;
 using FreshCode.Interfaces;
@@ -8,7 +7,6 @@ using FreshCode.ModelsDTO;
 using FreshCode.Repositories;
 using FreshCode.Requests;
 using FreshCode.Responses;
-using FreshCode.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FreshCode.UseCases
@@ -52,7 +50,6 @@ namespace FreshCode.UseCases
 
         public async Task<ActionResult<PetDTO>> IncreaseStat(long userId, IncreaseStatRequest request)
         {
-            //TODO: обновить среднюю силу питомца
             User user = await _userRepository.GetUserById(userId);
             Pet pet = await _petsRepository.GetPetById(request.PetId);
 

@@ -1,20 +1,23 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using FreshCode.Services;
+using Microsoft.AspNetCore.SignalR;
 
 namespace FreshCode.Hubs
 {
     public class BattleHub : Hub
     {
-        // Сообщение для начала боя
-        public async Task StartBattle(string player1Id, string player2Id)
+        private readonly BattleService _battleService;
+
+        public BattleHub(BattleService battleService)
         {
-            await Clients.User(player1Id).SendAsync("BattleStarted", player2Id);
-            await Clients.User(player2Id).SendAsync("BattleStarted", player1Id);
+            _battleService = battleService;
         }
 
-        // Сообщение о ходе игрока
-        public async Task MakeMove(string battleId, string playerId, string move)
+        // Сообщение для начала боя
+        // Метод для обработки атаки
+        public async Task Attack(string battleId, string attackerId, string defenderId)
         {
-            await Clients.Group(battleId).SendAsync("ReceiveMove", playerId, move);
+            // Обработка атаки через сервис
+            await _battleService.HandleAttack(battleId, attackerId, defenderId);
         }
 
         // Присоединение к бою
