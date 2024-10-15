@@ -99,5 +99,10 @@ namespace FreshCode.MiddleWare
             long vk_user_id = Convert.ToInt64(QueryParams["vk_user_id"]);
             return await _userUseCase.GetUserIdByVkId(vk_user_id);
         }
+
+        public long GetVkId()
+        {
+            return Convert.ToInt64(QueryParams["vk_user_id"]);
+        }
     }
 }

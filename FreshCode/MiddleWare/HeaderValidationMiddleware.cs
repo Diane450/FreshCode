@@ -32,6 +32,8 @@ namespace FreshCode.MiddleWare
                 var userId = await GetUserId();
 
                 _httpContext.Items["userId"] = userId;
+
+                _httpContext.Items["vk_user_id"] = _middleWare.GetVkId();
             }
             catch (Exception ex)
             {

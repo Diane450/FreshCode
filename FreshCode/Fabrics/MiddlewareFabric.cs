@@ -11,7 +11,7 @@ namespace FreshCode.Fabrics
             return platform switch
             {
                 "vk" => new VKMiddleWare(userUseCase),
-                "tg" => new TgMiddleWare(),
+                //"tg" => new TgMiddleWare(),
                 _ => throw new ArgumentException("Invalid platform")
             };
         }

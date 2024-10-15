@@ -120,7 +120,6 @@ namespace FreshCode.Hubs
             // Уведомляем обоих игроков о найденном сопернике
             await Clients.Client(opponentConnectionId).SendAsync("OpponentFound", userId);
             await Clients.Client(_waitingPlayers[userId].ConnectionId).SendAsync("OpponentFound", opponentId);
-
         }
 
         // Метод отмены поиска
@@ -136,7 +135,6 @@ namespace FreshCode.Hubs
                 _waitingPlayers.Remove(userId);
             }
         }
-
 
         // Сообщение для начала боя
         // Метод для обработки атаки
