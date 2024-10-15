@@ -79,12 +79,11 @@ namespace FreshCode.UseCases
                     BattleId = battle.Id,
                 });
 
-                // Добавляем их в группу боя
                 await _battleHub.Groups.AddToGroupAsync(BattleHub._userConnections[userId.ToString()], groupName);
                 await _battleHub.Groups.AddToGroupAsync(BattleHub._userConnections[opponent.UserId.ToString()], groupName);
 
                 await _battleHub.Clients.Client(BattleHub._userConnections[userId.ToString()])
-                    .SendAsync("GroupAssigned", groupName, "Ваш ход");  // Уведомление для userId
+                    .SendAsync("GroupAssigned", groupName, "Ваш ход");
                 await _battleHub.Clients.Client(BattleHub._userConnections[opponent.UserId.ToString()])
                     .SendAsync("GroupAssigned", groupName, "Ход противника");
             }
