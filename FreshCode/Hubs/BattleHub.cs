@@ -1,4 +1,6 @@
 ﻿using FreshCode.Controllers;
+using FreshCode.DbModels;
+using FreshCode.Interfaces;
 using FreshCode.ModelsDTO;
 using FreshCode.Services;
 using Microsoft.AspNetCore.SignalR;
@@ -13,16 +15,19 @@ namespace FreshCode.Hubs
 
         public static readonly Dictionary<string, string> _userConnections = new();
 
-        private static Dictionary<long, (string ConnectionId, CancellationTokenSource CancelToken)> _waitingPlayers = new();
-        
+        private static Dictionary<long, (string ConnectionId, CancellationTokenSource CancelToken, Pet Pet)> _waitingPlayers = new();
+
         public static readonly List<BattleDTO> _battles = new();
 
-        public BattleHub(BattleService battleService)
+        private readonly IPetsRepository _petRepository;
+
+        public BattleHub(BattleService battleService, IPetsRepository petRepository)
         {
             _battleService = battleService;
+            _petRepository = petRepository;
         }
 
-        public override async Task OnConnectedAsync()
+        public override async System.Threading.Tasks.Task OnConnectedAsync()
         {
             //var userId = Context.GetHttpContext()!.Items["userId"];
             var userId = Context.GetHttpContext().Request.Query["userId"];
@@ -31,26 +36,29 @@ namespace FreshCode.Hubs
             await JoinQueue(Context.ConnectionId);
         }
 
-        public async Task JoinQueue(string connectionId)
+        public async System.Threading.Tasks.Task JoinQueue(string connectionId)
         {
             //var userId = Context.GetHttpContext()!.Items["userId"];
             var userId = Context.GetHttpContext().Request.Query["userId"];
             await StartLookingForOpponent(Convert.ToInt64(userId), connectionId);
         }
 
-        public async Task StartLookingForOpponent(long userId, string connectionId)
+        public async System.Threading.Tasks.Task StartLookingForOpponent(long userId, string connectionId)
         {
             // Создаем токен для возможности отмены
             var cancellationTokenSource = new CancellationTokenSource();
-            _waitingPlayers.Add(userId, (connectionId, cancellationTokenSource));
+
+            Pet pet = await _petRepository.GetPetByUserId(userId);
+
+            _waitingPlayers.Add(userId, (connectionId, cancellationTokenSource, pet));
 
             // Запускаем таймер отмены поиска через 30 секунд
-            var task = Task.Delay(TimeSpan.FromMinutes(1), cancellationTokenSource.Token);
+            var task = System.Threading.Tasks.Task.Delay(TimeSpan.FromMinutes(1), cancellationTokenSource.Token);
 
             try
             {
                 // Ожидаем завершения задачи поиска соперника
-                await Task.WhenAny(task, Matchmaking(userId, cancellationTokenSource.Token));
+                await System.Threading.Tasks.Task.WhenAny(task, Matchmaking(userId, cancellationTokenSource.Token));
 
                 if (task.IsCompleted && !cancellationTokenSource.IsCancellationRequested)
                 {
@@ -65,7 +73,7 @@ namespace FreshCode.Hubs
         }
 
         // Метод поиска соперника (Matchmaking)
-        private async Task Matchmaking(long userId, CancellationToken token)
+        private async System.Threading.Tasks.Task Matchmaking(long userId, CancellationToken token)
         {
             // Логика поиска соперника
             while (!token.IsCancellationRequested)
@@ -78,7 +86,7 @@ namespace FreshCode.Hubs
                     // Отменяем таймер
                     _waitingPlayers[userId].CancelToken.Cancel();
                     _waitingPlayers[(long)opponentId].CancelToken.Cancel();
-                    
+
                     // Если найден соперник
                     await NotifyOpponentFound(userId, (long)opponentId);
 
@@ -90,31 +98,24 @@ namespace FreshCode.Hubs
                 }
 
                 // Ждем некоторое время перед повторной попыткой
-                await Task.Delay(TimeSpan.FromSeconds(1), token);
+                await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(1), token);
             }
         }
 
         // Метод для поиска соперника
         private long? FindOpponent(long userId)
         {
-            // Поиск соперника среди игроков в очереди
-            foreach (var player in _waitingPlayers)
-            {
+            var currentPlayer = _waitingPlayers[userId];
+            var player = _waitingPlayers.FirstOrDefault(
+                p => p.Value.Pet.Level.LevelValue >= currentPlayer.Pet.Level.LevelValue - 1
+                && p.Value.Pet.Level.LevelValue <= currentPlayer.Pet.Level.LevelValue + 1
+                && p.Value.Pet.Id != currentPlayer.Pet.Id);
 
-                // Исключаем текущего игрока из поиска
-                if (player.Key != userId)
-                {
-                    // Если найден соперник, возвращаем его ID
-                    return player.Key;
-                }
-            }
-
-            // Если соперник не найден
-            return null;
+            return player.Key;
         }
 
         // Метод уведомления о найденном сопернике
-        private async Task NotifyOpponentFound(long userId, long opponentId)
+        private async System.Threading.Tasks.Task NotifyOpponentFound(long userId, long opponentId)
         {
             // Получаем ConnectionId соперника
             var opponentConnectionId = _waitingPlayers[opponentId].ConnectionId;
@@ -126,7 +127,7 @@ namespace FreshCode.Hubs
         }
 
         // Метод отмены поиска
-        private async Task CancelSearch(long userId)
+        private async System.Threading.Tasks.Task CancelSearch(long userId)
         {
             if (_waitingPlayers.TryGetValue(userId, out var playerData))
             {
@@ -142,7 +143,7 @@ namespace FreshCode.Hubs
 
         // Сообщение для начала боя
         // Метод для обработки атаки
-        public async Task Attack(string battleId)
+        public async System.Threading.Tasks.Task Attack(string battleId)
         {
             //var userId = Context.GetHttpContext()!.Items["userId"];
             var userId = Context.GetHttpContext().Request.Query["userId"].ToString();
