@@ -23,8 +23,6 @@ public partial class UserBattle
 
     public DateTime? FinishedAt { get; set; }
 
-    public virtual ICollection<BattleQueue> BattleQueues { get; set; } = new List<BattleQueue>();
-
     public virtual User FirstPlayer { get; set; } = null!;
 
     public virtual User SecondPlayer { get; set; } = null!;

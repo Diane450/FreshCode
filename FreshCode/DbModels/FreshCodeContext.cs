@@ -31,8 +31,6 @@ public partial class FreshCodeContext : DbContext
 
     public virtual DbSet<BannerType> BannerTypes { get; set; }
 
-    public virtual DbSet<BattleQueue> BattleQueues { get; set; }
-
     public virtual DbSet<Body> Bodies { get; set; }
 
     public virtual DbSet<Bonu> Bonus { get; set; }
@@ -228,29 +226,6 @@ public partial class FreshCodeContext : DbContext
             entity.ToTable("BannerType");
 
             entity.Property(e => e.Type).HasColumnType("character varying");
-        });
-
-        modelBuilder.Entity<BattleQueue>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("BattleQueue_pkey");
-
-            entity.ToTable("BattleQueue");
-
-            entity.Property(e => e.CreatedAt).HasColumnName("Created_at");
-
-            entity.HasOne(d => d.Battle).WithMany(p => p.BattleQueues)
-                .HasForeignKey(d => d.BattleId)
-                .HasConstraintName("FK_BattleQueue_Battle");
-
-            entity.HasOne(d => d.Pet).WithMany(p => p.BattleQueues)
-                .HasForeignKey(d => d.PetId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_BattleQueue_Pet");
-
-            entity.HasOne(d => d.User).WithMany(p => p.BattleQueues)
-                .HasForeignKey(d => d.UserId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_BattleQueue_User");
         });
 
         modelBuilder.Entity<Body>(entity =>

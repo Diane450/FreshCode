@@ -1,11 +1,8 @@
-﻿using FreshCode.Controllers;
-using FreshCode.DbModels;
+﻿using FreshCode.DbModels;
 using FreshCode.Interfaces;
 using FreshCode.ModelsDTO;
 using FreshCode.Services;
 using Microsoft.AspNetCore.SignalR;
-using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace FreshCode.Hubs
 {

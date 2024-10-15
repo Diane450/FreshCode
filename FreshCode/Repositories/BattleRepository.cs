@@ -8,15 +8,5 @@ namespace FreshCode.Repositories
     public class BattleRepository(FreshCodeContext dbContext) : IBattleRepository
     {
         private readonly FreshCodeContext _dbContext = dbContext;
-
-        public IQueryable<long> GetPetOpponents(Pet pet)
-        {
-            return _dbContext.BattleQueues
-                .Where(bq => bq.PetLevel >= pet.Level.LevelValue - 1
-                && bq.PetLevel <= pet.Level.LevelValue + 1
-                && bq.PetId != pet.Id)
-                .Include(p => p.Pet)
-                .Select(p => p.PetId);
-        }
     }
 }

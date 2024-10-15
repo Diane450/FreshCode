@@ -51,8 +51,6 @@ public partial class Pet
 
     public virtual Artifact? Accessory { get; set; }
 
-    public virtual ICollection<BattleQueue> BattleQueues { get; set; } = new List<BattleQueue>();
-
     public virtual Body Body { get; set; } = null!;
 
     public virtual Eye Eyes { get; set; } = null!;
