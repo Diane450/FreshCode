@@ -70,23 +70,23 @@ namespace FreshCode.UseCases
             {
                 var battle = await CreateBattle(userId, opponent.UserId);
 
-                // Уведомляем пользователей через ConnectionId
-                await _battleHub.Clients.Client(BattleHub._userConnections[userId.ToString()])
-                    .SendAsync("BattleStarted", opponent.UserId);
-                await _battleHub.Clients.Client(BattleHub._userConnections[opponent.UserId.ToString()])
-                    .SendAsync("BattleStarted", userId);
-
                 var groupName = battle.Id.ToString();
+
+                BattleHub._battles.Add(new BattleDTO
+                {
+                    Attacker = new (BattleHub._userConnections[userId.ToString()], userId),
+                    Defender = new(BattleHub._userConnections[opponent.UserId.ToString()], opponent.UserId),
+                    BattleId = battle.Id,
+                });
 
                 // Добавляем их в группу боя
                 await _battleHub.Groups.AddToGroupAsync(BattleHub._userConnections[userId.ToString()], groupName);
                 await _battleHub.Groups.AddToGroupAsync(BattleHub._userConnections[opponent.UserId.ToString()], groupName);
 
                 await _battleHub.Clients.Client(BattleHub._userConnections[userId.ToString()])
-                    .SendAsync("GroupAssigned", groupName);  // Уведомление для userId
+                    .SendAsync("GroupAssigned", groupName, "Ваш ход");  // Уведомление для userId
                 await _battleHub.Clients.Client(BattleHub._userConnections[opponent.UserId.ToString()])
-                    .SendAsync("GroupAssigned", groupName);
-
+                    .SendAsync("GroupAssigned", groupName, "Ход противника");
             }
         }
 
