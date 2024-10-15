@@ -3,6 +3,7 @@ using FreshCode.Hubs;
 using FreshCode.Interfaces;
 using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
+using FreshCode.Requests;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using System.Numerics;
@@ -65,13 +66,27 @@ namespace FreshCode.UseCases
 
             await _baseRepository.SaveChangesAsync();
             var opponent = await FindOpponent(userId);
-
             if (opponent != null)
             {
-                var battle = CreateBattle(userId, opponent.Id);
+                var battle = await CreateBattle(userId, opponent.UserId);
 
-                await _battleHub.Clients.User(userId.ToString()).SendAsync("BattleStarted", opponent.UserId);
-                await _battleHub.Clients.User(opponent.UserId.ToString()).SendAsync("BattleStarted", userId);
+                // Уведомляем пользователей через ConnectionId
+                await _battleHub.Clients.Client(BattleHub._userConnections[userId.ToString()])
+                    .SendAsync("BattleStarted", opponent.UserId);
+                await _battleHub.Clients.Client(BattleHub._userConnections[opponent.UserId.ToString()])
+                    .SendAsync("BattleStarted", userId);
+
+                var groupName = battle.Id.ToString();
+
+                // Добавляем их в группу боя
+                await _battleHub.Groups.AddToGroupAsync(BattleHub._userConnections[userId.ToString()], groupName);
+                await _battleHub.Groups.AddToGroupAsync(BattleHub._userConnections[opponent.UserId.ToString()], groupName);
+
+                await _battleHub.Clients.Client(BattleHub._userConnections[userId.ToString()])
+                    .SendAsync("GroupAssigned", groupName);  // Уведомление для userId
+                await _battleHub.Clients.Client(BattleHub._userConnections[opponent.UserId.ToString()])
+                    .SendAsync("GroupAssigned", groupName);
+
             }
         }
 
@@ -87,6 +102,11 @@ namespace FreshCode.UseCases
             await _baseRepository.SaveChangesAsync();
 
             return userBattle;
+        }
+
+        public async System.Threading.Tasks.Task Attack(AttackRequest request)
+        {
+            await _battleHub.Clients.Group(request.BattleId.ToString()).SendAsync("Attack", request.BattleId, request.AttackerId, request.DefenderId);
         }
     }
 }

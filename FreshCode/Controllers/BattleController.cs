@@ -17,15 +17,16 @@ namespace FreshCode.Controllers
         private readonly BattleUseCase _battleUseCase = battleUseCase;
 
         [HttpGet("join-battle-queue")]
-        public async Task JoinQueue()
+        public async Task JoinQueue([FromBody] long userId)
         {
-            var userId = GetUserId(HttpContext);
+            //var userId = GetUserId(HttpContext);
             await _battleUseCase.JoinBattleQueue(userId);
         }
 
         [HttpPost("attack")]
         public async Task<IActionResult> Attack([FromBody] AttackRequest request)
         {
+            await _battleUseCase.Attack(request);
             await _hubContext.Clients.Group(request.BattleId.ToString()).SendAsync("Attack", request.BattleId, request.AttackerId, request.DefenderId);
             return Ok();
         }

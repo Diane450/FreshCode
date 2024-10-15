@@ -1,5 +1,7 @@
-﻿using FreshCode.Services;
+﻿using FreshCode.Controllers;
+using FreshCode.Services;
 using Microsoft.AspNetCore.SignalR;
+using System.ComponentModel;
 
 namespace FreshCode.Hubs
 {
@@ -7,12 +9,17 @@ namespace FreshCode.Hubs
     {
         private readonly BattleService _battleService;
 
+        public static readonly Dictionary<string, string> _userConnections = new();
         public BattleHub(BattleService battleService)
         {
             _battleService = battleService;
         }
         public override async Task OnConnectedAsync()
         {
+
+            //var userId = Context.GetHttpContext()!.Items["userId"];
+            var userId = Context.GetHttpContext().Request.Query["userId"];
+            _userConnections[userId!.ToString()] = Context.ConnectionId;
             await Clients.Client(Context.ConnectionId).SendAsync("OnConnected", "User has connected to BattleHub");
         }
 
@@ -22,12 +29,6 @@ namespace FreshCode.Hubs
         {
             // Обработка атаки через сервис
             await _battleService.HandleAttack(battleId, attackerId, defenderId);
-        }
-
-        // Присоединение к бою
-        public async Task JoinBattle(string battleId)
-        {
-            await Groups.AddToGroupAsync(Context.ConnectionId, battleId);
         }
     }
 }

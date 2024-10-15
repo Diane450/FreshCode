@@ -28,13 +28,13 @@ namespace FreshCode.Services
         // Метод расчёта урона
         public int CalculateDamage(PetStatResponse attacker, PetStatResponse defender)
         {
-            bool isCriticalHit = (decimal)new Random().NextDouble() <= attacker.CriticalChance;
+            bool isCriticalHit = (decimal)new Random().NextDouble() <= attacker.CriticalChance / 100;
 
             decimal damage;
 
             if (isCriticalHit)
             {
-                damage = attacker.Strength * (1 + attacker.CriticalDamage);
+                damage = attacker.Strength * (1 + (attacker.CriticalDamage / 100));
             }
             else
             {
@@ -46,29 +46,26 @@ namespace FreshCode.Services
 
             var baseDamage = damage * (1 - damageAbsorption);
 
-            if (isCriticalHit)
-            {
-                baseDamage = (int)(baseDamage * attacker.CriticalDamage);
-            }
             return Convert.ToInt32(baseDamage);
         }
 
         // Обработка удара
         public async System.Threading.Tasks.Task HandleAttack(string battleId, string attackerId, string defenderId)
         {
-            PetStatResponse attackerStats = await _petsUseCase.GetPetStats(Convert.ToInt64(attackerId));
-            PetStatResponse defenderStats = await _petsUseCase.GetPetStats(Convert.ToInt64(defenderId));
-
             Pet attackerPet = await _petRepository.GetPetByUserId(Convert.ToInt64(attackerId));
             Pet defenderPet = await _petRepository.GetPetByUserId(Convert.ToInt64(defenderId));
+
+
+            PetStatResponse attackerStats = await _petsUseCase.GetPetStats(Convert.ToInt64(attackerPet.Id));
+            PetStatResponse defenderStats = await _petsUseCase.GetPetStats(Convert.ToInt64(defenderPet.Id));
+
 
             // Рассчитываем урон
             var damage = CalculateDamage(attackerStats, defenderStats);
             defenderPet.CurrentHealth = Math.Max(defenderPet.CurrentHealth - damage, 0); // Обновляем здоровье
 
             // Уведомляем обоих игроков о результате удара
-            await _hubContext.Clients.User(attackerId).SendAsync("ReceiveAttackResult", damage, defenderPet.CurrentHealth);
-            await _hubContext.Clients.User(defenderId).SendAsync("ReceiveAttackResult", damage, defenderPet.CurrentHealth);
+            await _hubContext.Clients.Group(battleId).SendAsync("ReceiveAttackResult", damage, defenderPet.CurrentHealth);
 
             // Проверяем конец боя
             if (defenderPet.CurrentHealth <= 0)
