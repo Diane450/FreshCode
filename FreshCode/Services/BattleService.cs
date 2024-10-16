@@ -63,10 +63,20 @@ namespace FreshCode.Services
             var damage = CalculateDamage(attackerStats, defenderStats);
             defenderPet.CurrentHealth = Math.Max(defenderPet.CurrentHealth - damage, 0); // Обновляем здоровье
 
+            // Получаем кортеж
+            var attacker = battle.Attacker;
+
+            // Изменяем поле Movecount
+            attacker.Movecount -= 1;
+
+            // Присваиваем обновленный кортеж обратно
+            battle.Attacker = attacker;
+
             var message = new
             {
                 attacker_damage = damage,
                 defender_health = defenderPet.CurrentHealth,
+
             };
             // Уведомляем обоих игроков о результате удара
             await _hubContext.Clients.Group(battle.BattleId.ToString()).SendAsync("ReceiveAttackResult", damage, message);
@@ -81,8 +91,8 @@ namespace FreshCode.Services
             battle.Defender = battle.Attacker;
             battle.Attacker = defender;
 
-            await _hubContext.Clients.Client(battle.Attacker.ConnectionId).SendAsync("InformPlayerTurn", "Ваш ход"); 
-            await _hubContext.Clients.Client(battle.Defender.ConnectionId).SendAsync("InformPlayerTurn", "Ход противника"); 
+            await _hubContext.Clients.Client(battle.Attacker.ConnectionId).SendAsync("InformPlayerTurn", "Ваш ход");
+            await _hubContext.Clients.Client(battle.Defender.ConnectionId).SendAsync("InformPlayerTurn", "Ход противника");
         }
     }
 }

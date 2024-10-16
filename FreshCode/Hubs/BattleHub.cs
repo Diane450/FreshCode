@@ -150,8 +150,8 @@ namespace FreshCode.Hubs
 
             _battles.Add(new BattleDTO
             {
-                Attacker = new(_waitingPlayers[vk_user_id].ConnectionId, _waitingPlayers[vk_user_id].InnerId, _waitingPlayers[vk_user_id].Pet),
-                Defender = new(_waitingPlayers[vk_opponent_Id].ConnectionId, _waitingPlayers[vk_opponent_Id].InnerId, _waitingPlayers[vk_opponent_Id].Pet),
+                Attacker = new(_waitingPlayers[vk_user_id].ConnectionId, _waitingPlayers[vk_user_id].InnerId, _waitingPlayers[vk_user_id].Pet, 10),
+                Defender = new(_waitingPlayers[vk_opponent_Id].ConnectionId, _waitingPlayers[vk_opponent_Id].InnerId, _waitingPlayers[vk_opponent_Id].Pet, 10),
                 BattleId = battle.Id,
             });
 
@@ -194,7 +194,6 @@ namespace FreshCode.Hubs
                 await dbContext.SaveChangesAsync();
 
                 return userBattle;
-
             }
         }
 
