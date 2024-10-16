@@ -84,7 +84,7 @@ namespace FreshCode.Services
             await _hubContext.Clients.Group(battle.BattleId.ToString()).SendAsync("ReceiveAttackResult", message);
 
             await _hubContext.Clients.Client(battle.Attacker.ConnectionId).SendAsync("InformAttackerMoveCount", $"Ходов осталось: {battle.Attacker.Movecount}");
-            await _hubContext.Clients.Client(battle.Defender.ConnectionId).SendAsync("UpdateHealth", battle.Defender.pet.CurrentHealth);
+            await _hubContext.Clients.Client(battle.Defender.ConnectionId).SendAsync("UpdateStats", battle.Defender.pet.CurrentHealth);
 
             if (battle.Attacker.Movecount == 0 || battle.Defender.pet.CurrentHealth <= 0)
             {
@@ -113,15 +113,11 @@ namespace FreshCode.Services
                 };
                 await _hubContext.Clients.Client(winner.ConnectionId).SendAsync("WinnerReward", reward); // Уведомляем о завершении боя
 
-                //await _petsUseCase.AddPoints(reward.points);
-                //await _userUseCase.AddReward(reward);
-                
                 await _battleUseCase.UpdateBattle(battle.BattleId, reward, winner.UserId, loser.UserId);
                 
                 await _hubContext.Clients.Group(battle.BattleId.ToString()).SendAsync("BattleEnded", winner.vk_user_id); // Уведомляем о завершении боя                
                 return true;
             }
-
             return false;
         }
 

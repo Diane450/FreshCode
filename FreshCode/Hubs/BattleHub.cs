@@ -3,7 +3,10 @@ using FreshCode.Interfaces;
 using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
 using FreshCode.Repositories;
+using FreshCode.Requests;
+using FreshCode.Responses;
 using FreshCode.Services;
+using FreshCode.UseCases;
 using Microsoft.AspNetCore.SignalR;
 using System.ComponentModel;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
@@ -27,6 +30,7 @@ namespace FreshCode.Hubs
         private readonly IBaseRepository _baseRepository;
         private readonly IUserRepository _userRepository;
         private readonly IServiceProvider _serviceProvider;
+        private readonly PetsUseCase _petsUseCase;
 
         private readonly static Dictionary<string, CancellationTokenSource> _attackTimers = new();
 
@@ -35,7 +39,8 @@ namespace FreshCode.Hubs
             IBaseRepository baseRepository,
             IUserRepository userRepository,
             IServiceProvider serviceProvider,
-            IHubContext<BattleHub> hubContext)
+            IHubContext<BattleHub> hubContext,
+            PetsUseCase petsUseCase)
         {
             _battleService = battleService;
             _petRepository = petRepository;
@@ -43,6 +48,7 @@ namespace FreshCode.Hubs
             _userRepository = userRepository;
             _serviceProvider = serviceProvider;
             _hubContext = hubContext;
+            _petsUseCase = petsUseCase;
         }
 
         public override async System.Threading.Tasks.Task OnConnectedAsync()
@@ -241,6 +247,17 @@ namespace FreshCode.Hubs
             {
                 await _hubContext.Clients.Client(battle.Defender.ConnectionId).SendAsync("InformPlayerTurn", "Дождитесь хода соперника");
             }
+        }
+
+        public async Task FeedRequest(string battleId, long foodId, long petId)
+        {
+            var battle = _battles.First(b => b.BattleId == Convert.ToInt64(battleId));
+            var userId =  Context.GetHttpContext().Items["userId"];
+
+            var pet = battle.Attacker.pet.Id == Convert.ToInt64(petId)? battle.Attacker.pet: battle.Defender.pet;
+            await _petsUseCase.FeedAtBattle((long)userId, foodId, petId);
+
+
         }
 
         public async Task<UserBattle> CreateBattle(long firstPlayerId, long secondPlayerId)
