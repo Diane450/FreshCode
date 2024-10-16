@@ -13,6 +13,8 @@ namespace FreshCode.Hubs
     {
         private readonly BattleService _battleService;
 
+        private readonly IHubContext<BattleHub> _hubContext;
+
         public static readonly Dictionary<string, string> _userConnections = new();
 
         private static Dictionary<long, (string ConnectionId, long InnerId, CancellationTokenSource CancelToken, PetDTO Pet)> _waitingPlayers = new();
@@ -24,65 +26,52 @@ namespace FreshCode.Hubs
         private readonly IUserRepository _userRepository;
         private readonly IServiceProvider _serviceProvider;
 
+        private readonly static Dictionary<string, CancellationTokenSource> _attackTimers = new();
+
         public BattleHub(BattleService battleService,
             IPetsRepository petRepository,
             IBaseRepository baseRepository,
             IUserRepository userRepository,
-            IServiceProvider serviceProvider)
+            IServiceProvider serviceProvider,
+            IHubContext<BattleHub> hubContext)
         {
             _battleService = battleService;
             _petRepository = petRepository;
             _baseRepository = baseRepository;
             _userRepository = userRepository;
             _serviceProvider = serviceProvider;
+            _hubContext = hubContext;
         }
 
         public override async System.Threading.Tasks.Task OnConnectedAsync()
         {
-            //var vk_user_id = Context.GetHttpContext()!.Items["vk_user_id"];
             var vk_user_id = Context.GetHttpContext().Request.Query["vk_user_id"];
             _userConnections[vk_user_id!.ToString()] = Context.ConnectionId;
-            await Clients.Client(Context.ConnectionId).SendAsync("OnConnected", "User has connected to BattleHub");
+            await _hubContext.Clients.Client(Context.ConnectionId).SendAsync("OnConnected", "User has connected to BattleHub");
             await JoinQueue(Context.ConnectionId, Convert.ToInt64(vk_user_id));
         }
 
         public async System.Threading.Tasks.Task JoinQueue(string connectionId, long vk_user_id)
         {
-            //var userId = Context.GetHttpContext()!.Items["vk_user_id"];
-
-            //var vk_user_id = Context.GetHttpContext()!.Items["vk_user_id"];
-
             await StartLookingForOpponent(vk_user_id, connectionId);
         }
 
         public async System.Threading.Tasks.Task StartLookingForOpponent(long vk_user_id, string connectionId)
         {
-            // Создаем токен для возможности отмены
             var cancellationTokenSource = new CancellationTokenSource();
-
-            //var userId = Context.GetHttpContext()!.Items["userId"];
-
-            //var userId = Context.GetHttpContext().Request.Query["userId"];
-
             var userId = await _userRepository.GetUserIdByVkId(vk_user_id);
-
             Pet pet = await _petRepository.GetPetByUserId(Convert.ToInt64(userId));
-
             PetDTO petDTO = PetMapper.ToDto(pet);
 
             _waitingPlayers.Add(vk_user_id, (connectionId, Convert.ToInt64(userId), cancellationTokenSource, petDTO));
 
-            // Запускаем таймер отмены поиска через 30 секунд
             var task = System.Threading.Tasks.Task.Delay(TimeSpan.FromMinutes(5), cancellationTokenSource.Token);
 
             try
             {
-                // Ожидаем завершения задачи поиска соперника
                 await System.Threading.Tasks.Task.WhenAny(task, Matchmaking(vk_user_id, cancellationTokenSource.Token));
-
                 if (task.IsCompleted && !cancellationTokenSource.IsCancellationRequested)
                 {
-                    // Время вышло, отменяем поиск
                     await CancelSearch(vk_user_id);
                 }
             }
@@ -92,33 +81,26 @@ namespace FreshCode.Hubs
             }
         }
 
-        // Метод поиска соперника (Matchmaking)
         private async System.Threading.Tasks.Task Matchmaking(long vk_user_id, CancellationToken token)
         {
-            // Логика поиска соперника
             while (!token.IsCancellationRequested)
             {
-                // Ищем соперника в очереди...
                 var vk_opponent_id = FindOpponent(vk_user_id);
 
                 if (vk_opponent_id != null)
                 {
-                    // Если найден соперник
                     await NotifyOpponentFound(vk_user_id, (long)vk_opponent_id);
 
-                    //Удаляем из списка ожидания
                     _waitingPlayers.Remove(vk_user_id);
                     _waitingPlayers.Remove((long)vk_opponent_id);
 
                     return;
                 }
 
-                // Ждем некоторое время перед повторной попыткой
                 await System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(1), token);
             }
         }
 
-        // Метод для поиска соперника
         private long? FindOpponent(long vk_user_id)
         {
             var currentPlayer = _waitingPlayers[vk_user_id];
@@ -134,15 +116,12 @@ namespace FreshCode.Hubs
             return null;
         }
 
-        // Метод уведомления о найденном сопернике
         private async System.Threading.Tasks.Task NotifyOpponentFound(long vk_user_id, long vk_opponent_Id)
         {
-            // Получаем ConnectionId соперника
             var opponentConnectionId = _waitingPlayers[vk_opponent_Id].ConnectionId;
 
-            // Уведомляем обоих игроков о найденном сопернике
-            await Clients.Client(opponentConnectionId).SendAsync("OpponentFound", vk_user_id, _waitingPlayers[vk_user_id].Pet);
-            await Clients.Client(_waitingPlayers[vk_user_id].ConnectionId).SendAsync("OpponentFound", vk_opponent_Id, _waitingPlayers[vk_opponent_Id].Pet);
+            await _hubContext.Clients.Client(opponentConnectionId).SendAsync("OpponentFound", vk_user_id, _waitingPlayers[vk_user_id].Pet);
+            await _hubContext.Clients.Client(_waitingPlayers[vk_user_id].ConnectionId).SendAsync("OpponentFound", vk_opponent_Id, _waitingPlayers[vk_opponent_Id].Pet);
 
             var battle = await CreateBattle(_waitingPlayers[vk_user_id].InnerId, _waitingPlayers[vk_opponent_Id].InnerId);
 
@@ -150,25 +129,25 @@ namespace FreshCode.Hubs
 
             _battles.Add(new BattleDTO
             {
-                Attacker = new(_waitingPlayers[vk_user_id].ConnectionId, _waitingPlayers[vk_user_id].InnerId, _waitingPlayers[vk_user_id].Pet, 10),
-                Defender = new(_waitingPlayers[vk_opponent_Id].ConnectionId, _waitingPlayers[vk_opponent_Id].InnerId, _waitingPlayers[vk_opponent_Id].Pet, 10),
+                Attacker = new(_waitingPlayers[vk_user_id].ConnectionId, _waitingPlayers[vk_user_id].InnerId, _waitingPlayers[vk_user_id].Pet, vk_user_id, 10),
+                Defender = new(_waitingPlayers[vk_opponent_Id].ConnectionId, _waitingPlayers[vk_opponent_Id].InnerId,  _waitingPlayers[vk_opponent_Id].Pet, vk_opponent_Id, 10),
                 BattleId = battle.Id,
             });
 
             try
             {
-                await Groups.AddToGroupAsync(_waitingPlayers[vk_user_id].ConnectionId, groupName);
-                await Groups.AddToGroupAsync(_waitingPlayers[vk_opponent_Id].ConnectionId, groupName);
+                await _hubContext.Groups.AddToGroupAsync(_waitingPlayers[vk_user_id].ConnectionId, groupName);
+                await _hubContext.Groups.AddToGroupAsync(_waitingPlayers[vk_opponent_Id].ConnectionId, groupName);
 
-                await Clients.Client(_waitingPlayers[vk_user_id].ConnectionId)
+                await _hubContext.Clients.Client(_waitingPlayers[vk_user_id].ConnectionId)
                     .SendAsync("GroupAssigned", groupName, "Ваш ход");
-                await Clients.Client(_waitingPlayers[vk_opponent_Id].ConnectionId)
+                await _hubContext.Clients.Client(_waitingPlayers[vk_opponent_Id].ConnectionId)
                     .SendAsync("GroupAssigned", groupName, "Ход противника");
 
-                // Отменяем таймер
                 _waitingPlayers[vk_user_id].CancelToken.Cancel();
                 _waitingPlayers[vk_opponent_Id].CancelToken.Cancel();
 
+                StartAttackTimer(battle.Id.ToString(), vk_user_id);
             }
             catch (Exception ex)
             {
@@ -176,9 +155,81 @@ namespace FreshCode.Hubs
             }
         }
 
+        private void StartAttackTimer(string battleId, long vk_user_id)
+        {
+            var cancellationTokenSource = new CancellationTokenSource();
+            _attackTimers[battleId] = cancellationTokenSource;
+
+            System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(20), cancellationTokenSource.Token).ContinueWith(async task =>
+            {
+                if (!task.IsCanceled)
+                {
+                    await ForcePassTurn(battleId, vk_user_id);
+                }
+            });
+        }
+
+        private async System.Threading.Tasks.Task ForcePassTurn(string battleId, long vk_user_id)
+        {
+            var battle = _battles.FirstOrDefault(b => b.BattleId == Convert.ToInt64(battleId));
+            if (battle != null)
+            {
+                if (battle.Attacker.vk_user_id == vk_user_id)
+                {
+                    try
+                    {
+                        await _hubContext.Clients.Client(battle.Attacker.ConnectionId).SendAsync("TurnPassed", "Ваш ход был пропущен.");
+                        await _hubContext.Clients.Client(battle.Defender.ConnectionId).SendAsync("OpponentTurn", "Противник пропустил ход. Ваша очередь");
+
+                    }
+                    catch (Exception ex)
+                    {
+                        throw;
+                    }
+                }
+                else
+                {
+                    await _hubContext.Clients.Client(battle.Defender.ConnectionId).SendAsync("TurnPassed", "Ваш ход был пропущен.");
+                    await _hubContext.Clients.Client(battle.Attacker.ConnectionId).SendAsync("OpponentTurn", "Противник пропустил ход. Ваша очередь");
+                }
+
+                // Смена хода
+                SwapTurns(battleId);
+            }
+        }
+
+        private void SwapTurns(string battleId)
+        {
+            var battle = _battles.FirstOrDefault(b => b.BattleId == Convert.ToInt64(battleId));
+            if (battle != null)
+            {
+                var temp = battle.Attacker;
+                battle.Attacker = battle.Defender;
+                battle.Defender = temp;
+
+                StartAttackTimer(battleId, battle.Attacker.vk_user_id);
+            }
+        }
+
+        public async System.Threading.Tasks.Task Attack(string battleId)
+        {
+            var vk_user_Id = Context.GetHttpContext().Request.Query["vk_user_id"].ToString();
+            var battle = _battles.Where(b => b.BattleId == Convert.ToInt64(battleId)).First();
+
+            if (Convert.ToInt64(vk_user_Id) == battle.Attacker.vk_user_id)
+            {
+                await _battleService.HandleAttack(battle);
+                _attackTimers[battleId].Cancel();
+                SwapTurns(battleId);
+            }
+            else
+            {
+                await _hubContext.Clients.Client(battle.Defender.ConnectionId).SendAsync("InformPlayerTurn", "Дождитесь хода соперника");
+            }
+        }
+
         public async Task<UserBattle> CreateBattle(long firstPlayerId, long secondPlayerId)
         {
-
             using (var scope = _serviceProvider.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<FreshCodeContext>();
@@ -188,84 +239,36 @@ namespace FreshCode.Hubs
                     FirstPlayerId = firstPlayerId,
                     SecondPlayerId = secondPlayerId,
                     CreatedAt = DateTime.UtcNow,
+                    FinishedAt = null
                 };
 
-                await dbContext.UserBattles.AddAsync(userBattle);
+                dbContext.UserBattles.Add(userBattle);
                 await dbContext.SaveChangesAsync();
 
                 return userBattle;
             }
         }
 
-        // Метод отмены поиска
-        private async System.Threading.Tasks.Task CancelSearch(long userId)
+        private async System.Threading.Tasks.Task CancelSearch(long vk_user_id)
         {
-            if (_waitingPlayers.TryGetValue(userId, out var playerData))
+            if (_waitingPlayers.ContainsKey(vk_user_id))
             {
-                // Уведомляем пользователя об отмене поиска
-                await Clients.Client(playerData.ConnectionId)
-                    .SendAsync("SearchCanceled", "К сожалению, соперник не был найден. Попробуйте снова через некоторое время.");
-
-                // Удаляем пользователя из очереди
-                _waitingPlayers.Remove(userId);
-
-                // Закрываем соединение
-                var connection = Clients.Client(playerData.ConnectionId);
-                if (connection != null)
-                {
-                    await connection.SendAsync("OnDisconnected", "Отключение из-за неудачного поиска.");
-                    Context.Abort();  // Отключаем клиента от хаба
-                }
+                var connectionId = _waitingPlayers[vk_user_id].ConnectionId;
+                _waitingPlayers.Remove(vk_user_id);
+                await Clients.Client(connectionId).SendAsync("SearchCancelled", "Поиск соперника отменен.");
             }
         }
 
         public override async System.Threading.Tasks.Task OnDisconnectedAsync(Exception? exception)
         {
-            //var vk_user_id = Context.GetHttpContext()!.Items["vk_user_id"];
-
             var vk_user_id = Context.GetHttpContext().Request.Query["vk_user_id"];
-
-            // Удаляем соединение пользователя из словаря
-            if (_userConnections.TryGetValue(vk_user_id!.ToString(), out var connectionId))
+            if (_userConnections.ContainsKey(vk_user_id))
             {
-                _userConnections.Remove(vk_user_id.ToString());
-                await Clients.All.SendAsync("UserDisconnected", $"{vk_user_id} отключился от BattleHub");
-
-                // Удаляем пользователя из очереди
-                //var playerInQueue = _waitingPlayers.FirstOrDefault(q => q.Key == Convert.ToInt64(vk_user_id));
-                //var playerInQueue = _waitingPlayers[Convert.ToInt64(vk_user_id)];
-                if (_waitingPlayers.TryGetValue(Convert.ToInt64(vk_user_id), out var playerInQueue))
-                {
-                    _waitingPlayers.Remove(Convert.ToInt64(vk_user_id));
-                }
-
-                // Удаляем пользователя из боя, если он в нем участвует
-                var battleToRemove = _battles.FirstOrDefault(b => b.Attacker.UserId == Convert.ToInt64(vk_user_id) || b.Defender.UserId == Convert.ToInt64(vk_user_id));
-                if (battleToRemove != null)
-                {
-                    _battles.Remove(battleToRemove);
-                }
+                _userConnections.Remove(vk_user_id);
+                await CancelSearch(Convert.ToInt64(vk_user_id));
             }
+
             await base.OnDisconnectedAsync(exception);
-        }
-
-        // Сообщение для начала боя
-        // Метод для обработки атаки
-        public async System.Threading.Tasks.Task Attack(string battleId)
-        {
-            //var userId = Context.GetHttpContext()!.Items["userId"];
-            var userId = Context.GetHttpContext().Request.Query["vk_user_id"].ToString();
-
-            var battle = _battles.Where(b => b.BattleId == Convert.ToInt64(battleId)).First();
-            if (Convert.ToInt64(userId) == battle.Attacker.UserId)
-            {
-                // Обработка атаки через сервис
-                await _battleService.HandleAttack(battle);
-            }
-            else
-            {
-                await Clients.Client(battle.Defender.ConnectionId).SendAsync("InformPlayerTurn", "Дождитесь хода соперника");
-            }
         }
     }
 }

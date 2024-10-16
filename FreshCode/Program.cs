@@ -7,6 +7,7 @@ using FreshCode.Repositories;
 using FreshCode.Services;
 using FreshCode.Settings;
 using FreshCode.UseCases;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
