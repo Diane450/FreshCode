@@ -75,11 +75,12 @@ namespace FreshCode.Services
             var message = new
             {
                 attacker_damage = damage,
-                defender_health = defenderPet.CurrentHealth,
-
+                defender_health = defenderPet.CurrentHealth
             };
             // Уведомляем обоих игроков о результате удара
             await _hubContext.Clients.Group(battle.BattleId.ToString()).SendAsync("ReceiveAttackResult", damage, message);
+
+            await _hubContext.Clients.Client(battle.Attacker.ConnectionId).SendAsync("InformAttackerMoveCount", $"Ходов осталось: {battle.Attacker.Movecount}");
 
             // Проверяем конец боя
             if (defenderPet.CurrentHealth <= 0)
