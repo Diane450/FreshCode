@@ -59,15 +59,12 @@ namespace FreshCode.Services
         // Обработка удара
         public async Task<bool> HandleAttack(BattleDTO battle)
         {
-            Pet attackerPet = await _petRepository.GetPetByUserId(Convert.ToInt64(battle.Attacker.UserId));
-            Pet defenderPet = await _petRepository.GetPetByUserId(Convert.ToInt64(battle.Defender.UserId));
-
-            PetStatResponse attackerStats = await _petsUseCase.GetPetStats(Convert.ToInt64(attackerPet.Id));
-            PetStatResponse defenderStats = await _petsUseCase.GetPetStats(Convert.ToInt64(defenderPet.Id));
+            PetStatResponse attackerStats = await _petsUseCase.GetPetStats(Convert.ToInt64(battle.Attacker.pet.Id));
+            PetStatResponse defenderStats = await _petsUseCase.GetPetStats(Convert.ToInt64(battle.Defender.pet.Id));
 
             // Рассчитываем урон
             var damage = CalculateDamage(attackerStats, defenderStats);
-            defenderPet.CurrentHealth = Math.Max(defenderPet.CurrentHealth - damage, 0); // Обновляем здоровье
+            battle.Defender.pet.CurrentHealth = Math.Max(battle.Defender.pet.CurrentHealth - damage, 0); // Обновляем здоровье
 
             // Получаем кортеж
             var attacker = battle.Attacker;
@@ -81,7 +78,7 @@ namespace FreshCode.Services
             var message = new
             {
                 attacker_damage = damage,
-                defender_health = defenderPet.CurrentHealth
+                defender_health = battle.Defender.pet.CurrentHealth
             };
             // Уведомляем обоих игроков о результате удара
             await _hubContext.Clients.Group(battle.BattleId.ToString()).SendAsync("ReceiveAttackResult", damage, message);
@@ -89,13 +86,13 @@ namespace FreshCode.Services
             await _hubContext.Clients.Client(battle.Attacker.ConnectionId).SendAsync("InformAttackerMoveCount", $"Ходов осталось: {battle.Attacker.Movecount}");
 
             // Проверяем конец боя
-            if (defenderPet.CurrentHealth <= 0)
+            if (battle.Defender.pet.CurrentHealth <= 0)
             {
                 await _hubContext.Clients.Group(battle.BattleId.ToString()).SendAsync("BattleEnded", battle.Attacker.UserId); // Уведомляем о завершении боя
                 //логика для удаления пользователей сражения из списка
             }
 
-            if (battle.Attacker.Movecount == 0 || defenderPet.CurrentHealth <= 0)
+            if (battle.Attacker.Movecount == 0 || battle.Defender.pet.CurrentHealth <= 0)
             {
                 (string ConnectionId, long UserId, PetDTO pet, long vk_user_id, int Movecount) winner;
                 (string ConnectionId, long UserId, PetDTO pet, long vk_user_id, int Movecount) loser;
@@ -125,7 +122,7 @@ namespace FreshCode.Services
                 //await _petsUseCase.AddPoints(reward.points);
                 //await _userUseCase.AddReward(reward);
                 
-                await _battleUseCase.UpdateBattle(battle.BattleId, reward, winner.UserId);
+                await _battleUseCase.UpdateBattle(battle.BattleId, reward, winner.UserId, loser.UserId);
                 
                 await _hubContext.Clients.Group(battle.BattleId.ToString()).SendAsync("BattleEnded", winner.vk_user_id); // Уведомляем о завершении боя                
                 return true;

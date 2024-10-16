@@ -214,7 +214,7 @@ namespace FreshCode.Hubs
             }
         }
 
-        public async System.Threading.Tasks.Task Attack(string battleId)
+        public async Task Attack(string battleId)
         {
             var vk_user_Id = Context.GetHttpContext().Request.Query["vk_user_id"].ToString();
             var battle = _battles.Where(b => b.BattleId == Convert.ToInt64(battleId)).First();
