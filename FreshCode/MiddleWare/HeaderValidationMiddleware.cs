@@ -48,13 +48,9 @@ namespace FreshCode.MiddleWare
 
         private async Task<long> GetUserId()
         {
-            if (!_httpContext.Request.Cookies.ContainsKey("userId"))
-            {
-                long id = await _middleWare.GetInnerId(_httpContext);
-                await SetUserIdCookie(id);
-                return id;
-            }
-            return Convert.ToInt64(_httpContext.Request.Cookies["userId"]);
+            long id = await _middleWare.GetInnerId(_httpContext);
+            //await SetUserIdCookie(id);
+            return id;
         }
         private Task SetUserIdCookie(long innerId)
         {
