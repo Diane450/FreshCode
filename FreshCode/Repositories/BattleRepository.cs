@@ -8,5 +8,10 @@ namespace FreshCode.Repositories
     public class BattleRepository(FreshCodeContext dbContext) : IBattleRepository
     {
         private readonly FreshCodeContext _dbContext = dbContext;
+
+        public Task<UserBattle> GetBattleById(long battleId)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -23,6 +23,8 @@ public partial class UserBattle
 
     public DateTime? FinishedAt { get; set; }
 
+    public int? PrimogemsReward { get; set; }
+
     public virtual User FirstPlayer { get; set; } = null!;
 
     public virtual User SecondPlayer { get; set; } = null!;

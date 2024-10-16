@@ -2,6 +2,7 @@
 using FreshCode.Hubs;
 using FreshCode.Interfaces;
 using FreshCode.Requests;
+using FreshCode.Responses;
 using Microsoft.AspNetCore.SignalR;
 
 namespace FreshCode.UseCases
@@ -102,6 +103,18 @@ namespace FreshCode.UseCases
         public async System.Threading.Tasks.Task Attack(AttackRequest request)
         {
             await _battleHub.Clients.Group(request.BattleId.ToString()).SendAsync("Attack", request.BattleId, request.AttackerId, request.DefenderId);
+        }
+
+        public async System.Threading.Tasks.Task UpdateBattle(long battleId, RewardResponse reward, long winnerId)
+        {
+            UserBattle userBattle = await _battleRepository.GetBattleById(battleId);
+            userBattle.MoneyReward = reward.Money;
+            userBattle.WinnerId = winnerId;
+            userBattle.PointsReward = reward.Points;
+            userBattle.StatPointsReward = reward.StatPoints;
+            userBattle.PrimogemsReward = reward.Primogems;
+
+            await _baseRepository.SaveChangesAsync();
         }
     }
 }

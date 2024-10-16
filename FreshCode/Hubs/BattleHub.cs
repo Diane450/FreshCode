@@ -6,6 +6,8 @@ using FreshCode.Repositories;
 using FreshCode.Services;
 using Microsoft.AspNetCore.SignalR;
 using System.ComponentModel;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
+using Task = System.Threading.Tasks.Task;
 
 namespace FreshCode.Hubs
 {
@@ -130,7 +132,7 @@ namespace FreshCode.Hubs
             _battles.Add(new BattleDTO
             {
                 Attacker = new(_waitingPlayers[vk_user_id].ConnectionId, _waitingPlayers[vk_user_id].InnerId, _waitingPlayers[vk_user_id].Pet, vk_user_id, 10),
-                Defender = new(_waitingPlayers[vk_opponent_Id].ConnectionId, _waitingPlayers[vk_opponent_Id].InnerId,  _waitingPlayers[vk_opponent_Id].Pet, vk_opponent_Id, 10),
+                Defender = new(_waitingPlayers[vk_opponent_Id].ConnectionId, _waitingPlayers[vk_opponent_Id].InnerId, _waitingPlayers[vk_opponent_Id].Pet, vk_opponent_Id, 10),
                 BattleId = battle.Id,
             });
 
@@ -176,16 +178,17 @@ namespace FreshCode.Hubs
             {
                 if (battle.Attacker.vk_user_id == vk_user_id)
                 {
-                    try
-                    {
-                        await _hubContext.Clients.Client(battle.Attacker.ConnectionId).SendAsync("TurnPassed", "Ваш ход был пропущен.");
-                        await _hubContext.Clients.Client(battle.Defender.ConnectionId).SendAsync("OpponentTurn", "Противник пропустил ход. Ваша очередь");
+                    // Получаем кортеж
+                    var attacker = battle.Attacker;
 
-                    }
-                    catch (Exception ex)
-                    {
-                        throw;
-                    }
+                    // Изменяем поле Movecount
+                    attacker.Movecount -= 1;
+
+                    // Присваиваем обновленный кортеж обратно
+                    battle.Attacker = attacker;
+
+                    await _hubContext.Clients.Client(battle.Attacker.ConnectionId).SendAsync("TurnPassed", "Ваш ход был пропущен", battle.Attacker.Movecount);
+                    await _hubContext.Clients.Client(battle.Defender.ConnectionId).SendAsync("OpponentTurn", "Противник пропустил ход. Ваша очередь");
                 }
                 else
                 {
@@ -218,9 +221,18 @@ namespace FreshCode.Hubs
 
             if (Convert.ToInt64(vk_user_Id) == battle.Attacker.vk_user_id)
             {
-                await _battleService.HandleAttack(battle);
-                _attackTimers[battleId].Cancel();
-                SwapTurns(battleId);
+                if (await _battleService.HandleAttack(battle))
+                {
+                    await Groups.RemoveFromGroupAsync(battle.Attacker.ConnectionId, battleId);
+                    await Groups.RemoveFromGroupAsync(battle.Defender.ConnectionId, battleId);
+
+                    _battles.Remove(battle);
+                }
+                else
+                {
+                    _attackTimers[battleId].Cancel();
+                    SwapTurns(battleId);
+                }
             }
             else
             {
@@ -249,17 +261,18 @@ namespace FreshCode.Hubs
             }
         }
 
-        private async System.Threading.Tasks.Task CancelSearch(long vk_user_id)
+        private async Task CancelSearch(long vk_user_id)
         {
             if (_waitingPlayers.ContainsKey(vk_user_id))
             {
                 var connectionId = _waitingPlayers[vk_user_id].ConnectionId;
                 _waitingPlayers.Remove(vk_user_id);
                 await Clients.Client(connectionId).SendAsync("SearchCancelled", "Поиск соперника отменен.");
+                Context.Abort();
             }
         }
 
-        public override async System.Threading.Tasks.Task OnDisconnectedAsync(Exception? exception)
+        public override async Task OnDisconnectedAsync(Exception? exception)
         {
             var vk_user_id = Context.GetHttpContext().Request.Query["vk_user_id"];
             if (_userConnections.ContainsKey(vk_user_id))
@@ -267,8 +280,12 @@ namespace FreshCode.Hubs
                 _userConnections.Remove(vk_user_id);
                 await CancelSearch(Convert.ToInt64(vk_user_id));
             }
-
             await base.OnDisconnectedAsync(exception);
+        }
+
+        public async Task Disconnect()
+        {
+            Context.Abort();
         }
     }
 }
