@@ -81,16 +81,10 @@ namespace FreshCode.Services
                 defender_health = battle.Defender.pet.CurrentHealth
             };
             // Уведомляем обоих игроков о результате удара
-            await _hubContext.Clients.Group(battle.BattleId.ToString()).SendAsync("ReceiveAttackResult", damage, message);
+            await _hubContext.Clients.Group(battle.BattleId.ToString()).SendAsync("ReceiveAttackResult", message);
 
             await _hubContext.Clients.Client(battle.Attacker.ConnectionId).SendAsync("InformAttackerMoveCount", $"Ходов осталось: {battle.Attacker.Movecount}");
-
-            // Проверяем конец боя
-            if (battle.Defender.pet.CurrentHealth <= 0)
-            {
-                await _hubContext.Clients.Group(battle.BattleId.ToString()).SendAsync("BattleEnded", battle.Attacker.UserId); // Уведомляем о завершении боя
-                //логика для удаления пользователей сражения из списка
-            }
+            await _hubContext.Clients.Client(battle.Defender.ConnectionId).SendAsync("UpdateHealth", battle.Defender.pet.CurrentHealth);
 
             if (battle.Attacker.Movecount == 0 || battle.Defender.pet.CurrentHealth <= 0)
             {
@@ -128,12 +122,6 @@ namespace FreshCode.Services
                 return true;
             }
 
-            var defender = battle.Defender;
-            battle.Defender = battle.Attacker;
-            battle.Attacker = defender;
-
-            await _hubContext.Clients.Client(battle.Attacker.ConnectionId).SendAsync("InformPlayerTurn", "Ваш ход");
-            await _hubContext.Clients.Client(battle.Defender.ConnectionId).SendAsync("InformPlayerTurn", "Ход противника");
             return false;
         }
 

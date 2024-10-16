@@ -91,6 +91,9 @@ namespace FreshCode.Hubs
 
                 if (vk_opponent_id != null)
                 {
+                    _waitingPlayers[vk_user_id].CancelToken.Cancel();
+                    _waitingPlayers[(long)vk_opponent_id].CancelToken.Cancel();
+
                     await NotifyOpponentFound(vk_user_id, (long)vk_opponent_id);
 
                     _waitingPlayers.Remove(vk_user_id);
@@ -146,10 +149,7 @@ namespace FreshCode.Hubs
                 await _hubContext.Clients.Client(_waitingPlayers[vk_opponent_Id].ConnectionId)
                     .SendAsync("GroupAssigned", groupName, "Ход противника");
 
-                _waitingPlayers[vk_user_id].CancelToken.Cancel();
-                _waitingPlayers[vk_opponent_Id].CancelToken.Cancel();
-
-                StartAttackTimer(battle.Id.ToString(), vk_user_id);
+                StartAttackTimer(battle.Id.ToString(), _battles.First(b => b.BattleId == battle.Id).Attacker.vk_user_id);
             }
             catch (Exception ex)
             {
@@ -162,7 +162,7 @@ namespace FreshCode.Hubs
             var cancellationTokenSource = new CancellationTokenSource();
             _attackTimers[battleId] = cancellationTokenSource;
 
-            System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(20), cancellationTokenSource.Token).ContinueWith(async task =>
+            System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(30), cancellationTokenSource.Token).ContinueWith(async task =>
             {
                 if (!task.IsCanceled)
                 {
@@ -171,7 +171,7 @@ namespace FreshCode.Hubs
             });
         }
 
-        private async System.Threading.Tasks.Task ForcePassTurn(string battleId, long vk_user_id)
+        private async Task ForcePassTurn(string battleId, long vk_user_id)
         {
             var battle = _battles.FirstOrDefault(b => b.BattleId == Convert.ToInt64(battleId));
             if (battle != null)
@@ -197,11 +197,11 @@ namespace FreshCode.Hubs
                 }
 
                 // Смена хода
-                SwapTurns(battleId);
+                await SwapTurns(battleId);
             }
         }
 
-        private void SwapTurns(string battleId)
+        private async Task SwapTurns(string battleId)
         {
             var battle = _battles.FirstOrDefault(b => b.BattleId == Convert.ToInt64(battleId));
             if (battle != null)
@@ -209,6 +209,9 @@ namespace FreshCode.Hubs
                 var temp = battle.Attacker;
                 battle.Attacker = battle.Defender;
                 battle.Defender = temp;
+                
+                await _hubContext.Clients.Client(battle.Attacker.ConnectionId).SendAsync("InformPlayerTurn", "Ваш ход");
+                await _hubContext.Clients.Client(battle.Defender.ConnectionId).SendAsync("InformPlayerTurn", "Ход противника");
 
                 StartAttackTimer(battleId, battle.Attacker.vk_user_id);
             }

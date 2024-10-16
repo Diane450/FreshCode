@@ -9,9 +9,10 @@ namespace FreshCode.Repositories
     {
         private readonly FreshCodeContext _dbContext = dbContext;
 
-        public Task<UserBattle> GetBattleById(long battleId)
+        public async Task<UserBattle> GetBattleById(long battleId)
         {
-            throw new NotImplementedException();
+            return await _dbContext.UserBattles
+                .FindAsync(battleId);
         }
     }
 }

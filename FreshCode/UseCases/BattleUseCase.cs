@@ -117,6 +117,7 @@ namespace FreshCode.UseCases
             userBattle.PointsReward = reward.Points;
             userBattle.StatPointsReward = reward.StatPoints;
             userBattle.PrimogemsReward = reward.Primogems;
+            userBattle.FinishedAt = DateTime.UtcNow;
 
             User user = await _userRepository.GetUserById(winnerId);
 
