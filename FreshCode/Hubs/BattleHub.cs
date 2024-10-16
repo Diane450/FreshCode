@@ -286,9 +286,15 @@ namespace FreshCode.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
-        public async Task Disconnect()
+        public async Task DisconnectUser(string connectionId)
         {
-            Context.Abort();
+            // Проверьте, существует ли клиент с таким connectionId
+            var client = Clients.Client(connectionId);
+            if (client != null)
+            {
+                // Отправить команду клиенту завершить соединение
+                await client.SendAsync("ForceDisconnect");
+            }
         }
     }
 }
