@@ -1,5 +1,6 @@
 using FreshCode.DbModels;
 using FreshCode.Fabrics;
+using FreshCode.Filters;
 using FreshCode.Hubs;
 using FreshCode.Interfaces;
 using FreshCode.MiddleWare;
@@ -15,7 +16,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<BattleStateFilter>();
+});
 
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<FreshCodeContext>(options => options.UseNpgsql(connectionString));
