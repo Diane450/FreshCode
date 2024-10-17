@@ -6,7 +6,6 @@ namespace FreshCode.Interfaces
 {
     public interface IEyesRepository
     {
-        Task<List<EyeDTO>> GetEyesAsync();
-        Task<Eye> GetEyesById(long id);
+        IQueryable<Eye> GetEyesAsync();
     }
 }

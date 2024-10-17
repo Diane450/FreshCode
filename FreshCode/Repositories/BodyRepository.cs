@@ -15,16 +15,9 @@ namespace FreshCode.Repositories
             _dbContext = freshCodeContext;
         }
 
-        public async Task<List<BodyDTO>> GetBodiesAsync()
+        public IQueryable<Body> GetBodiesAsync()
         {
-            return await _dbContext.Bodies
-                .Select(body => BodyMapper.ToDTO(body))
-                .ToListAsync();
-        }
-
-        public async Task<Body> GetBodyById(long id)
-        {
-            return await _dbContext.Bodies.FirstAsync(b => b.Id == id);
+            return _dbContext.Bodies;
         }
     }
 }

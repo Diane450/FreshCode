@@ -16,16 +16,9 @@ namespace FreshCode.Repositories
             _dbContext = freshCodeContext;
         }
 
-        public async Task<List<EyeDTO>> GetEyesAsync()
+        public IQueryable<Eye> GetEyesAsync()
         {
-            return await _dbContext.Eyes
-                .Select(eye => EyeMapper.ToDTO(eye))
-                .ToListAsync();
-        }
-
-        public async Task<Eye> GetEyesById(long id)
-        {
-            return await _dbContext.Eyes.FirstAsync(e => e.Id == id);
+            return _dbContext.Eyes;
         }
     }
 }
