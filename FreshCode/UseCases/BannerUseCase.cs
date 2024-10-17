@@ -97,7 +97,6 @@ namespace FreshCode.UseCases
             {
                 throw new InvalidOperationException("Недостаточно круток");
             }
-
         }
         
         private async Task<BannerItem> GetBannerItemWithArtifact(Banner banner, List<ArtifactHistory> history, IQueryable<BannerItem> bannerItems)

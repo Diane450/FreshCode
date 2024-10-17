@@ -7,28 +7,28 @@ using Microsoft.AspNetCore.Mvc;
 namespace FreshCode.Controllers
 {
     [ApiController]
-    [Route("[controller]/[action]")]
+    [Route("inventory")]
     public class InventoryController(UserUseCase userUseCase, PetsUseCase petsUseCase) : BaseController
     {
         private readonly UserUseCase _userUseCase = userUseCase;
         private readonly PetsUseCase _petsUseCase = petsUseCase;
 
-        [HttpPost]
+        [HttpPost("set-background")]
         public async Task<IActionResult> SetBackground([FromBody] long backgroundId)
         {
             try
             {
                 long userId = GetUserId(HttpContext);
-                await _userUseCase.SetBackground(backgroundId, userId);
-                return Ok();
+                var background = await _userUseCase.SetBackground(backgroundId, userId);
+                return Ok(background);
             }
             catch (ArgumentException ex)
             {
-                return BadRequest(ex.Message);
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, ex.Message);
+                return StatusCode(500, "Произошла ошибка на сервере, попробуйте позже");
             }
         }
     }

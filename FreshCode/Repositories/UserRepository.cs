@@ -3,6 +3,7 @@ using FreshCode.Interfaces;
 using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq;
 using Task = FreshCode.DbModels.Task;
 
@@ -87,13 +88,11 @@ namespace FreshCode.Repositories
                 .ToListAsync();
         }
 
-        public async Task<List<BackgroundDTO>> GetUserBackgrounds(long userId)
+        public IQueryable<UserBackground> GetUserBackgrounds(long userId)
         {
-            return await _dbContext.UserBackgrounds
+            return _dbContext.UserBackgrounds
                 .Where(ub => ub.UserId == userId)
-                .Include(ub => ub.Background)
-                .Select(userBackground => BackgroundMapper.ToDTO(userBackground.Background))
-                .ToListAsync();
+                .Include(ub => ub.Background);
         }
 
         public async Task<User> GetUserByVkId(long vk_user_id)

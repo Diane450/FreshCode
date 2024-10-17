@@ -13,16 +13,35 @@ namespace FreshCode.Controllers
         private readonly BannerUseCase _bannerUseCase = bannerUseCase;
 
         [HttpGet("{bannerId}")]
-        public async Task<BanerDTO> GetBannerById(long bannerId)
+        public async Task<IActionResult> GetBannerById(long bannerId)
         {
-            return await _bannerUseCase.GetBannerById(bannerId);
+            try
+            {
+                return Ok(await _bannerUseCase.GetBannerById(bannerId));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { message = "Произошла внутренняя ошибка сервера. Попробуйте позже." });
+            }
         }
 
         [HttpGet("drop-artifact")]
-        public async Task<DropArtifactResponse> GetArtifacts([FromBody] WishRequest wishRequest)
+        public async Task<IActionResult> GetArtifacts([FromBody] WishRequest wishRequest)
         {
-            long userId = GetUserId(HttpContext);
-            return await _bannerUseCase.GetArtifact(userId, wishRequest);
+            try
+            {
+                long userId = GetUserId(HttpContext);
+
+                return Ok(await _bannerUseCase.GetArtifact(userId, wishRequest));
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new { message = "Произошла внутренняя ошибка сервера. Попробуйте позже." });
+            }
         }
     }
 }

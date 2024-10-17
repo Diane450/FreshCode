@@ -63,6 +63,7 @@ builder.Services.AddScoped<IBonusRepository, BonusRepository>();
 builder.Services.AddScoped<FortuneWheelUseCase>();
 builder.Services.AddScoped<IPetBonusManagerService, PetBonusManagerService>();
 builder.Services.AddScoped<IPetLoggerService, PetLoggerService>();
+builder.Services.AddScoped<IBackgroundRepository, BackgroundRepository>();
 
 builder.Services.AddScoped<BattleUseCase>();
 builder.Services.AddScoped<IBattleRepository, BattleRepository>();

@@ -12,7 +12,7 @@ namespace FreshCode.Interfaces
         IQueryable <ArtifactHistory> GetArtifactHistory(long userId, long bannerId);
         IQueryable<UserFood> GetUserFood(long userId);
         Task<List<ArtifactDTO>> GetUserArtifact(long userId);
-        Task<List<BackgroundDTO>> GetUserBackgrounds(long userId);
+        IQueryable<UserBackground> GetUserBackgrounds(long userId);
         Task<long> GetUserIdByVkId(long vk_user_id);
         Task<User> GetUserByVkId(long vk_user_id);
         System.Threading.Tasks.Task CreateNewClan(Clan clan);

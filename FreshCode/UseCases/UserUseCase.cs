@@ -12,12 +12,14 @@ namespace FreshCode.UseCases
     public class UserUseCase(IUserRepository userRepository,
         IClanRepository clanRepository,
         VkApiService vkApiService,
-        IBaseRepository baseRepository)
+        IBaseRepository baseRepository,
+        IBackgroundRepository backgroundRepository)
     {
         private readonly IUserRepository _userRepository = userRepository;
         private readonly IClanRepository _clanRepository = clanRepository;
         private readonly VkApiService _vkApiService = vkApiService;
         private readonly IBaseRepository _baseRepository = baseRepository;
+        private readonly IBackgroundRepository _backgroundRepository = backgroundRepository;
 
         public async Task<UserDTO> GetUserGameInfo(long userId)
         {
@@ -56,14 +58,26 @@ namespace FreshCode.UseCases
 
         public async Task<List<BackgroundDTO>> GetUserBackgrounds(long userId)
         {
-            return await _userRepository.GetUserBackgrounds(userId);
+            var backgrounds = _userRepository.GetUserBackgrounds(userId);
+            var bacgroundsList = await backgrounds.Select(b => BackgroundMapper.ToDTO(b.Background)).ToListAsync();
+            return bacgroundsList;
         }
 
-        public async System.Threading.Tasks.Task SetBackground(long backgroundId, long userId)
+        public async Task<BackgroundDTO> SetBackground(long backgroundId, long userId)
         {
             User user = await _userRepository.GetUserById(userId);
+            
+            UserBackground? userBackground = _userRepository.GetUserBackgrounds(userId)
+                .FirstOrDefault(ub => ub.BackgroundId == backgroundId);
+
+            if (userBackground is null)
+            {
+                throw new ArgumentException("У пользователя нет выбранного заднего фона");
+            }
+
             user.BackgroundId = backgroundId;
             await _baseRepository.SaveChangesAsync();
+            return BackgroundMapper.ToDTO(await _backgroundRepository.GetBackgroundById(backgroundId));
         }
 
         public async Task<List<UserRatingTableDTO>> GetAllUsersRatingTable()
