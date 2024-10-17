@@ -16,12 +16,24 @@ namespace FreshCode.Controllers
         private readonly UserUseCase _userUseCase = userUseCase;
 
         [HttpGet]
-        public async Task<PetDTO> GetPetAsync()
+        public async Task<IActionResult> GetPetAsync()
         {
-            var userId = GetUserId(HttpContext);
-            return await _petsUseCase.GetPetByUserIdAsync(userId);
+            try
+            {
+                var userId = GetUserId(HttpContext);
+                return Ok(await _petsUseCase.GetPetByUserIdAsync(userId));
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500,"Ошибка на сервере, попробуйте позже");
+            }
         }
 
+        
         [HttpGet("artifacts")]
         public async Task<List<ArtifactDTO>> GetPetArtifacts([FromBody] long petId)
         {
