@@ -24,7 +24,7 @@ namespace FreshCode.UseCases
 
             if (await _userRepository.isArtifactAbsent(artifactToBuy.ArtifactId, user.Id))
             {
-                throw new InvalidOperationException("Пользователь уже имеет данный артефакт");
+                throw new InvalidOperationException("У вас уже есть этот артефакт");
             }
 
             user.Money -= artifactToBuy.Price;
@@ -86,7 +86,7 @@ namespace FreshCode.UseCases
 
             if (await _userRepository.isBackgroundAbsent(backgroundToBuy.BackgroundId, user.Id))
             {
-                throw new InvalidOperationException("Пользователь уже имеет данный фон");
+                throw new InvalidOperationException("У вас уже есть данный задний фон");
             }
 
             user.Money -= backgroundToBuy.Price;
@@ -105,7 +105,7 @@ namespace FreshCode.UseCases
         {
             if (user.Money < 0)
             {
-                throw new InvalidOperationException("User does not have enough funds");
+                throw new InvalidOperationException("Недостаточно средств");
             }
         }
 

@@ -108,7 +108,7 @@ namespace FreshCode.UseCases
             return PetMapper.ToDto(pet);
         }
 
-        public async System.Threading.Tasks.Task Feed(long userId, FeedRequest request)
+        public async Task Feed(long userId, FeedRequest request)
         {
             IQueryable<PetFeedLog> log = _petsRepository.GetFeedPetLogLast5Minute(request.PetId);
 
