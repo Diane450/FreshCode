@@ -88,8 +88,8 @@ namespace FreshCode.Services
 
             if (battle.Attacker.Movecount == 0 || battle.Defender.pet.CurrentHealth <= 0)
             {
-                (string ConnectionId, long UserId, PetDTO pet, long vk_user_id, int Movecount) winner;
-                (string ConnectionId, long UserId, PetDTO pet, long vk_user_id, int Movecount) loser;
+                (string ConnectionId, long UserId, PetBattleDTO pet, long vk_user_id, int Movecount) winner;
+                (string ConnectionId, long UserId, PetBattleDTO pet, long vk_user_id, int Movecount) loser;
                 
                 if (battle.Attacker.pet.CurrentHealth != battle.Defender.pet.CurrentHealth)
                 {

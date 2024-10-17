@@ -17,7 +17,7 @@ namespace FreshCode.Hubs
 
         public static readonly Dictionary<string, string> _userConnections = new();
 
-        private static Dictionary<long, (string ConnectionId, long InnerId, CancellationTokenSource CancelToken, PetDTO Pet)> _waitingPlayers = new();
+        private static Dictionary<long, (string ConnectionId, long InnerId, CancellationTokenSource CancelToken, PetBattleDTO Pet)> _waitingPlayers = new();
 
         public static readonly List<BattleDTO> _battles = new();
 
@@ -92,7 +92,7 @@ namespace FreshCode.Hubs
             var cancellationTokenSource = new CancellationTokenSource();
             var userId = await _userRepository.GetUserIdByVkId(vk_user_id);
             Pet pet = await _petRepository.GetPetByUserId(Convert.ToInt64(userId));
-            PetDTO petDTO = PetMapper.ToDto(pet);
+            PetBattleDTO petDTO = PetMapper.ToBattleDto(pet);
 
             _waitingPlayers.Add(vk_user_id, (connectionId, Convert.ToInt64(userId), cancellationTokenSource, petDTO));
 
@@ -112,7 +112,7 @@ namespace FreshCode.Hubs
             }
         }
 
-        private async System.Threading.Tasks.Task Matchmaking(long vk_user_id, CancellationToken token)
+        private async Task Matchmaking(long vk_user_id, CancellationToken token)
         {
             while (!token.IsCancellationRequested)
             {
@@ -150,7 +150,7 @@ namespace FreshCode.Hubs
             return null;
         }
 
-        private async System.Threading.Tasks.Task NotifyOpponentFound(long vk_user_id, long vk_opponent_Id)
+        private async Task NotifyOpponentFound(long vk_user_id, long vk_opponent_Id)
         {
             var opponentConnectionId = _waitingPlayers[vk_opponent_Id].ConnectionId;
 

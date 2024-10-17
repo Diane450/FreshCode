@@ -249,7 +249,7 @@ namespace FreshCode.UseCases
             return petSleepLog.WokeUpAt;
         }
 
-        public async Task FeedAtBattle(long userId, long foodId, long petId, PetDTO petDTO)
+        public async Task FeedAtBattle(long userId, long foodId, long petId, PetBattleDTO petDTO)
         {
             IQueryable<PetFeedLog> log = _petsRepository.GetFeedPetLogLast5Minute(petId);
 
