@@ -1,5 +1,6 @@
 using FreshCode.DbModels;
 using FreshCode.Fabrics;
+using FreshCode.Filters;
 using FreshCode.Hubs;
 using FreshCode.Interfaces;
 using FreshCode.MiddleWare;
@@ -7,6 +8,7 @@ using FreshCode.Repositories;
 using FreshCode.Services;
 using FreshCode.Settings;
 using FreshCode.UseCases;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -14,7 +16,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add<BattleStateFilter>();
+});
 
 string? connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<FreshCodeContext>(options => options.UseNpgsql(connectionString));
@@ -58,6 +63,10 @@ builder.Services.AddScoped<IBonusRepository, BonusRepository>();
 builder.Services.AddScoped<FortuneWheelUseCase>();
 builder.Services.AddScoped<IPetBonusManagerService, PetBonusManagerService>();
 builder.Services.AddScoped<IPetLoggerService, PetLoggerService>();
+
+builder.Services.AddScoped<BattleUseCase>();
+builder.Services.AddScoped<IBattleRepository, BattleRepository>();
+builder.Services.AddScoped<BattleService>();
 
 builder.Services.AddHostedService<SleepDepletionService>();
 builder.Services.AddHostedService<PetDecreasedSatietyService>();
@@ -112,7 +121,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.MapHub<SleepNotificationHub>("sleep-notifications");
+app.MapHub<BattleHub>("battle-hub");
 
 app.UseAuthorization();
 

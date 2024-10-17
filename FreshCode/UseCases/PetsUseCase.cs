@@ -1,15 +1,15 @@
 ﻿using FreshCode.DbModels;
-using FreshCode.Enums;
 using FreshCode.Exceptions;
 using FreshCode.Extensions;
+using FreshCode.Hubs;
 using FreshCode.Interfaces;
 using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
 using FreshCode.Repositories;
 using FreshCode.Requests;
 using FreshCode.Responses;
-using FreshCode.Services;
 using Microsoft.AspNetCore.Mvc;
+using Task = System.Threading.Tasks.Task;
 
 namespace FreshCode.UseCases
 {
@@ -52,7 +52,6 @@ namespace FreshCode.UseCases
 
         public async Task<ActionResult<PetDTO>> IncreaseStat(long userId, IncreaseStatRequest request)
         {
-            //TODO: обновить среднюю силу питомца
             User user = await _userRepository.GetUserById(userId);
             Pet pet = await _petsRepository.GetPetById(request.PetId);
 
@@ -119,7 +118,7 @@ namespace FreshCode.UseCases
                 throw new Exception("Питомец уже наелся!");
             }
 
-            UserFood userFood = _userRepository.GetUserFood(userId)
+            UserFood? userFood = _userRepository.GetUserFood(userId)
                 .FirstOrDefault(uf => uf.FoodId == request.FoodId);
 
             if (userFood is null || userFood.Count == 0)
@@ -146,13 +145,34 @@ namespace FreshCode.UseCases
 
             for (int i = 0; i < foodBonuses.Count; i++)
             {
-                if (foodBonuses[i].IsTemporary)
+                if (foodBonuses[i].Id != 6)
                 {
-                    if (foodBonuses[i].Bonus.Value > 0)
+                    if (foodBonuses[i].IsTemporary)
                     {
-                        var bonus = currentBonuses.FirstOrDefault(c => c.Bonus.CharacteristicId == foodBonuses[i].Bonus.CharacteristicId);
+                        if (foodBonuses[i].Bonus.Value > 0)
+                        {
+                            var bonus = currentBonuses.FirstOrDefault(c => c.Bonus.CharacteristicId == foodBonuses[i].Bonus.CharacteristicId);
 
-                        if (bonus is null)
+                            if (bonus is null)
+                            {
+                                UserBonuse userBonuse = new UserBonuse
+                                {
+                                    PetId = pet.Id,
+                                    BonusId = foodBonuses[i].BonusId,
+                                    CreatedAt = DateTime.UtcNow,
+                                    ExpiresAt = DateTime.UtcNow.AddSeconds(foodBonuses[i].Bonus.Duration),
+                                    BonusTypeId = 2
+                                };
+                                await _baseRepository.AddAsync(userBonuse);
+                            }
+                            else
+                            {
+                                bonus.BonusId = foodBonuses[i].BonusId;
+                                bonus.CreatedAt = DateTime.UtcNow;
+                                bonus.ExpiresAt = DateTime.UtcNow.AddSeconds(foodBonuses[i].Bonus.Duration);
+                            }
+                        }
+                        else
                         {
                             UserBonuse userBonuse = new UserBonuse
                             {
@@ -164,29 +184,11 @@ namespace FreshCode.UseCases
                             };
                             await _baseRepository.AddAsync(userBonuse);
                         }
-                        else
-                        {
-                            bonus.BonusId = foodBonuses[i].BonusId;
-                            bonus.CreatedAt = DateTime.UtcNow;
-                            bonus.ExpiresAt = DateTime.UtcNow.AddSeconds(foodBonuses[i].Bonus.Duration);
-                        }
                     }
                     else
                     {
-                        UserBonuse userBonuse = new UserBonuse
-                        {
-                            PetId = pet.Id,
-                            BonusId = foodBonuses[i].BonusId,
-                            CreatedAt = DateTime.UtcNow,
-                            ExpiresAt = DateTime.UtcNow.AddSeconds(foodBonuses[i].Bonus.Duration),
-                            BonusTypeId = 2
-                        };
-                        await _baseRepository.AddAsync(userBonuse);
+                        await _bonusRepository.SetBonus(pet, foodBonuses[i].Bonus);
                     }
-                }
-                else
-                {
-                    await _bonusRepository.SetBonus(pet, foodBonuses[i].Bonus);
                 }
             }
 
@@ -246,5 +248,104 @@ namespace FreshCode.UseCases
             await _baseRepository.SaveChangesAsync();
             return petSleepLog.WokeUpAt;
         }
+
+        public async Task FeedAtBattle(long userId, long foodId, long petId, PetDTO petDTO)
+        {
+            IQueryable<PetFeedLog> log = _petsRepository.GetFeedPetLogLast5Minute(petId);
+
+            if (log.Count() >= 3)
+            {
+                throw new Exception("Питомец уже наелся!");
+            }
+
+            UserFood? userFood = _userRepository.GetUserFood(userId)
+                .FirstOrDefault(uf => uf.FoodId == foodId);
+
+            if (userFood is null || userFood.Count == 0)
+            {
+                throw new Exception("User does not have this food");
+            }
+
+            userFood.Count -= 1;
+
+            if (userFood.Count == 0)
+            {
+                _baseRepository.Remove(userFood);
+            }
+            Food food = await _foodRepository.GetFoodById(foodId);
+
+            Pet pet = await _petsRepository.GetPetById(petId);
+
+            var currentStats = await GetPetStats(petId);
+
+            var currentBonuses = _petsRepository.GetPetBonuses(petId)
+                .Where(ub => ub.BonusTypeId == 2).ToList();
+
+            var foodBonuses = food.FoodBonuses.ToList();
+
+            for (int i = 0; i < foodBonuses.Count; i++)
+            {
+                if (foodBonuses[i].Bonus.CharacteristicId != 6)
+                {
+                    if (foodBonuses[i].IsTemporary)
+                    {
+                        if (foodBonuses[i].Bonus.Value > 0)
+                        {
+                            var bonus = currentBonuses.FirstOrDefault(c => c.Bonus.CharacteristicId == foodBonuses[i].Bonus.CharacteristicId);
+
+                            if (bonus is null)
+                            {
+                                UserBonuse userBonuse = new UserBonuse
+                                {
+                                    PetId = pet.Id,
+                                    BonusId = foodBonuses[i].BonusId,
+                                    CreatedAt = DateTime.UtcNow,
+                                    ExpiresAt = DateTime.UtcNow.AddSeconds(foodBonuses[i].Bonus.Duration),
+                                    BonusTypeId = 2
+                                };
+                                await _baseRepository.AddAsync(userBonuse);
+                            }
+                            else
+                            {
+                                bonus.BonusId = foodBonuses[i].BonusId;
+                                bonus.CreatedAt = DateTime.UtcNow;
+                                bonus.ExpiresAt = DateTime.UtcNow.AddSeconds(foodBonuses[i].Bonus.Duration);
+                            }
+                        }
+                        else
+                        {
+                            UserBonuse userBonuse = new UserBonuse
+                            {
+                                PetId = pet.Id,
+                                BonusId = foodBonuses[i].BonusId,
+                                CreatedAt = DateTime.UtcNow,
+                                ExpiresAt = DateTime.UtcNow.AddSeconds(foodBonuses[i].Bonus.Duration),
+                                BonusTypeId = 2
+                            };
+                            await _baseRepository.AddAsync(userBonuse);
+                        }
+                    }
+                    else
+                    {
+                        await _bonusRepository.SetBonus(pet, foodBonuses[i].Bonus);
+                    }
+                }
+                else
+                {
+                    petDTO.CurrentHealth = petDTO.CurrentHealth + foodBonuses[i].Bonus.Value > petDTO.MaxHealth ? petDTO.MaxHealth : petDTO.CurrentHealth + foodBonuses[i].Bonus.Value;
+                }
+            }
+
+            PetFeedLog petFeedLog = new()
+            {
+                PetId = petId,
+                CreatedAt = DateTime.UtcNow
+            };
+            await _baseRepository.AddAsync(petFeedLog);
+
+            _baseRepository.Update(pet);
+            await _baseRepository.SaveChangesAsync();
+        }
+
     }
 }

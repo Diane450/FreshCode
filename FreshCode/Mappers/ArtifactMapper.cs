@@ -18,9 +18,9 @@ namespace FreshCode.Mappers
                 X = artifact.X,
                 Y = artifact.Y,
                 Price = artifact.Price,
-                Rarity = artifact.Rarity.Rarity1,
-                Type = artifact.ArtifactType.Type,
-                Bonuses = artifact.ArtifactBonuses.Select(b => BonusMapper.ToDTO(b.Bonus)).ToList(),
+                Rarity = artifact.Rarity == null ? null : artifact.Rarity.Rarity1,
+                Type = artifact.ArtifactType == null ? null : artifact.ArtifactType.Type,
+                Bonuses = artifact.ArtifactBonuses == null ? null : artifact.ArtifactBonuses.Select(b => BonusMapper.ToDTO(b.Bonus)).ToList(),
             };
         }
 

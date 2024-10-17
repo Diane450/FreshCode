@@ -9,5 +9,8 @@ namespace FreshCode.Interfaces
         public bool VerifySignature(IHeaderDictionary header);
 
         public Task<long> GetInnerId(HttpContext context);
+
+        public long GetVkId();
+
     }
 }

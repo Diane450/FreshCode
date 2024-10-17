@@ -45,7 +45,6 @@ namespace FreshCode.Services
                     TimeSpan timeDifference;
                     if (feedLog == null)
                     {
-
                         timeDifference = DateTime.UtcNow - pet.CreatedAt;
                     }
                     else
@@ -67,7 +66,7 @@ namespace FreshCode.Services
                     // Если значение изменилось, обновляем БД
                     if (newFeedValue != pet.FeedNeed)
                     {
-                        pet.FeedNeed = (int)newFeedValue;
+                        pet.FeedNeed = newFeedValue;
                         await dbContext.SaveChangesAsync(cancellationToken);
                     }
                 }
