@@ -82,12 +82,12 @@ namespace FreshCode.Hubs
             }
         }
 
-        public async System.Threading.Tasks.Task JoinQueue(string connectionId, long vk_user_id)
+        public async Task JoinQueue(string connectionId, long vk_user_id)
         {
             await StartLookingForOpponent(vk_user_id, connectionId);
         }
 
-        public async System.Threading.Tasks.Task StartLookingForOpponent(long vk_user_id, string connectionId)
+        public async Task StartLookingForOpponent(long vk_user_id, string connectionId)
         {
             var cancellationTokenSource = new CancellationTokenSource();
             var userId = await _userRepository.GetUserIdByVkId(vk_user_id);
@@ -96,7 +96,7 @@ namespace FreshCode.Hubs
 
             _waitingPlayers.Add(vk_user_id, (connectionId, Convert.ToInt64(userId), cancellationTokenSource, petDTO));
 
-            var task = System.Threading.Tasks.Task.Delay(TimeSpan.FromSeconds(5), cancellationTokenSource.Token);
+            var task = System.Threading.Tasks.Task.Delay(TimeSpan.FromMinutes(55), cancellationTokenSource.Token);
 
             try
             {

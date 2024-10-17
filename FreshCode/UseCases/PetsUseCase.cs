@@ -1,7 +1,6 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.Exceptions;
 using FreshCode.Extensions;
-using FreshCode.Hubs;
 using FreshCode.Interfaces;
 using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
@@ -123,7 +122,7 @@ namespace FreshCode.UseCases
 
             if (userFood is null || userFood.Count == 0)
             {
-                throw new Exception("User does not have this food");
+                throw new Exception("У вас не такой еды");
             }
 
             userFood.Count -= 1;
@@ -263,7 +262,7 @@ namespace FreshCode.UseCases
 
             if (userFood is null || userFood.Count == 0)
             {
-                throw new Exception("User does not have this food");
+                throw new Exception("У вас нет такой еды");
             }
 
             userFood.Count -= 1;
