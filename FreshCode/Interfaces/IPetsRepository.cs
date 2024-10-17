@@ -14,5 +14,6 @@ namespace FreshCode.Interfaces
         IQueryable<UserBonuse> GetPetBonuses(long petId);
         Task<PetStatResponse> GetPetStats(long petId);
         IQueryable<PetFeedLog> GetFeedPetLogLast5Minute(long petId);
+        Task<bool> IsPetSleeping(long vkUserId);
     }
 }

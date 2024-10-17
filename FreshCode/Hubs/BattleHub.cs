@@ -52,25 +52,33 @@ namespace FreshCode.Hubs
         public override async Task OnConnectedAsync()
         {
             var vk_user_id = Context.GetHttpContext().Request.Query["vk_user_id"];
-
-            if (_userConnections.ContainsKey(vk_user_id))
+            var userId = Context.GetHttpContext().Items["userId"];
+            if (await _petRepository.IsPetSleeping((long)userId))
             {
-                _userConnections[vk_user_id!.ToString()] = Context.ConnectionId;
-
-                var battle = _battles.FirstOrDefault(b => b.Attacker.vk_user_id == Convert.ToInt64(vk_user_id) ||
-                                                  b.Defender.vk_user_id == Convert.ToInt64(vk_user_id));
-                if (battle != null)
-                {
-                    var user = battle.Defender.vk_user_id == vk_user_id ? battle.Defender : battle.Attacker;
-                    user.ConnectionId = Context.ConnectionId;
-                }
-                await _hubContext.Clients.Client(Context.ConnectionId).SendAsync("OnConnected", "User has reconnected to BattleHub");
+                await _hubContext.Clients.Client(Context.ConnectionId).SendAsync("BattleNotAllowed", "Ваш питомец спит, ему нельзя участвовать в боях");
+                Context.Abort();
             }
             else
             {
-                _userConnections[vk_user_id!.ToString()] = Context.ConnectionId;
-                await _hubContext.Clients.Client(Context.ConnectionId).SendAsync("OnConnected", "User has connected to BattleHub");
-                await JoinQueue(Context.ConnectionId, Convert.ToInt64(vk_user_id));
+                if (_userConnections.ContainsKey(vk_user_id))
+                {
+                    _userConnections[vk_user_id!.ToString()] = Context.ConnectionId;
+
+                    var battle = _battles.FirstOrDefault(b => b.Attacker.vk_user_id == Convert.ToInt64(vk_user_id) ||
+                                                      b.Defender.vk_user_id == Convert.ToInt64(vk_user_id));
+                    if (battle != null)
+                    {
+                        var user = battle.Defender.vk_user_id == vk_user_id ? battle.Defender : battle.Attacker;
+                        user.ConnectionId = Context.ConnectionId;
+                    }
+                    await _hubContext.Clients.Client(Context.ConnectionId).SendAsync("OnConnected", "User has reconnected to BattleHub");
+                }
+                else
+                {
+                    _userConnections[vk_user_id!.ToString()] = Context.ConnectionId;
+                    await _hubContext.Clients.Client(Context.ConnectionId).SendAsync("OnConnected", "User has connected to BattleHub");
+                    await JoinQueue(Context.ConnectionId, Convert.ToInt64(vk_user_id));
+                }
             }
         }
 
@@ -346,6 +354,11 @@ namespace FreshCode.Hubs
                     .SendAsync("UserDisconnected", "Вы отключились");
 
                 _userConnections.Remove(vk_user_id);
+            }
+            else
+            {
+                await _hubContext.Clients.Client(Context.ConnectionId)
+                    .SendAsync("UserDisconnected", "Вы отключились");
             }
             await base.OnDisconnectedAsync(exception);
         }

@@ -140,5 +140,11 @@ namespace FreshCode.Repositories
                 .Where(pfl => pfl.PetId == petId && pfl.CreatedAt > DateTime.UtcNow.AddMinutes(-5));
         }
 
+        public Task<bool> IsPetSleeping(long userId)
+        {
+            return _dbContext.Pets
+                .Where(p => p.UserId == userId)
+                .Select(p => p.IsSleeping).FirstAsync() ;
+        }
     }
 }
