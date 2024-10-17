@@ -57,7 +57,7 @@ namespace FreshCode.Services
         }
 
         // Обработка удара
-        public async Task<bool> HandleAttack(BattleDTO battle)
+        public async Task<AttackResponse?> HandleAttack(BattleDTO battle)
         {
             PetStatResponse attackerStats = await _petsUseCase.GetPetStats(Convert.ToInt64(battle.Attacker.pet.Id));
             PetStatResponse defenderStats = await _petsUseCase.GetPetStats(Convert.ToInt64(battle.Defender.pet.Id));
@@ -111,14 +111,14 @@ namespace FreshCode.Services
                     StatPoints = CalculateReward(100, winner.pet.Level),
                     Primogems = CalculateReward(100, winner.pet.Level)
                 };
-                await _hubContext.Clients.Client(winner.ConnectionId).SendAsync("WinnerReward", reward); // Уведомляем о завершении боя
-
-                await _battleUseCase.UpdateBattle(battle.BattleId, reward, winner.UserId, loser.UserId);
-                
-                await _hubContext.Clients.Group(battle.BattleId.ToString()).SendAsync("BattleEnded", winner.vk_user_id); // Уведомляем о завершении боя                
-                return true;
+                return new AttackResponse()
+                {
+                    Winner = winner,
+                    Loser = loser,
+                    Reward = reward,
+                };
             }
-            return false;
+            return null;
         }
 
         private int CalculateReward(int baseReward, long petLevel)

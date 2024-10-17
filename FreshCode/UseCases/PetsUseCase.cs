@@ -283,7 +283,7 @@ namespace FreshCode.UseCases
 
             for (int i = 0; i < foodBonuses.Count; i++)
             {
-                if (foodBonuses[i].Id != 6)
+                if (foodBonuses[i].Bonus.CharacteristicId != 6)
                 {
                     if (foodBonuses[i].IsTemporary)
                     {
