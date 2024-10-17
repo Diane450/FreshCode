@@ -11,15 +11,29 @@ namespace FreshCode.Controllers
         private readonly PetPartsUseCase _petPartsUseCase = petPartsUseCase;
 
         [HttpGet("eyes")]
-        public async Task<List<EyeDTO>> GetEyes()
+        public async Task<IActionResult> GetEyes()
         {
-            return await _petPartsUseCase.GetEyesAsync();
+            try
+            {
+                return Ok(await _petPartsUseCase.GetEyesAsync());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Произошла внутренняя ошибка сервера. Попробуйте позже." });
+            }
         }
 
         [HttpGet("bodies")]
-        public async Task<List<BodyDTO>> GetBodies()
+        public async Task<IActionResult> GetBodies()
         {
-            return await _petPartsUseCase.GetBodiesAsync();
+            try
+            {
+                return Ok(await _petPartsUseCase.GetBodiesAsync());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Произошла внутренняя ошибка сервера. Попробуйте позже." });
+            }
         }
     }
 }

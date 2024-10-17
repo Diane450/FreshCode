@@ -19,15 +19,16 @@ namespace FreshCode.Controllers
             {
                 long userId = GetUserId(HttpContext);
                 var result = await _fortuneWheelUseCase.IsSpinAvailable(userId);
+                
                 return Ok(new
                 {
                     canSpin = result.Item1,
                     timeUntilNextSpin = result.Item2
                 });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(500, new { message = "Произошла внутренняя ошибка сервера. Попробуйте позже." });
             }
         }
 
@@ -41,7 +42,7 @@ namespace FreshCode.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(500, new { message = "Произошла внутренняя ошибка сервера. Попробуйте позже." });
             }
         }
     }
