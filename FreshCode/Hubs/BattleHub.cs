@@ -5,9 +5,6 @@ using FreshCode.ModelsDTO;
 using FreshCode.Services;
 using FreshCode.UseCases;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.Extensions.Logging;
-using System.Numerics;
-using System.Reflection;
 using Task = System.Threading.Tasks.Task;
 
 namespace FreshCode.Hubs
