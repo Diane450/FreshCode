@@ -21,5 +21,7 @@ public partial class Level
 
     public decimal EnhancementCoefficient { get; set; }
 
+    public int LevelValue { get; set; }
+
     public virtual ICollection<Pet> Pets { get; set; } = new List<Pet>();
 }

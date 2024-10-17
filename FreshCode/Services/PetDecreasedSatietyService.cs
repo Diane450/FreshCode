@@ -56,7 +56,9 @@ namespace FreshCode.Services
 
                     double seconds = timeDifference.TotalSeconds;
 
-                    int feedNeedDecrease = 100 - (int)Math.Ceiling((seconds * 100) / 18000);
+                    var feedLevel = feedLog is null? 100:feedLog.FoodLevel;
+
+                    int feedNeedDecrease = feedLevel - (int)Math.Ceiling((seconds * 100) / 18000);
                     // Потребность в еде уменьшается в зависимости от времени, прошедшего с последнего кормления
 
                     // Новое значение потребности в еде

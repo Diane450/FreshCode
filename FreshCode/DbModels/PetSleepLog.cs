@@ -13,7 +13,9 @@ public partial class PetSleepLog
 
     public DateTime WokeUpAt { get; set; }
 
-    public int InitialSleepNeed { get; set; }
+    public int SleepLevelWhenSleep { get; set; }
+
+    public int SleepLevel { get; set; }
 
     public virtual Pet Pet { get; set; } = null!;
 }

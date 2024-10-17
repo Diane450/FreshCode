@@ -25,6 +25,7 @@ namespace FreshCode.Services
                 PetId = pet.Id,
                 CreatedAt = DateTime.UtcNow,
                 WokeUpAt = DateTime.UtcNow,
+                SleepLevel = pet.SleepNeed
             };
             await _baseRepository.AddAsync(petSleepLog);
             await _baseRepository.SaveChangesAsync();

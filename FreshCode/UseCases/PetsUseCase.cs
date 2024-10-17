@@ -193,7 +193,8 @@ namespace FreshCode.UseCases
             PetFeedLog petFeedLog = new()
             {
                 PetId = request.PetId,
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                FoodLevel = pet.FeedNeed
             };
             await _baseRepository.AddAsync(petFeedLog);
 
@@ -237,6 +238,7 @@ namespace FreshCode.UseCases
                 PetId = petId,
                 CreatedAt = DateTime.UtcNow,
                 WokeUpAt = DateTime.UtcNow.AddSeconds(secondsToSleep),
+                SleepLevelWhenSleep = pet.SleepNeed,
             };
 
             pet.IsSleeping = true;

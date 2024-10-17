@@ -11,5 +11,7 @@ public partial class PetFeedLog
 
     public DateTime CreatedAt { get; set; }
 
+    public int FoodLevel { get; set; }
+
     public virtual Pet Pet { get; set; } = null!;
 }

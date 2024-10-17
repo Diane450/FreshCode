@@ -49,7 +49,9 @@ namespace FreshCode.Services
 
                     double seconds = timeDifference.TotalSeconds;
 
-                    int newSleepValue = 100 - (int)Math.Ceiling((seconds * 100) / 18000);
+                    var sleepLevel = sleepLog is null ? 100:sleepLog.SleepLevel ;
+
+                    int newSleepValue = sleepLevel - (int)Math.Ceiling((seconds * 100) / 18000);
 
                     if (newSleepValue != pet.SleepNeed)
                     {
