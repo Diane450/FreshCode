@@ -12,6 +12,25 @@ namespace FreshCode.Controllers
     {
         private readonly FortuneWheelUseCase _fortuneWheelUseCase = fortuneWheelUseCase;
 
+        [HttpGet("can-spin")]
+        public async Task<ActionResult> IsSpinAvailable()
+        {
+            try
+            {
+                long userId = GetUserId(HttpContext);
+                var result = await _fortuneWheelUseCase.IsSpinAvailable(userId);
+                return Ok(new
+                {
+                    canSpin = result.Item1,
+                    timeUntilNextSpin = result.Item2
+                });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
         [HttpGet("get-value")]
         public async Task<ActionResult<FortuneWheelDropResponse>> GetValue()
         {

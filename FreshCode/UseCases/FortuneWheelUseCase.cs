@@ -2,6 +2,7 @@
 using FreshCode.Interfaces;
 using FreshCode.Responses;
 using FreshCode.Services;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FreshCode.UseCases
 {
@@ -76,7 +77,21 @@ namespace FreshCode.UseCases
             }
             else
             {
-                throw new ArgumentException("User cannot spin the wheel of fortune yet");
+                throw new ArgumentException($"Вы пока не можете получить бонус. Следующая попытка через:{24 - DateTime.UtcNow.Hour - Convert.ToDateTime(userLastWheelRollTime).Hour}");
+            }
+        }
+
+        public async Task<(bool,int?)> IsSpinAvailable(long userId)
+        {
+            DateTime? userLastWheelRollTime = _fortuneRepository.GetUserLastWheelRollTime(userId);
+            
+            if (userLastWheelRollTime is null || (DateTime.UtcNow - userLastWheelRollTime.Value).TotalHours >= 24)
+            {
+                return (true,null);
+            }
+            else
+            {
+                return (false, 24 - (DateTime.UtcNow.Hour - Convert.ToDateTime(userLastWheelRollTime).Hour));
             }
         }
     }
