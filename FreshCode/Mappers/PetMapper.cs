@@ -85,7 +85,9 @@ namespace FreshCode.Mappers
                 CurrentDefence = pet.CurrentDefence,
                 CurrentCriticalDamage = pet.CurrentCriticalDamage,
                 CurrentCriticalChance = pet.CurrentCriticalChance,
-                MaxHealth = pet.Level.MaxHealth
+                MaxHealth = pet.CurrentHealth,
+                CurrentPoints = pet.Points,
+                MaxPoints = pet.MaxPoints,
             };
         }
     }

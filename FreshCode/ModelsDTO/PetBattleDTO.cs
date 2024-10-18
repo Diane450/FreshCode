@@ -37,5 +37,8 @@
         public decimal CurrentCriticalChance { get; set; }
 
         public int MaxHealth { get; set; }
+        public int CurrentPoints { get; set; }
+        public int MaxPoints { get; set; }
+
     }
 }

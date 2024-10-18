@@ -1,6 +1,7 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.Hubs;
 using FreshCode.Interfaces;
+using FreshCode.ModelsDTO;
 using FreshCode.Requests;
 using FreshCode.Responses;
 using Microsoft.AspNetCore.SignalR;
@@ -108,31 +109,38 @@ namespace FreshCode.UseCases
             await _battleHub.Clients.Group(request.BattleId.ToString()).SendAsync("Attack", request.BattleId, request.AttackerId, request.DefenderId);
         }
 
-        public async System.Threading.Tasks.Task UpdateBattle(long battleId, RewardResponse reward, long winnerId, long loserId)
+        public async System.Threading.Tasks.Task UpdateBattle(long battleId, RewardResponse reward, (string ConnectionId, long UserId, PetBattleDTO pet, long vk_user_id, int Movecount) winner, long loserId)
         {
             UserBattle userBattle = await _battleRepository.GetBattleById(battleId);
 
             userBattle.MoneyReward = reward.Money;
-            userBattle.WinnerId = winnerId;
+            userBattle.WinnerId = winner.UserId;
             userBattle.PointsReward = reward.Points;
             userBattle.StatPointsReward = reward.StatPoints;
             userBattle.PrimogemsReward = reward.Primogems;
             userBattle.FinishedAt = DateTime.UtcNow;
 
-            User user = await _userRepository.GetUserById(winnerId);
+            User user = await _userRepository.GetUserById(winner.UserId);
 
             user.Money += reward.Money;
             user.StatPoints += reward.StatPoints;
             user.PrimogemsCount = reward.Primogems;
             user.WonBattlesCount += 1;
 
-            Pet winnerPet = await _petRepository.GetPetByUserId(winnerId);
+            Pet winnerPet = await _petRepository.GetPetByUserId(winner.UserId);
 
             winnerPet.SleepNeed = winnerPet.SleepNeed - 20 < 0 ? 0 : winnerPet.SleepNeed - 20;
             winnerPet.FeedNeed = winnerPet.FeedNeed - 20 < 0 ? 0 : winnerPet.FeedNeed - 20;
 
-            winnerPet.Points += reward.Points;
-
+            if (winnerPet.Points + reward.Points > winnerPet.MaxPoints)
+            {
+                winnerPet.Points = winnerPet.MaxPoints;
+                await _battleHub.Clients.Client(winner.ConnectionId).SendAsync("LevelUp");
+            }
+            else
+            {
+                winnerPet.Points = winnerPet.Points + reward.Points;
+            }
             Pet loserPet = await _petRepository.GetPetByUserId(loserId);
 
             loserPet.SleepNeed = loserPet.SleepNeed - 30 < 0 ? 0 : loserPet.SleepNeed - 30;
