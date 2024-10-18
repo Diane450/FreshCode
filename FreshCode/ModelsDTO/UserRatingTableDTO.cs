@@ -17,7 +17,7 @@ namespace FreshCode.ModelsDTO
         [JsonProperty("first_name")]
         public string FirstName { get; set; } = null!;
 
-        [JsonProperty("photo_50")]
+        [JsonProperty("photo_100")]
         public string Photo50 { get; set; }
     }
 }

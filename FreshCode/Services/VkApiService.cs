@@ -27,7 +27,7 @@ namespace FreshCode.Services
             var _apiVersion = "5.199";
 
             // Формируем запрос к VK API для получения информации о пользователе
-            var url = $"/users.get?user_ids={vk_user_id}&fields=first_name,last_name,photo_50&lang=ru&v={_apiVersion}&access_token={_accessToken}";
+            var url = $"/users.get?user_ids={vk_user_id}&fields=first_name,last_name,photo_100&lang=ru&v={_apiVersion}&access_token={_accessToken}";
 
             HttpResponseMessage response;
             // Отправляем запрос к VK API
