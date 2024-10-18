@@ -3,6 +3,7 @@ using FreshCode.Requests;
 using FreshCode.Responses;
 using FreshCode.UseCases;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace FreshCode.Controllers
 {
@@ -17,6 +18,16 @@ namespace FreshCode.Controllers
             _purchaseUseCase = purchaseUseCase;
         }
 
+        /// <summary>
+        /// Купить артефакт
+        /// </summary>
+        /// <returns></returns>
+        /// <param name="artifactToBuy">покупаемый артефакт</param>
+        /// <response code="500">Ошибка API</response>
+        /// <response code="200">Успешное выполнение</response>
+        /// <response code="404">Пользователь не найден</response>
+        /// <response code="409">Недостаточно средств(денег)</response>
+
         [HttpPost("artifact")]
         public async Task<ActionResult<BuyArtifactResponse>> BuyArtifact([FromBody] BuyArtifactRequest artifactToBuy)
         {
@@ -27,7 +38,7 @@ namespace FreshCode.Controllers
             }
             catch (ArgumentException exception)
             {
-                return BadRequest(exception.Message);
+                return NotFound(exception.Message);
             }
             catch (InvalidOperationException exception)
             {
@@ -35,9 +46,18 @@ namespace FreshCode.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"Ошибка: {ex.Message}");
+                return StatusCode(500, "Произошла ошибка на сервере, попробуйте позже");
             }
         }
+        /// <summary>
+        /// Купить еду
+        /// </summary>
+        /// <returns></returns>
+        /// <param name="foodToBuy">покупаемая еда</param>
+        /// <response code="500">Ошибка API</response>
+        /// <response code="200">Успешное выполнение</response>
+        /// <response code="404">Пользователь не найден</response>
+        /// <response code="409">Недостаточно средств(денег)</response>
 
         [HttpPost("food")]
         public async Task<ActionResult<BuyFoodResponse>> BuyFood([FromBody] BuyFoodRequest foodToBuy)
@@ -61,6 +81,16 @@ namespace FreshCode.Controllers
             }
         }
 
+        /// <summary>
+        /// Купить задний фон
+        /// </summary>
+        /// <returns></returns>
+        /// <param name="backgroundToBuy">покупаемый задний фон</param>
+        /// <response code="500">Ошибка API</response>
+        /// <response code="200">Успешное выполнение</response>
+        /// <response code="404">Пользователь не найден</response>
+        /// <response code="409">Недостаточно средств(денег)</response>
+
         [HttpPost("background")]
         public async Task<ActionResult> BuyBackground([FromBody] BuyBackgroundRequest backgroundToBuy)
         {
@@ -83,12 +113,36 @@ namespace FreshCode.Controllers
                 return StatusCode(500, $"Ошибка: {ex.Message}");
             }
         }
+        /// <summary>
+        /// Купить крутки
+        /// </summary>
+        /// <returns></returns>
+        /// <param name="wishCount">кол-во круток</param>
+        /// <response code="500">Ошибка API</response>
+        /// <response code="200">Успешное выполнение</response>
+        /// <response code="404">Пользователь не найден</response>
+        /// <response code="409">Недостаточно средств(примогемов)</response>
 
         [HttpPost("wishes")]
-        public async Task<BuyWishesResponse> BuyWishes([FromBody]int wishCount)
+        public async Task<ActionResult<BuyWishesResponse>> BuyWishes([FromBody]int wishCount)
         {
-            var userId = GetUserId(HttpContext);
-            return await _purchaseUseCase.BuyWishes(userId, wishCount);
+            try
+            {
+                var userId = GetUserId(HttpContext);
+                return await _purchaseUseCase.BuyWishes(userId, wishCount);
+            }
+            catch (InsufficientFundsException ex)
+            {
+                return Conflict(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Произошла ошибка на сервере, попробуйте позже");
+            }
         }
     }
 }

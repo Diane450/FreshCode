@@ -10,23 +10,62 @@ namespace FreshCode.Controllers
     public class ShopController(ShopUseCase shopUseCase) : Controller
     {
         private readonly ShopUseCase _shopUseCase = shopUseCase;
+        /// <summary>
+        /// Получение всей еды в магазине
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="500">Ошибка API</response>
+        /// <response code="200">Успешное выполнение</response>
 
         [HttpGet("food")]
-        public async Task<List<FoodDTO>> GetFood()
+        public async Task<ActionResult<List<FoodDTO>>> GetFood()
         {
-            return await _shopUseCase.GetFoodAsync();
+            try
+            {
+                return await _shopUseCase.GetFoodAsync();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Произошла ошибка на сервере, попробуйте позже");
+            }
         }
-
+        /// <summary>
+        /// Получение всех артефактов из магазина
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="500">Ошибка API</response>
+        /// <response code="200">Успешное выполнение</response>
+        
         [HttpGet("artifacts")]
-        public async Task<List<ArtifactDTO>> GetArtifacts()
+        public async Task<ActionResult<List<ArtifactDTO>>> GetArtifacts()
         {
-            return await _shopUseCase.GetArtifactsAsync();
+            try
+            {
+                return await _shopUseCase.GetArtifactsAsync();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Произошла ошибка на сервере, попробуйте позже");
+            }
         }
+        /// <summary>
+        /// Получение всех задних фонов из магазина
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="500">Ошибка API</response>
+        /// <response code="200">Успешное выполнение</response>
 
         [HttpGet("backgrounds")]
-        public async Task<List<BackgroundDTO>> GetBackgrounds()
+        public async Task<ActionResult<List<BackgroundDTO>>> GetBackgrounds()
         {
-            return await _shopUseCase.GetBackgroundsAsync();
+            try
+            {
+                return await _shopUseCase.GetBackgroundsAsync();
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, "Произошла ошибка на сервере, попробуйте позже");
+            }
         }
     }
 }

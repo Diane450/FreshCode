@@ -67,9 +67,15 @@ namespace FreshCode.UseCases
 
         public async Task<List<UserFoodDTO>> GetUserFood(long userId)
         {
-            var food = _userRepository.GetUserFood(userId).ToList();
-
-            return UserFoodMapper.ToDTO(food);
+            try
+            {
+                var food = _userRepository.GetUserFood(userId).ToList();
+                return UserFoodMapper.ToDTO(food);
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException();
+            }
         }
 
         public async Task<List<ArtifactDTO>> GetUserArtifact(long userId)
