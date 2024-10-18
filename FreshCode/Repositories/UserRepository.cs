@@ -2,11 +2,7 @@
 using FreshCode.Interfaces;
 using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
-using System.Linq;
-using Task = FreshCode.DbModels.Task;
 
 namespace FreshCode.Repositories
 {
@@ -218,6 +214,17 @@ namespace FreshCode.Repositories
                 .Where(u => u.Id == userClanId);
 
             return usersInClan;
+        }
+
+        public async Task<List<int>> GetExistingVkFriendIds(List<long> vkFriendIds)
+        {
+            // Получаем все ID друзей из базы данных
+            var existingIds = await _dbContext.Users
+                .Where(f => vkFriendIds.Contains(f.VkId)) // Предположим, что VkId - это поле в вашей таблице Friends
+                .Select(f => f.VkId)
+                .ToListAsync();
+
+            return existingIds;
         }
     }
 }

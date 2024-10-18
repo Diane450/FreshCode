@@ -84,7 +84,7 @@ namespace FreshCode.UseCases
 
         public async Task<PagedList<UserRatingTableDTO>> GetAllUsersRatingTable(QueryParameters queryParameters)
         {
-            IQueryable<User> users = _userRepository.GetAllUsers();
+            IQueryable<User> users = _userRepository.GetAllUsers().OrderByDescending(u => u.WonBattlesCount);
 
             users = users.Sort(queryParameters.SortBy, queryParameters.SortDescending);
 
@@ -93,7 +93,6 @@ namespace FreshCode.UseCases
             int totalCount = await users.CountAsync();
 
             users = users.Paginate(queryParameters.Page, queryParameters.PageSize);
-            users = users.OrderByDescending(u => u.WonBattlesCount);
             var usersDTO = users.Select(u => UserMapper.ToRatingTableDTO(u)).ToList();
             // Для каждого пользователя запросим данные из VK API
 
@@ -122,14 +121,40 @@ namespace FreshCode.UseCases
             return [.. clans.OrderByDescending(c => c.WonBattlesCount)];
         }
 
-        public async Task<PagedList<UserRatingTableDTO>> GetFriendsRatingTable(long vk_user_id)
+        public async Task<PagedList<UserRatingTableDTO>> GetFriendsRatingTable(QueryParameters queryParameters, long vk_user_id)
         {
+            IQueryable<User> users = _userRepository.GetAllUsers();
+
             var friendsIds = await _vkApiService.GetVkFriends(vk_user_id);
 
-            //List<long> friendsIds = await _vkApiService.GetUserFriendsIds(vk_user_id);
+            friendsIds.Add(vk_user_id);
 
-            return null;
-            //return await _userRepository.GetFriendsRatingTable(friendsIds);
+            var filteredUsers = users.Where(user => friendsIds.Contains(user.VkId));
+
+            //filteredUsers = filteredUsers.Sort(queryParameters.SortBy, queryParameters.SortDescending);
+
+            //filteredUsers = filteredUsers.Filter(queryParameters.FilterBy, queryParameters.FilterValue);
+
+            int totalCount = await filteredUsers.CountAsync();
+
+            filteredUsers = filteredUsers.Paginate(queryParameters.Page, queryParameters.PageSize);
+            filteredUsers = filteredUsers.OrderByDescending(u => u.WonBattlesCount);
+            var usersDTO = filteredUsers.Select(u => UserMapper.ToRatingTableDTO(u)).ToList();
+            var idsList = String.Join(",", usersDTO.Select(u => u.Id).ToList());
+
+            var vkUsersInfo = await _vkApiService.GetVkUsersInfo(idsList);
+
+            foreach (var vkUser in vkUsersInfo)
+            {
+                var userDTO = usersDTO.FirstOrDefault(u => u.Id == vkUser.Id);
+                if (userDTO != null)
+                {
+                    userDTO.FirstName = vkUser.FirstName;
+                    userDTO.LastName = vkUser.LastName;
+                    userDTO.Photo50 = vkUser.Photo50;
+                }
+            }
+            return new PagedList<UserRatingTableDTO>(usersDTO, queryParameters.Page, queryParameters.PageSize, totalCount);
         }
     }
 }

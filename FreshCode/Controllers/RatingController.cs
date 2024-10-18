@@ -26,10 +26,10 @@ namespace FreshCode.Controllers
         //}
 
         [HttpGet("friends")]
-        public async Task<PagedList<UserRatingTableDTO>> GetFriendsRatingTable()
+        public async Task<PagedList<UserRatingTableDTO>> GetFriendsRatingTable([FromQuery] QueryParameters queryParameters)
         {
             var vk_user_id = GetVkId(HttpContext);
-            return await _userUseCase.GetFriendsRatingTable(vk_user_id);
+            return await _userUseCase.GetFriendsRatingTable(queryParameters, vk_user_id);
         }
     }
 }

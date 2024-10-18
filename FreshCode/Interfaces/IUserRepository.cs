@@ -26,5 +26,6 @@ namespace FreshCode.Interfaces
         public Task<User> GetUserById(long userId);
         IQueryable<User> GetUsersByClanId(long clanId);
         Task<IQueryable<User>> GetClanUsers(long userId);
+        Task<List<int>> GetExistingVkFriendIds(List<long> vkFriendIds);
     }
 }
