@@ -1,7 +1,9 @@
-﻿using FreshCode.ModelsDTO;
+﻿using FreshCode.DbModels;
+using FreshCode.ModelsDTO;
 using FreshCode.Services;
 using FreshCode.UseCases;
 using Microsoft.AspNetCore.Mvc;
+using System.Runtime.InteropServices;
 
 namespace FreshCode.Controllers
 {
@@ -67,6 +69,7 @@ namespace FreshCode.Controllers
         /// <returns></returns>
         /// <response code="500">Ошибка API</response>
         /// <response code="200">Успешное выполнение</response>
+        /// <response code="404">У пользователя нет еды</response>
 
         [HttpGet("food")]
         public async Task<ActionResult<List<UserFoodDTO>>> GetUserFood()
@@ -74,7 +77,13 @@ namespace FreshCode.Controllers
             try
             {
                 var userId = GetUserId(HttpContext);
-                return await _userUseCase.GetUserFood(userId);
+                var food =  await _userUseCase.GetUserFood(userId);
+
+                if (food == null || !food.Any()) // Если еды нет
+                {
+                    return NotFound("У вас нет еды");
+                }
+                return Ok(food);
             }
             catch (Exception)
             {
@@ -87,6 +96,7 @@ namespace FreshCode.Controllers
         /// <returns></returns>
         /// <response code="500">Ошибка API</response>
         /// <response code="200">Успешное выполнение</response>
+        /// <response code="404">У пользователя нет артефактов</response>
 
         [HttpGet("artifacts")]
         public async Task<ActionResult<List<ArtifactDTO>>> GetUserArtifact()
@@ -94,7 +104,14 @@ namespace FreshCode.Controllers
             try
             {
                 var userId = GetUserId(HttpContext);
-                return await _userUseCase.GetUserArtifact(userId);
+                var artifacts = await _userUseCase.GetUserArtifact(userId);
+
+                if (artifacts == null || !artifacts.Any()) // Если еды нет
+                {
+                    return NotFound("У вас нет артефактов");
+                }
+                return Ok(artifacts);
+
             }
             catch (Exception)
             {

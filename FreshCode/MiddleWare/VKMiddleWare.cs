@@ -96,8 +96,15 @@ namespace FreshCode.MiddleWare
 
         public async Task<long> GetInnerId(HttpContext context)
         {
-            long vk_user_id = Convert.ToInt64(QueryParams["vk_user_id"]);
-            return await _userUseCase.GetUserIdByVkId(vk_user_id);
+            try
+            {
+                long vk_user_id = Convert.ToInt64(QueryParams["vk_user_id"]);
+                return await _userUseCase.GetUserIdByVkId(vk_user_id);
+            }
+            catch (ArgumentException ex)
+            {
+                throw ex;
+            }
         }
 
         public long GetVkId()

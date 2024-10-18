@@ -42,15 +42,22 @@ namespace FreshCode.MiddleWare
 
                 context.Response.ContentType = new MediaTypeHeaderValue("application/json").ToString();
                 await context.Response.WriteAsync(jsonString, Encoding.UTF8);
+                return;
             }
             await _next(_httpContext);
         }
 
         private async Task<long> GetUserId()
         {
-            long id = await _middleWare.GetInnerId(_httpContext);
-            //await SetUserIdCookie(id);
-            return id;
+            try
+            {
+                long id = await _middleWare.GetInnerId(_httpContext);
+                return id;
+            }
+            catch (ArgumentException ex)
+            {
+                throw ex;
+            }
         }
         private Task SetUserIdCookie(long innerId)
         {

@@ -87,7 +87,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     var basePath = AppContext.BaseDirectory;
-    var xmlPath = Path.Combine(basePath, "FreshCode.xaml");
+    var xmlPath = Path.Combine(basePath, "FreshCode.xml");
     c.IncludeXmlComments(xmlPath);
 
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });

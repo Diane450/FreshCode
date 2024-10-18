@@ -5,7 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <DocumentationFile>C:\Users\Home\Desktop\vsProjects\FreshCode\FreshCode\bin\Debug\net8.0\FreshCode.xaml</DocumentationFile>
+    <DocumentationFile>C:\Users\Home\Desktop\vsProjects\FreshCode\FreshCode\bin\Debug\net8.0\FreshCode.xml</DocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

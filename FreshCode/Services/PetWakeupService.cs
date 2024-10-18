@@ -21,6 +21,7 @@ namespace FreshCode.Services
             {
                 await WakeUpPets(cancellationToken);
                 await System.Threading.Tasks.Task.Delay(TimeSpan.FromMinutes(1), cancellationToken);
+            
             }
         }
 

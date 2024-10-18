@@ -15,13 +15,15 @@ namespace FreshCode.UseCases
         IClanRepository clanRepository,
         VkApiService vkApiService,
         IBaseRepository baseRepository,
-        IBackgroundRepository backgroundRepository)
+        IBackgroundRepository backgroundRepository,
+        TransactionRepository transactionRepository)
     {
         private readonly IUserRepository _userRepository = userRepository;
         private readonly IClanRepository _clanRepository = clanRepository;
         private readonly VkApiService _vkApiService = vkApiService;
         private readonly IBaseRepository _baseRepository = baseRepository;
         private readonly IBackgroundRepository _backgroundRepository = backgroundRepository;
+        private readonly TransactionRepository _transactionRepository = transactionRepository;
 
         public async Task<UserDTO> GetUserGameInfo(long userId)
         {
@@ -30,25 +32,46 @@ namespace FreshCode.UseCases
 
         public async Task<long> GetUserIdByVkId(long vk_user_id)
         {
+            using var transaction = _transactionRepository.BeginTransaction();
+
             try
             {
                 return await _userRepository.GetUserIdByVkId(vk_user_id);
             }
             catch (ArgumentException ex)
             {
-                User user = new User()
+                try
                 {
-                    Money = 0,
-                    StatPoints = 0,
-                    BackgroundId = 6,
-                    WonBattlesCount = 0,
-                    PrimogemsCount = 0,
-                    FatesCount = 0,
-                    VkId = (int)vk_user_id
-                };
-                await _baseRepository.AddAsync(user);
-                await _baseRepository.SaveChangesAsync();
-                return user.Id;
+                    User user = new User()
+                    {
+                        Money = 0,
+                        StatPoints = 0,
+                        BackgroundId = 6,
+                        WonBattlesCount = 0,
+                        PrimogemsCount = 0,
+                        FatesCount = 0,
+                        VkId = (int)vk_user_id
+                    };
+
+                    await _baseRepository.AddAsync(user);
+                    await _baseRepository.SaveChangesAsync();
+
+                    UserBackground userBackground = new()
+                    {
+                        UserId = 2,
+                        BackgroundId = 6,
+                    };
+                    await _baseRepository.AddAsync(userBackground);
+                    await _baseRepository.SaveChangesAsync();
+                    transaction.Commit();
+                    return user.Id;
+                    
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                    throw new ArgumentException("Не удалось создать нового пользователя");
+                }
             }
         }
 
