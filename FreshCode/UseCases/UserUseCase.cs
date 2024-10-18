@@ -30,7 +30,26 @@ namespace FreshCode.UseCases
 
         public async Task<long> GetUserIdByVkId(long vk_user_id)
         {
-            return await _userRepository.GetUserIdByVkId(vk_user_id);
+            try
+            {
+                return await _userRepository.GetUserIdByVkId(vk_user_id);
+            }
+            catch (ArgumentException ex)
+            {
+                User user = new User()
+                {
+                    Money = 0,
+                    StatPoints = 0,
+                    BackgroundId = 6,
+                    WonBattlesCount = 0,
+                    PrimogemsCount = 0,
+                    FatesCount = 0,
+                    VkId = (int)vk_user_id
+                };
+                await _baseRepository.AddAsync(user);
+                await _baseRepository.SaveChangesAsync();
+                return user.Id;
+            }
         }
 
         public async Task<List<TaskDTO>> GetUserTasks(long userId)
@@ -86,9 +105,9 @@ namespace FreshCode.UseCases
         {
             IQueryable<User> users = _userRepository.GetAllUsers().OrderByDescending(u => u.WonBattlesCount);
 
-            users = users.Sort(queryParameters.SortBy, queryParameters.SortDescending);
+            //users = users.Sort(queryParameters.SortBy, queryParameters.SortDescending);
 
-            users = users.Filter(queryParameters.FilterBy, queryParameters.FilterValue);
+            //users = users.Filter(queryParameters.FilterBy, queryParameters.FilterValue);
 
             int totalCount = await users.CountAsync();
 
@@ -130,10 +149,6 @@ namespace FreshCode.UseCases
             friendsIds.Add(vk_user_id);
 
             var filteredUsers = users.Where(user => friendsIds.Contains(user.VkId));
-
-            //filteredUsers = filteredUsers.Sort(queryParameters.SortBy, queryParameters.SortDescending);
-
-            //filteredUsers = filteredUsers.Filter(queryParameters.FilterBy, queryParameters.FilterValue);
 
             int totalCount = await filteredUsers.CountAsync();
 

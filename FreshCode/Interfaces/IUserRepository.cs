@@ -19,7 +19,6 @@ namespace FreshCode.Interfaces
         System.Threading.Tasks.Task AddUserClan(UserClan userClan);
         Task<Clan> GetClanByUser(long userId);
         IQueryable<User> GetAllUsers();
-        Task<List<UserRatingTableDTO>> GetFriendsRatingTable(List<long> friendsIds);
         Task<UserFood> GetUserFoodByFoodId(long id);
         public Task<bool> isArtifactAbsent(long artifactId, long userId);
         public Task<bool> isBackgroundAbsent(long backgroundId, long userId);

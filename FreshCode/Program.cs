@@ -1,5 +1,4 @@
 using FreshCode.DbModels;
-using FreshCode.Fabrics;
 using FreshCode.Filters;
 using FreshCode.Hubs;
 using FreshCode.Interfaces;
@@ -8,7 +7,6 @@ using FreshCode.Repositories;
 using FreshCode.Services;
 using FreshCode.Settings;
 using FreshCode.UseCases;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -88,6 +86,10 @@ builder.Services.AddHttpClient<VkApiService>((httpClient) =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
+    var basePath = AppContext.BaseDirectory;
+    var xmlPath = Path.Combine(basePath, "FreshCode.xaml");
+    c.IncludeXmlComments(xmlPath);
+
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
     // Ќастраиваем Swagger дл€ добавлени€ заголовка Authorization
     c.AddSecurityDefinition("Authorization", new OpenApiSecurityScheme

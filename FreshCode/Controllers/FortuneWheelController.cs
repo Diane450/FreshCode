@@ -12,6 +12,14 @@ namespace FreshCode.Controllers
     {
         private readonly FortuneWheelUseCase _fortuneWheelUseCase = fortuneWheelUseCase;
 
+        /// <summary>
+        /// Получение информации о том, может ли пользователь покрутить колесо фортуны
+        /// </summary>
+        /// <returns>Возвращает:canSpin — можно ли крутить, timeUntilNextSpin — через сколько часов можно сделать след крутку (если canSpin == false)</returns>
+        /// <response code="200">Успешное выполнение</response>
+        /// <response code="500">Ошибка API</response>
+
+
         [HttpGet("can-spin")]
         public async Task<ActionResult> IsSpinAvailable()
         {
@@ -32,6 +40,14 @@ namespace FreshCode.Controllers
             }
         }
 
+        /// <summary>
+        /// Получение бонуса с колеса фортуны
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="200">Успешное выполнение</response>
+        /// <response code="404">Пользователю нельзя совершать крутку, слишком рано, не прошло 24 часа с последнего момента крутки</response>
+        /// <response code="500">Ошибка API</response>
+
         [HttpGet("get-value")]
         public async Task<ActionResult<FortuneWheelDropResponse>> GetValue()
         {
@@ -39,6 +55,10 @@ namespace FreshCode.Controllers
             {
                 long userId = GetUserId(HttpContext);
                 return await _fortuneWheelUseCase.SpinFortuneWheel(userId);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {

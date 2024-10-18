@@ -9,9 +9,16 @@ namespace FreshCode.Controllers
     public class PetPartsController(PetPartsUseCase petPartsUseCase) : BaseController
     {
         private readonly PetPartsUseCase _petPartsUseCase = petPartsUseCase;
+        
+        /// <summary>
+        /// Чтение данных обо всех глазах для создания питомца
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="200">Успешное выполнение</response>
+        /// <response code="500">Ошибка API</response>
 
         [HttpGet("eyes")]
-        public async Task<IActionResult> GetEyes()
+        public async Task<ActionResult<EyeDTO>> GetEyes()
         {
             try
             {
@@ -23,8 +30,15 @@ namespace FreshCode.Controllers
             }
         }
 
+        /// <summary>
+        /// Чтение данных обо всех телах для создания питомца
+        /// </summary>
+        /// <returns></returns>
+        /// <response code="200">Успешное выполнение</response>
+        /// <response code="500">Ошибка API</response>
+
         [HttpGet("bodies")]
-        public async Task<IActionResult> GetBodies()
+        public async Task<ActionResult<BodyDTO>> GetBodies()
         {
             try
             {

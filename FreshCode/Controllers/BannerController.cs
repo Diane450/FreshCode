@@ -12,6 +12,13 @@ namespace FreshCode.Controllers
     {
         private readonly BannerUseCase _bannerUseCase = bannerUseCase;
 
+        /// <summary>
+        /// Получение информации (Id, когда создан, до какого действует, какие артефакты) о баннере по Id
+        /// </summary>
+        /// <param name="bannerId">Id баннера</param>
+        /// <returns></returns>
+        /// <response code="500">Ошибка API</response>
+
         [HttpGet("{bannerId}")]
         public async Task<IActionResult> GetBannerById(long bannerId)
         {
@@ -24,6 +31,15 @@ namespace FreshCode.Controllers
                 return StatusCode(500, new { message = "Произошла внутренняя ошибка сервера. Попробуйте позже." });
             }
         }
+
+        /// <summary>
+        /// Дроп артефактов с баннера
+        /// </summary>
+        /// <param name="wishRequest">Запрос на покрутить баннер</param>
+        /// <returns></returns>
+        /// <response code="200">Успешное выполнение</response>
+        /// <response code="404">Недостаточно круток</response>
+        /// <response code="500">Ошибка API</response>
 
         [HttpGet("drop-artifact")]
         public async Task<IActionResult> GetArtifacts([FromBody] WishRequest wishRequest)

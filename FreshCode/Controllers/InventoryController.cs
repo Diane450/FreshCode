@@ -13,8 +13,17 @@ namespace FreshCode.Controllers
         private readonly UserUseCase _userUseCase = userUseCase;
         private readonly PetsUseCase _petsUseCase = petsUseCase;
 
+        /// <summary>
+        /// Установка заднего фона для пользователя
+        /// </summary>
+        /// <param name="backgroundId">Id заднего фона</param>
+        /// <returns></returns>
+        /// <response code="200">Успешное выполнение</response>
+        /// <response code="400">У пользователя нет выбрнного фона</response>
+        /// <response code="500">Ошибка API</response>
+
         [HttpPost("set-background")]
-        public async Task<IActionResult> SetBackground([FromBody] long backgroundId)
+        public async Task<ActionResult<BackgroundDTO>> SetBackground([FromBody] long backgroundId)
         {
             try
             {

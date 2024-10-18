@@ -114,7 +114,7 @@ namespace FreshCode.UseCases
 
             if (log.Count() >= 3)
             {
-                throw new Exception("Питомец уже наелся!");
+                throw new ArgumentException("Питомец уже наелся!");
             }
 
             UserFood? userFood = _userRepository.GetUserFood(userId)
@@ -122,7 +122,7 @@ namespace FreshCode.UseCases
 
             if (userFood is null || userFood.Count == 0)
             {
-                throw new Exception("У вас не такой еды");
+                throw new ArgumentException("У вас не такой еды");
             }
 
             userFood.Count -= 1;
@@ -231,7 +231,7 @@ namespace FreshCode.UseCases
             int secondsToSleep = (fullSleepSeconds * difference) / 100;
             if (secondsToSleep <= 0)
             {
-                throw new Exception("Ваш питомец уже полностью отдохнул и не нуждается в дополнительном сне");
+                throw new ArgumentException("Ваш питомец уже полностью отдохнул и не нуждается в дополнительном сне");
             }
 
             PetSleepLog petSleepLog = new PetSleepLog()

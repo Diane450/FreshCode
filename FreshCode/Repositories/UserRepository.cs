@@ -136,22 +136,6 @@ namespace FreshCode.Repositories
             return _dbContext.Users;
         }
 
-        //TODO:test
-        public async Task<List<UserRatingTableDTO>> GetFriendsRatingTable(List<long> friendsIds)
-        {
-            List<UserRatingTableDTO> userFriendsRating = [];
-
-            //foreach (long id in friendsIds)
-            //{
-            //    UserRatingTableDTO userRatingTable = await _dbContext.Users
-            //        .Where(u => u.VkId == id)
-            //        .Select(u => UserMapper.ToRatingTableDTO(u))
-            //        .FirstAsync();
-            //}
-            //return userFriendsRating.OrderByDescending(ufr => ufr.WonBattlesCount).ToList();
-            return null;
-        }
-
         public Task<UserFood> GetUserFoodByFoodId(long foodId)
         {
             return _dbContext.UserFoods.FirstAsync(uf => uf.FoodId == foodId);
@@ -226,5 +210,6 @@ namespace FreshCode.Repositories
 
             return existingIds;
         }
+
     }
 }
