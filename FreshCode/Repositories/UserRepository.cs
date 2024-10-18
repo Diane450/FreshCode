@@ -201,13 +201,12 @@ namespace FreshCode.Repositories
                 .Select(c=>c.User);
         }
 
-        public async Task<List<User>> GetUsersInSameClanAsync(long currentUserId)
+        public async Task<IQueryable<User>> GetClanUsers(long currentUserId)
         {
             // Получаем Clan_Id пользователя
             var userClanId = await _dbContext.Users
                 .Where(u => u.Id == currentUserId)
-                .Select(u => u.Id)
-                .FirstOrDefaultAsync();
+                .Select(u => u.Id).FirstAsync();
 
             if (userClanId == 0)
             {
@@ -215,9 +214,8 @@ namespace FreshCode.Repositories
             }
 
             // Получаем всех пользователей с тем же Clan_Id
-            var usersInClan = await _dbContext.Users
-                .Where(u => u.Id == userClanId)
-                .ToListAsync();
+            var usersInClan = _dbContext.Users
+                .Where(u => u.Id == userClanId);
 
             return usersInClan;
         }

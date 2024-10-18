@@ -23,7 +23,7 @@ namespace FreshCode.Mappers
         {
             return new UserRatingTableDTO
             {
-                Id = user.VkId,
+                Id = Convert.ToString(user.VkId),
                 WonBattlesCount = user.WonBattlesCount,
             };
         }

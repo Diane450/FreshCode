@@ -116,14 +116,16 @@ namespace FreshCode.UseCases
 
         public async Task<List<ClanRatingTableDTO>> GetClanRatingTable(long userId)
         {
-            IQueryable<User> ClanUsers = _userRepository.GetClanUsers(userId);
+            IQueryable<User> ClanUsers = await _userRepository.GetClanUsers(userId);
 
             List<ClanRatingTableDTO> clans = await _clanRepository.GetClanRatingTable();
             return [.. clans.OrderByDescending(c => c.WonBattlesCount)];
         }
 
-        public async Task<List<UserRatingTableDTO>> GetFriendsRatingTable(string vk_user_id)
+        public async Task<PagedList<UserRatingTableDTO>> GetFriendsRatingTable(long vk_user_id)
         {
+            var friendsIds = await _vkApiService.GetVkFriends(vk_user_id);
+
             //List<long> friendsIds = await _vkApiService.GetUserFriendsIds(vk_user_id);
 
             return null;

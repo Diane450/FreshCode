@@ -42,5 +42,31 @@ namespace FreshCode.Services
 
             return new List<UserRatingTableDTO>();
         }
+
+        public async Task<List<long>> GetVkFriends(long vk_user_id)
+        {
+            var _accessToken = "0c0ce98c0c0ce98c0c0ce98c930f13194300c0c0c0ce98c6b0ea83be278ceee456f5480";
+            var _apiVersion = "5.199";
+
+            // Формируем запрос к VK API для получения информации о нескольких пользователях
+            var url = $"/friends.get?user_id={vk_user_id}&access_token={_accessToken}&v={_apiVersion}";
+
+            HttpResponseMessage response = await _httpClient.GetAsync(_httpClient.BaseAddress + url);
+            response.EnsureSuccessStatusCode();
+
+            var vkContent = await response.Content.ReadAsStringAsync();
+
+            // Десериализуем результат
+            var vkResponse = JsonConvert.DeserializeObject<VkApiResponseFriends<FriendIdsResponse>>(vkContent);
+            
+            if (vkResponse!= null && vkResponse.Response.Items != null)
+            {
+                return vkResponse.Response.Items;
+            }
+            else
+            {
+                throw new Exception("Друзья не найдены");
+            }
+        }
     }
 }

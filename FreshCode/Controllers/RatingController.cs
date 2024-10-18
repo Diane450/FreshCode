@@ -18,18 +18,18 @@ namespace FreshCode.Controllers
             return await _userUseCase.GetAllUsersRatingTable(queryParameters);
         }
 
-        [HttpGet("clans")]
-        public async Task<List<ClanRatingTableDTO>> GetClanRatingTable()
-        {
-            var vk_user_id = GetUserId(HttpContext);
-            return await _userUseCase.GetClanRatingTable();
-        }
+        //[HttpGet("clans")] КЛАНЫ В РАЗРАБОТКЕ
+        //public async Task<List<ClanRatingTableDTO>> GetClanRatingTable()
+        //{
+        //    var userId = GetUserId(HttpContext);
+        //    return await _userUseCase.GetClanRatingTable();
+        //}
 
         [HttpGet("friends")]
-        public async Task<List<UserRatingTableDTO>> GetFriendsRatingTable()
+        public async Task<PagedList<UserRatingTableDTO>> GetFriendsRatingTable()
         {
-            //return await _userUseCase.GetFriendsRatingTable(vk_user_id);
-            return null;
+            var vk_user_id = GetVkId(HttpContext);
+            return await _userUseCase.GetFriendsRatingTable(vk_user_id);
         }
     }
 }
