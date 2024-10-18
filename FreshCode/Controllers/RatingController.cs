@@ -13,16 +13,15 @@ namespace FreshCode.Controllers
         private UserUseCase _userUseCase = userUseCase;
 
         [HttpGet("all-users")]
-        public async Task<List<UserRatingTableDTO>> GetAllUsersRatingTable([FromQuery]QueryParameters queryParameters)
+        public async Task<PagedList<UserRatingTableDTO>> GetAllUsersRatingTable([FromQuery]QueryParameters queryParameters)
         {
-            var vk_user_id = GetVkId(HttpContext);
-
             return await _userUseCase.GetAllUsersRatingTable(queryParameters);
         }
 
         [HttpGet("clans")]
         public async Task<List<ClanRatingTableDTO>> GetClanRatingTable()
         {
+            var vk_user_id = GetUserId(HttpContext);
             return await _userUseCase.GetClanRatingTable();
         }
 

@@ -2,6 +2,7 @@
 using FreshCode.Interfaces;
 using FreshCode.Mappers;
 using FreshCode.ModelsDTO;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq;
@@ -18,7 +19,7 @@ namespace FreshCode.Repositories
             try
             {
                 return await _dbContext.Users
-                    .Where(u => u.VkId == Convert.ToString(vk_user_id))
+                    .Where(u => u.VkId == vk_user_id)
                     .Select(u => u.Id)
                     .FirstAsync();
             }
@@ -100,7 +101,7 @@ namespace FreshCode.Repositories
             try
             {
                 return await _dbContext.Users
-                    .FirstAsync(u => u.VkId == Convert.ToString(vk_user_id));
+                    .FirstAsync(u => u.VkId == vk_user_id);
             }
             catch (Exception)
             {
@@ -134,11 +135,9 @@ namespace FreshCode.Repositories
             return userClan;
         }
 
-        public async Task<List<UserRatingTableDTO>> GetAllUsersRatingTable()
+        public IQueryable<User> GetAllUsers()
         {
-            return await _dbContext.Users
-                .Select(u => UserMapper.ToRatingTableDTO(u))
-                .ToListAsync();
+            return _dbContext.Users;
         }
 
         //TODO:test
@@ -200,6 +199,27 @@ namespace FreshCode.Repositories
                 .Where(uc => uc.ClanId == clanId)
                 .Include(c => c.User)
                 .Select(c=>c.User);
+        }
+
+        public async Task<List<User>> GetUsersInSameClanAsync(long currentUserId)
+        {
+            // Получаем Clan_Id пользователя
+            var userClanId = await _dbContext.Users
+                .Where(u => u.Id == currentUserId)
+                .Select(u => u.Id)
+                .FirstOrDefaultAsync();
+
+            if (userClanId == 0)
+            {
+                throw new Exception("Пользователь не состоит в клане");
+            }
+
+            // Получаем всех пользователей с тем же Clan_Id
+            var usersInClan = await _dbContext.Users
+                .Where(u => u.Id == userClanId)
+                .ToListAsync();
+
+            return usersInClan;
         }
     }
 }

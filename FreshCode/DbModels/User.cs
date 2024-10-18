@@ -19,7 +19,7 @@ public partial class User
 
     public int FatesCount { get; set; }
 
-    public string VkId { get; set; } = null!;
+    public int VkId { get; set; }
 
     public virtual ICollection<ArtifactHistory> ArtifactHistories { get; set; } = new List<ArtifactHistory>();
 

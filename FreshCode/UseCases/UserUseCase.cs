@@ -1,4 +1,5 @@
 ﻿using FreshCode.DbModels;
+using FreshCode.Extensions;
 using FreshCode.Interfaces;
 using FreshCode.Mappers;
 using FreshCode.Models;
@@ -67,7 +68,7 @@ namespace FreshCode.UseCases
         public async Task<BackgroundDTO> SetBackground(long backgroundId, long userId)
         {
             User user = await _userRepository.GetUserById(userId);
-            
+
             UserBackground? userBackground = _userRepository.GetUserBackgrounds(userId)
                 .FirstOrDefault(ub => ub.BackgroundId == backgroundId);
 
@@ -81,29 +82,42 @@ namespace FreshCode.UseCases
             return BackgroundMapper.ToDTO(await _backgroundRepository.GetBackgroundById(backgroundId));
         }
 
-        public async Task<List<UserRatingTableDTO>> GetAllUsersRatingTable(QueryParameters queryParameters)
+        public async Task<PagedList<UserRatingTableDTO>> GetAllUsersRatingTable(QueryParameters queryParameters)
         {
-            // Получаем список пользователей из базы данных
-            List<UserRatingTableDTO> users = await _userRepository.GetAllUsersRatingTable();
+            IQueryable<User> users = _userRepository.GetAllUsers();
 
+            users = users.Sort(queryParameters.SortBy, queryParameters.SortDescending);
+
+            users = users.Filter(queryParameters.FilterBy, queryParameters.FilterValue);
+
+            int totalCount = await users.CountAsync();
+
+            users = users.Paginate(queryParameters.Page, queryParameters.PageSize);
+            users = users.OrderByDescending(u => u.WonBattlesCount);
+            var usersDTO = users.Select(u => UserMapper.ToRatingTableDTO(u)).ToList();
             // Для каждого пользователя запросим данные из VK API
-            foreach (var user in users)
-            {
-                var vkUserInfo = await _vkApiService.GetVkUserInfo(user.Id);
 
-                if (vkUserInfo != null)
+            var idsList = String.Join(",", usersDTO.Select(u => u.Id).ToList());
+
+            var vkUsersInfo = await _vkApiService.GetVkUsersInfo(idsList);
+
+            foreach (var vkUser in vkUsersInfo)
+            {
+                var userDTO = usersDTO.FirstOrDefault(u => u.Id == vkUser.Id);
+                if (userDTO != null)
                 {
-                    user.FirstName = vkUserInfo.FirstName;
-                    user.LastName = vkUserInfo.LastName;
-                    user.Photo50 = vkUserInfo.Photo50;
+                    userDTO.FirstName = vkUser.FirstName;
+                    userDTO.LastName = vkUser.LastName;
+                    userDTO.Photo50 = vkUser.Photo50;
                 }
             }
-
-            return users.OrderByDescending(u => u.WonBattlesCount).ToList();
+            return new PagedList<UserRatingTableDTO>(usersDTO, queryParameters.Page, queryParameters.PageSize, totalCount);
         }
 
-        public async Task<List<ClanRatingTableDTO>> GetClanRatingTable()
+        public async Task<List<ClanRatingTableDTO>> GetClanRatingTable(long userId)
         {
+            IQueryable<User> ClanUsers = _userRepository.GetClanUsers(userId);
+
             List<ClanRatingTableDTO> clans = await _clanRepository.GetClanRatingTable();
             return [.. clans.OrderByDescending(c => c.WonBattlesCount)];
         }
