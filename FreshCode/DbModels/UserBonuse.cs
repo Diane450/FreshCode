@@ -13,7 +13,7 @@ public partial class UserBonuse
 
     public DateTime CreatedAt { get; set; }
 
-    public DateTime ExpiresAt { get; set; }
+    public DateTime? ExpiresAt { get; set; }
 
     public long BonusTypeId { get; set; }
 

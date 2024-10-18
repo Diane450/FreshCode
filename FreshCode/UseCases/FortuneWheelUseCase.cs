@@ -31,68 +31,86 @@ namespace FreshCode.UseCases
         }
         public async Task<FortuneWheelDropResponse> SpinFortuneWheel(long userId)
         {
-            DateTime? userLastWheelRollTime = _fortuneRepository.GetUserLastWheelRollTime(userId);
+            // Получаем время последнего кручения колеса
+            DateTime? lastSpinTime = _fortuneRepository.GetUserLastWheelRollTime(userId);
 
+            // Рассчитываем время, когда можно будет снова крутить колесо
+            DateTime nextSpinAvailableTime = lastSpinTime?.AddHours(24) ?? DateTime.UtcNow;
+
+            // Проверка: если пользователь не крутил колесо или прошло 24 часа
+            if (DateTime.UtcNow < nextSpinAvailableTime)
+            {
+                TimeSpan timeUntilNextSpin = nextSpinAvailableTime - DateTime.UtcNow;
+                throw new ArgumentException($"Вы сможете крутить колесо через {timeUntilNextSpin.TotalHours:F0} часов.");
+            }
+
+            // Получаем питомца пользователя
             Pet pet = await _petRepository.GetPetByUserId(userId);
 
-            if (userLastWheelRollTime is null || (DateTime.UtcNow - userLastWheelRollTime.Value).TotalHours >= 24)
+            // Получаем все доступные бонусы
+            IQueryable<Bonu> bonuses = _bonusRepository.GetAllBonusesAsync();
+
+            // Выбираем случайный бонус
+            Bonu selectedBonus = _bonusDropService.GetRandomBonus(bonuses);
+
+            // Создаем ответ с информацией о бонусе
+            FortuneWheelDropResponse fortuneWheelResponse = new FortuneWheelDropResponse
             {
-                IQueryable<Bonu> bonuses = _bonusRepository.GetAllBonusesAsync();
+                CreatedAt = DateTime.UtcNow,
+                ExpiresAt = DateTime.UtcNow.AddSeconds(selectedBonus.Duration),
+                BonusFormat = selectedBonus.Type.Type,
+                Characteristic = selectedBonus.Characteristic.Characteristic1,
+                Value = selectedBonus.Value,
+            };
 
-                Bonu response = _bonusDropService.GetRandomBonus(bonuses);
-
-                FortuneWheelDropResponse fortuneWheelResponse = new()
+            // Применяем бонус: для характеристики 4 или 5 применяем к питомцу, иначе создаем бонус для пользователя
+            if (selectedBonus.CharacteristicId == 4 || selectedBonus.CharacteristicId == 5)
+            {
+                await _bonusService.SetBonus(pet, selectedBonus);
+            }
+            else
+            {
+                UserBonuse userBonus = new UserBonuse
                 {
-                    CreatedAt = DateTime.UtcNow,
-                    ExpiresAt = DateTime.UtcNow.AddSeconds(response.Duration),
-                    BonusFormat = response.Type.Type,
-                    Characteristic = response.Characteristic.Characteristic1,
-                    Value = response.Value,
+                    PetId = pet.Id,
+                    BonusId = selectedBonus.Id,
+                    CreatedAt = fortuneWheelResponse.CreatedAt,
+                    ExpiresAt = fortuneWheelResponse.ExpiresAt,
+                    BonusTypeId = 1 // тип бонуса
                 };
 
-                if (response.CharacteristicId == 4 || response.CharacteristicId == 5)
+                UserFortuneWheelSpin spinRecord = new UserFortuneWheelSpin
                 {
-                    await _bonusService.SetBonus(pet, response);
-                }
-                else
-                {
-                    UserBonuse userBonuse = new UserBonuse()
-                    {
-                        PetId = pet.Id,
-                        BonusId = response.Id,
-                        CreatedAt = DateTime.UtcNow,
-                        ExpiresAt = DateTime.UtcNow.AddSeconds(response.Duration),
-                        BonusTypeId = 1
-                    };
-                    UserFortuneWheelSpin spin = new()
-                    {
-                        UserId = userId,
-                        CreatedAt = userBonuse.CreatedAt
-                    };
-                    await _baseRepository.AddAsync(userBonuse);
-                    await _baseRepository.AddAsync(spin);
-                    await _baseRepository.SaveChangesAsync();
-                }
-                return fortuneWheelResponse;
+                    UserId = userId,
+                    CreatedAt = fortuneWheelResponse.CreatedAt
+                };
+
+                // Добавляем запись в базу данных
+                await _baseRepository.AddAsync(userBonus);
+                await _baseRepository.AddAsync(spinRecord);
+                await _baseRepository.SaveChangesAsync();
             }
-            else
-            {
-                throw new ArgumentException($"Вы пока не можете получить бонус. Следующая попытка через:{24 - DateTime.UtcNow.Hour - Convert.ToDateTime(userLastWheelRollTime).Hour}");
-            }
+
+            return fortuneWheelResponse;
         }
 
-        public async Task<(bool,int?)> IsSpinAvailable(long userId)
+        public async Task<(bool, int?)> IsSpinAvailable(long userId)
         {
-            DateTime? userLastWheelRollTime = _fortuneRepository.GetUserLastWheelRollTime(userId);
-            
-            if (userLastWheelRollTime is null || (DateTime.UtcNow - userLastWheelRollTime.Value).TotalHours >= 24)
+            // Получаем время последнего кручения колеса
+            DateTime? lastSpinTime = _fortuneRepository.GetUserLastWheelRollTime(userId);
+
+            // Если пользователь никогда не крутил колесо или прошло более 24 часов
+            if (lastSpinTime == null || DateTime.UtcNow >= lastSpinTime.Value.AddHours(24))
             {
-                return (true,null);
+                return (true, null);
             }
-            else
-            {
-                return (false, 24 - (DateTime.UtcNow.Hour - Convert.ToDateTime(userLastWheelRollTime).Hour));
-            }
+
+            // Рассчитываем, сколько времени осталось до следующей возможности крутить колесо
+            TimeSpan timeUntilNextSpin = lastSpinTime.Value.AddHours(24) - DateTime.UtcNow;
+
+            // Возвращаем информацию о том, через сколько часов можно будет снова крутить (округление до целого)
+            return (false, (int)Math.Ceiling(timeUntilNextSpin.TotalHours));
         }
     }
 }
+
