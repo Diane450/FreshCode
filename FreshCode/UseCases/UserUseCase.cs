@@ -32,7 +32,6 @@ namespace FreshCode.UseCases
 
         public async Task<long> GetUserIdByVkId(long vk_user_id)
         {
-            using var transaction = _transactionRepository.BeginTransaction();
 
             try
             {
@@ -40,6 +39,7 @@ namespace FreshCode.UseCases
             }
             catch (ArgumentException ex)
             {
+                using var transaction = _transactionRepository.BeginTransaction();
                 try
                 {
                     User user = new User()
