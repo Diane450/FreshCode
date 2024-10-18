@@ -608,12 +608,12 @@ public partial class FreshCodeContext : DbContext
 
             entity.ToTable("User");
 
-            entity.HasIndex(e => e.VkId, "vkid");
-
             entity.Property(e => e.BackgroundId).HasColumnName("Background_Id");
             entity.Property(e => e.FatesCount).HasColumnName("Fates_Count");
             entity.Property(e => e.PrimogemsCount).HasColumnName("Primogems_Count");
-            entity.Property(e => e.VkId).HasColumnName("Vk_Id");
+            entity.Property(e => e.VkId)
+                .HasColumnType("character varying")
+                .HasColumnName("Vk_Id");
             entity.Property(e => e.WonBattlesCount).HasColumnName("WonBattles_Count");
 
             entity.HasOne(d => d.Background).WithMany(p => p.Users)

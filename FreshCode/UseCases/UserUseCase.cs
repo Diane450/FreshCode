@@ -1,6 +1,7 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.Interfaces;
 using FreshCode.Mappers;
+using FreshCode.Models;
 using FreshCode.ModelsDTO;
 using FreshCode.Repositories;
 using FreshCode.Services;
@@ -80,10 +81,25 @@ namespace FreshCode.UseCases
             return BackgroundMapper.ToDTO(await _backgroundRepository.GetBackgroundById(backgroundId));
         }
 
-        public async Task<List<UserRatingTableDTO>> GetAllUsersRatingTable()
+        public async Task<List<UserRatingTableDTO>> GetAllUsersRatingTable(QueryParameters queryParameters)
         {
+            // Получаем список пользователей из базы данных
             List<UserRatingTableDTO> users = await _userRepository.GetAllUsersRatingTable();
-            return [.. users.OrderByDescending(u => u.WonBattlesCount)];
+
+            // Для каждого пользователя запросим данные из VK API
+            foreach (var user in users)
+            {
+                var vkUserInfo = await _vkApiService.GetVkUserInfo(user.Id);
+
+                if (vkUserInfo != null)
+                {
+                    user.FirstName = vkUserInfo.FirstName;
+                    user.LastName = vkUserInfo.LastName;
+                    user.Photo50 = vkUserInfo.Photo50;
+                }
+            }
+
+            return users.OrderByDescending(u => u.WonBattlesCount).ToList();
         }
 
         public async Task<List<ClanRatingTableDTO>> GetClanRatingTable()
@@ -94,9 +110,10 @@ namespace FreshCode.UseCases
 
         public async Task<List<UserRatingTableDTO>> GetFriendsRatingTable(string vk_user_id)
         {
-            List<long> friendsIds = await _vkApiService.GetUserFriendsIds(vk_user_id);
+            //List<long> friendsIds = await _vkApiService.GetUserFriendsIds(vk_user_id);
 
-            return await _userRepository.GetFriendsRatingTable(friendsIds);
+            return null;
+            //return await _userRepository.GetFriendsRatingTable(friendsIds);
         }
     }
 }

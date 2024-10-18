@@ -8,5 +8,11 @@ namespace FreshCode.Controllers
         {
             return (long)context.Items["userId"]!;
         }
+
+        protected long GetVkId(HttpContext context)
+        {
+            return (long)context.Items["vk_user_id"]!;
+        }
+
     }
 }

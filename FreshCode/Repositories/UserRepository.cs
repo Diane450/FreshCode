@@ -18,7 +18,7 @@ namespace FreshCode.Repositories
             try
             {
                 return await _dbContext.Users
-                    .Where(u => u.VkId == Convert.ToInt64(vk_user_id))
+                    .Where(u => u.VkId == Convert.ToString(vk_user_id))
                     .Select(u => u.Id)
                     .FirstAsync();
             }
@@ -100,7 +100,7 @@ namespace FreshCode.Repositories
             try
             {
                 return await _dbContext.Users
-                    .FirstAsync(u => u.VkId == Convert.ToInt32(vk_user_id));
+                    .FirstAsync(u => u.VkId == Convert.ToString(vk_user_id));
             }
             catch (Exception)
             {
@@ -146,14 +146,15 @@ namespace FreshCode.Repositories
         {
             List<UserRatingTableDTO> userFriendsRating = [];
 
-            foreach (long id in friendsIds)
-            {
-                UserRatingTableDTO userRatingTable = await _dbContext.Users
-                    .Where(u => u.VkId == id)
-                    .Select(u => UserMapper.ToRatingTableDTO(u))
-                    .FirstAsync();
-            }
-            return userFriendsRating.OrderByDescending(ufr => ufr.WonBattlesCount).ToList();
+            //foreach (long id in friendsIds)
+            //{
+            //    UserRatingTableDTO userRatingTable = await _dbContext.Users
+            //        .Where(u => u.VkId == id)
+            //        .Select(u => UserMapper.ToRatingTableDTO(u))
+            //        .FirstAsync();
+            //}
+            //return userFriendsRating.OrderByDescending(ufr => ufr.WonBattlesCount).ToList();
+            return null;
         }
 
         public Task<UserFood> GetUserFoodByFoodId(long foodId)

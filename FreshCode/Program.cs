@@ -79,7 +79,7 @@ builder.Services.Configure<VkApiSettings>(builder.Configuration.GetSection("VkAp
 
 builder.Services.AddHttpClient<VkApiService>((httpClient) =>
 {
-    httpClient.BaseAddress = new Uri("https://api.vk.com/");
+    httpClient.BaseAddress = new Uri("https://api.vk.com/method");
 
     httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
 });
