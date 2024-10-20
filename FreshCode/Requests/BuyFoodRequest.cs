@@ -10,10 +10,6 @@
         /// </summary>
         public long FoodId { get; set; }
         /// <summary>
-        /// Цена
-        /// </summary>
-        public int Price { get; set; }
-        /// <summary>
         /// Кол-во
         /// </summary>
         public int Count { get; set; }

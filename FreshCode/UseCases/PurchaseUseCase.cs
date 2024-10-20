@@ -11,6 +11,7 @@ namespace FreshCode.UseCases
     {
         private readonly IUserRepository _userRepository;
         private readonly IBaseRepository _baseRepository;
+        private readonly IFoodRepository _foodRepository;
 
         public PurchaseUseCase(IUserRepository userRepository,
             IBaseRepository baseRepository)
@@ -47,8 +48,8 @@ namespace FreshCode.UseCases
         public async Task<BuyFoodResponse> BuyFood(BuyFoodRequest foodToBuy, long userId)
         {
             User user = await _userRepository.GetUserById(userId);
-
-            user.Money -= foodToBuy.Price * foodToBuy.Count;
+            Food food = await _foodRepository.GetFoodById(foodToBuy.FoodId);
+            user.Money -= food.Price * foodToBuy.Count;
             HasPositiveBalance(user);
 
             var userFoodList = _userRepository.GetUserFood(user.Id).ToList();
