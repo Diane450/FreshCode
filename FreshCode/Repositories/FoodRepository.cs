@@ -19,5 +19,18 @@ namespace FreshCode.Repositories
 
             return food;
         }
+
+        public async Task<int> GetFoodPrice(long foodId)
+        {
+            var price = await _dbContext.Foods
+                .Where(f => f.Id == foodId)
+                .Select(f => f.Price).FirstOrDefaultAsync();
+
+            if (price == null || price == 0)
+            {
+                throw new ArgumentException("Еда не была найдена");
+            }
+            return price;
+        }
     }
 }

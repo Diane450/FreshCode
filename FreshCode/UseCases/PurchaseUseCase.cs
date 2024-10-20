@@ -48,8 +48,8 @@ namespace FreshCode.UseCases
         public async Task<BuyFoodResponse> BuyFood(BuyFoodRequest foodToBuy, long userId)
         {
             User user = await _userRepository.GetUserById(userId);
-            Food food = await _foodRepository.GetFoodById(foodToBuy.FoodId);
-            user.Money -= food.Price * foodToBuy.Count;
+            int price = await _foodRepository.GetFoodPrice(foodToBuy.FoodId);
+            user.Money -= price * foodToBuy.Count;
             HasPositiveBalance(user);
 
             var userFoodList = _userRepository.GetUserFood(user.Id).ToList();
