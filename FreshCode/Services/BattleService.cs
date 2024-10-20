@@ -102,7 +102,7 @@ namespace FreshCode.Services
                     loser = battle.Attacker.Movecount > battle.Defender.Movecount ? battle.Defender : battle.Attacker;
                 }
 
-                await _hubContext.Clients.Group(battle.BattleId.ToString()).SendAsync("BattleEnded", winner.vk_user_id); // Уведомляем о завершении боя
+                //await _hubContext.Clients.Group(battle.BattleId.ToString()).SendAsync("BattleEnded", winner.vk_user_id); // Уведомляем о завершении боя
 
                 var reward = new RewardResponse
                 {

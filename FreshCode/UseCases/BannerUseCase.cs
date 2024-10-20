@@ -10,29 +10,20 @@ using System;
 
 namespace FreshCode.UseCases
 {
-    public class BannerUseCase
+    public class BannerUseCase(IBanerRepository banerRepository,
+        IUserRepository userRepository,
+        IArtifactRepository artifactRepository,
+        IBaseRepository baseRepository,
+        ArtifactDropService artifactDropService,
+        TransactionRepository transactionRepository)
     {
-        private readonly IBanerRepository _banerRepository;
-        private readonly IUserRepository _userRepository;
-        private readonly IArtifactRepository _artifactRepository;
-        private readonly IBaseRepository _baseRepository;
-        private readonly ArtifactDropService _artifactDropService;
-        private readonly TransactionRepository _transactionRepository;
+        private readonly IBanerRepository _banerRepository = banerRepository;
+        private readonly IUserRepository _userRepository = userRepository;
+        private readonly IArtifactRepository _artifactRepository = artifactRepository;
+        private readonly IBaseRepository _baseRepository = baseRepository;
+        private readonly ArtifactDropService _artifactDropService = artifactDropService;
+        private readonly TransactionRepository _transactionRepository = transactionRepository;
 
-        public BannerUseCase(IBanerRepository banerRepository,
-            IUserRepository userRepository,
-            IArtifactRepository artifactRepository,
-            IBaseRepository baseRepository,
-            ArtifactDropService artifactDropService,
-            TransactionRepository transactionRepository)
-        {
-            _banerRepository = banerRepository;
-            _userRepository = userRepository;
-            _artifactRepository = artifactRepository;
-            _baseRepository = baseRepository;
-            _artifactDropService = artifactDropService;
-            _transactionRepository = transactionRepository;
-        }
         public async Task<BanerDTO> GetBannerById(long bannerId)
         {
             Banner banner = await _banerRepository.GetBannerById(bannerId);

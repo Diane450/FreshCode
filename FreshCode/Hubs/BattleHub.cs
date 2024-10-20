@@ -87,7 +87,7 @@ namespace FreshCode.Hubs
             await StartLookingForOpponent(vk_user_id, connectionId);
         }
 
-        public async Task StartLookingForOpponent(long vk_user_id, string connectionId)
+        private async Task StartLookingForOpponent(long vk_user_id, string connectionId)
         {
             var cancellationTokenSource = new CancellationTokenSource();
             var userId = await _userRepository.GetUserIdByVkId(vk_user_id);
@@ -306,7 +306,7 @@ namespace FreshCode.Hubs
             }
             catch (Exception ex)
             {
-                await _hubContext.Clients.Client(attacker.ConnectionId).SendAsync("FeedingError", ex.Message);
+                await _hubContext.Clients.Client(attacker.ConnectionId).SendAsync("PetFull", ex.Message);
             }
         }
 
@@ -337,8 +337,8 @@ namespace FreshCode.Hubs
             {
                 var connectionId = _waitingPlayers[vk_user_id].ConnectionId;
                 _waitingPlayers.Remove(vk_user_id);
-                await Clients.Client(connectionId).SendAsync("SearchCancelled", "К сожалению, соперник не был найден. Попробуйте начать поиск через некоторое время");
-                await _hubContext.Clients.Client(connectionId).SendAsync("UserDisconnected", "Вы отключились");
+                await _hubContext.Clients.Client(connectionId).SendAsync("SearchCancelled", "К сожалению, соперник не был найден. Попробуйте начать поиск через некоторое время");
+                //await _hubContext.Clients.Client(connectionId).SendAsync("UserDisconnected", "Вы отключились");
 
                 Context.Abort();
             }

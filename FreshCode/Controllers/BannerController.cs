@@ -1,4 +1,4 @@
-﻿using FreshCode.ModelsDTO;
+﻿    using FreshCode.ModelsDTO;
 using FreshCode.Requests;
 using FreshCode.Responses;
 using FreshCode.UseCases;
@@ -20,7 +20,7 @@ namespace FreshCode.Controllers
         /// <response code="500">Ошибка API</response>
 
         [HttpGet("{bannerId}")]
-        public async Task<IActionResult> GetBannerById(long bannerId)
+        public async Task<ActionResult<BanerDTO>> GetBannerById(long bannerId)
         {
             try
             {
@@ -42,7 +42,7 @@ namespace FreshCode.Controllers
         /// <response code="500">Ошибка API</response>
 
         [HttpGet("drop-artifact")]
-        public async Task<IActionResult> GetArtifacts([FromBody] WishRequest wishRequest)
+        public async Task<ActionResult<DropArtifactResponse>> GetArtifacts([FromBody] WishRequest wishRequest)
         {
             try
             {

@@ -11,6 +11,7 @@ namespace FreshCode.Repositories
         public IQueryable<Bonu> GetAllBonusesAsync()
         {
             return _dbContext.Bonus
+                 .Where(b => b.CharacteristicId != 6)
                 .Include(b => b.Characteristic)
                 .Include(b => b.Type);
         }

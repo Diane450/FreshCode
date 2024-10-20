@@ -5,13 +5,10 @@ using FreshCode.Responses;
 
 namespace FreshCode.Services
 {
-    public class PetBonusManagerService : IPetBonusManagerService
+    public class PetBonusManagerService(IPetLoggerService petLoggerService) : IPetBonusManagerService
     {
-        private readonly IPetLoggerService _petLoggerService;
-        public PetBonusManagerService(IPetLoggerService petLoggerService)
-        {
-            _petLoggerService = petLoggerService;
-        }
+        private readonly IPetLoggerService _petLoggerService = petLoggerService;
+
         public void SetBonuses(Pet pet, List<Bonu> bonuses)
         {
             foreach (var bonus in bonuses)
@@ -45,7 +42,7 @@ namespace FreshCode.Services
                         pet.FeedNeed = newFeedValue <=100 ? newFeedValue : 100;
                         break;
                     default:
-                        throw new Exception($"Invalid CharacteristicType {characteristic}");
+                        throw new Exception($"Некорректная характеристика");
                 }
             }
 

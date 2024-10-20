@@ -138,5 +138,34 @@ namespace FreshCode.Controllers
                 return StatusCode(500, "Произошла ошибка на сервере, попробуйте позже");
             }
         }
+
+        /// <summary>
+        /// Установка заднего фона для пользователя
+        /// </summary>
+        /// <param name="backgroundId">Id заднего фона</param>
+        /// <returns></returns>
+        /// <response code="200">Успешное выполнение</response>
+        /// <response code="400">У пользователя нет выбрнного фона</response>
+        /// <response code="500">Ошибка API</response>
+
+        [HttpPost("set-background")]
+        public async Task<ActionResult<BackgroundDTO>> SetBackground([FromBody] long backgroundId)
+        {
+            try
+            {
+                long userId = GetUserId(HttpContext);
+                var background = await _userUseCase.SetBackground(backgroundId, userId);
+                return Ok(background);
+            }
+            catch (ArgumentException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "Произошла ошибка на сервере, попробуйте позже");
+            }
+        }
+
     }
 }
