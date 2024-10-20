@@ -19,16 +19,29 @@ namespace FreshCode.UseCases
 
         public async Task<List<EyeDTO>> GetEyesAsync()
         {
-            IQueryable<Eye> eyes = _eyesRepository.GetEyesAsync();
-            var eyesListDTO = eyes.Select(e => EyeMapper.ToDTO(e)).ToListAsync();
-            return await eyesListDTO;
+            var eyesListDTO = await _eyesRepository.GetEyesAsync()
+                .Select(e => new EyeDTO
+                {
+                    Id = e.Id,
+                    X = e.X,
+                    Y = e.Y,
+                    // Включите все необходимые поля для DTO
+                })
+                .ToListAsync();
+
+            return eyesListDTO;
         }
 
         public async Task<List<BodyDTO>> GetBodiesAsync()
         {
-            IQueryable<Body> bodies = _bodyRepository.GetBodiesAsync();
-            var bodiesDTO = bodies.Select(b=>BodyMapper.ToDTO(b)).ToListAsync();
-            return await bodiesDTO;
+            return await _bodyRepository.GetBodiesAsync()
+                .Select(b => new BodyDTO
+                {
+                    Id = b.Id,
+                    X = b.X,
+                    Y = b.Y
+                })
+                .ToListAsync();
         }
     }
 }

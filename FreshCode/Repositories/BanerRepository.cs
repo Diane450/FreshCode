@@ -1,5 +1,6 @@
 ﻿using FreshCode.DbModels;
 using FreshCode.Interfaces;
+using FreshCode.ModelsDTO;
 using Microsoft.EntityFrameworkCore;
 
 namespace FreshCode.Repositories
@@ -27,15 +28,36 @@ namespace FreshCode.Repositories
 
         public async Task<Banner> GetBannerById(long bannerId)
         {
-            var banner = await _dbContext.Banners
+            return await _dbContext.Banners
+                .FindAsync(bannerId);
+        }
+
+        public async Task<BanerDTO> GetBannerInfo(long bannerId)
+        {
+            var bannerDto = await _dbContext.Banners
                 .Where(b => b.Id == bannerId)
-                .Include(b => b.BannerItems)
+                .Select(b => new BanerDTO
+                {
+                    Id = b.Id,
+                    CreatedAt = b.CreatedAt,
+                    ExpiresAt = b.ExpiresAt,
+                    Artifacts = b.BannerItems
+                        .Select(bi => new ArtifactDTO
+                        {
+                            Id = bi.Artifact.Id,
+                            X = bi.Artifact.X,
+                            Y = bi.Artifact.Y
+                        })
+                        .ToList()
+                })
                 .FirstOrDefaultAsync();
-            if (banner == null)
+
+            if (bannerDto == null)
             {
-                throw new Exception($"Baner with id {bannerId} was not found");
+                throw new Exception($"Banner with id {bannerId} was not found");
             }
-            return banner;
+
+            return bannerDto;
         }
     }
 }

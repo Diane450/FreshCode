@@ -26,8 +26,7 @@ namespace FreshCode.UseCases
 
         public async Task<BanerDTO> GetBannerById(long bannerId)
         {
-            Banner banner = await _banerRepository.GetBannerById(bannerId);
-            return BannerMapper.ToDTO(banner);
+            return await _banerRepository.GetBannerInfo(bannerId);
         }
 
         public async Task<DropArtifactResponse> GetArtifact(long userId, WishRequest wishRequest)
@@ -89,7 +88,7 @@ namespace FreshCode.UseCases
                 throw new InvalidOperationException("Недостаточно круток");
             }
         }
-        
+
         private async Task<BannerItem> GetBannerItemWithArtifact(Banner banner, List<ArtifactHistory> history, IQueryable<BannerItem> bannerItems)
         {
             var bannerItem = _artifactDropService.GetArtifact(banner, history, bannerItems);
